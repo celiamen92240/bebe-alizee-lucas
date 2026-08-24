@@ -1,0 +1,17 @@
+﻿{
+  "name": "Bébé d'Amour 💙 Alizée & Lucas",
+  "short_name": "Bébé Alizée",
+  "description": "Suivi de grossesse et jeux en famille pour le petit prince d'Alizée et Lucas",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#fbfbf4",
+  "theme_color": "#fbfbf4",
+  "icons": [
+    {
+      "src": "/logo.jpg",
+      "sizes": "192x192 512x512 1024x1024",
+      "type": "image/jpeg",
+      "purpose": "any maskable"
+    }
+  ]
+}
