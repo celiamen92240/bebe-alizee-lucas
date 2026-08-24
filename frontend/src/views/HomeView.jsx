@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Calendar, Heart, Clock, Sparkles, Trophy, ArrowRight, Baby, Crown, Star, Flame, Lock } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { useUser } from '../context/UserContext';
+import { fruitsData } from '../data/fruitsData';
 
 export default function HomeView({ setTab, isBorn, actualBirth }) {
   const { currentUser, setIsRegisterModalOpen } = useUser();
@@ -18,6 +19,7 @@ export default function HomeView({ setTab, isBorn, actualBirth }) {
   };
 
   const currentWeek = getAutoPregnancyWeek();
+  const fruitInfo = fruitsData.find(f => f.week === currentWeek) || fruitsData.find(f => f.week === 26) || fruitsData[0];
 
   // Real-time ticking Countdown to Due Date (08/12/2026)
   const [timeLeft, setTimeLeft] = useState({
@@ -134,27 +136,51 @@ export default function HomeView({ setTab, isBorn, actualBirth }) {
         )}
       </div>
 
-      {/* 2. Stade de Grossesse Automatique */}
-      <div className="bg-gradient-to-br from-[#C5D88F]/40 via-white to-[#ECCEE6]/30 rounded-3xl p-5 shadow-md border-2 border-[#C5D88F] space-y-3">
+      {/* 2. TAILLE DE BÉBÉ EN FRUITS / LÉGUMES */}
+      <div className="bg-gradient-to-br from-[#C5D88F]/35 via-white to-[#92AFEC]/20 rounded-3xl p-5 shadow-md border-2 border-[#C5D88F] space-y-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2.5">
             <span className="text-2xl p-1.5 bg-[#EFE89F]/60 rounded-xl">🌱</span>
             <div>
               <h3 className="font-serif text-sm font-black text-[#1E4E42]">
-                Stade de Grossesse Actuel
+                Taille de notre petit prince
               </h3>
-              <p className="text-[10px] text-slate-400">Évolution de notre petit champion</p>
+              <p className="text-[10px] text-slate-400">Évolution semaine après semaine</p>
             </div>
           </div>
-          <span className="text-[11px] font-black text-white bg-[#C5D88F] px-3 py-1 rounded-xl shadow-sm text-[#1E4E42] border border-white">
-            ✨ Semaine {currentWeek} / 41
+
+          {/* Automatic Live Week Badge (Semaine 26 sans /41) */}
+          <span className="text-[11px] font-black text-[#1E4E42] bg-[#EFE89F] border border-white/80 rounded-xl px-3 py-1 flex items-center gap-1 shadow-sm">
+            <span>✨ Semaine {currentWeek}</span>
           </span>
         </div>
 
-        <div className="bg-white/95 rounded-2xl p-4 border border-[#C5D88F]/60 shadow-xs">
-          <p className="text-xs text-[#1E4E42] leading-relaxed font-medium">
-            Notre petit champion grandit à merveille ! Ses petits muscles se renforcent et il adore réagir aux voix d'Alizée & Lucas et aux caresses sur le ventre.
-          </p>
+        {/* Fruit Detail Display */}
+        <div className="bg-white/95 rounded-2xl p-4 border border-[#C5D88F]/60 flex items-center gap-4 shadow-xs">
+          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#EFE89F]/60 to-[#C5D88F]/40 shadow-xs border-2 border-[#C5D88F] flex items-center justify-center text-4xl flex-shrink-0 animate-bounce-subtle">
+            {fruitInfo.emoji}
+          </div>
+
+          <div className="space-y-1">
+            <div className="flex items-center gap-2">
+              <span className="font-extrabold text-sm text-[#1E4E42]">
+                Comme {fruitInfo.fruit}
+              </span>
+              <span className="text-[10px] bg-[#EFE89F] text-[#6E732E] px-2 py-0.5 rounded-full font-bold">
+                Sem. {currentWeek}
+              </span>
+            </div>
+
+            <div className="flex items-center gap-3 text-xs text-[#92AFEC] font-bold">
+              <span>📏 {fruitInfo.sizeCm} cm</span>
+              <span>•</span>
+              <span>⚖️ ~{fruitInfo.weightG} g</span>
+            </div>
+
+            <p className="text-[11px] text-slate-600 italic leading-snug">
+              « {fruitInfo.desc} »
+            </p>
+          </div>
         </div>
       </div>
 

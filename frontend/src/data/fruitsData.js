@@ -1,0 +1,32 @@
+﻿export const fruitsData = [
+  { week: 20, fruit: "Banane", emoji: "🍌", sizeCm: 25.5, weightG: 300, desc: "Notre petit prince commence à bien entendre les voix d'Alizée & Lucas !" },
+  { week: 21, fruit: "Carotte", emoji: "🥕", sizeCm: 27.0, weightG: 360, desc: "Ses petits mouvements et ses coups de pied deviennent de plus en plus nets." },
+  { week: 22, fruit: "Poivron", emoji: "🫑", sizeCm: 28.0, weightG: 430, desc: "Ses sens se développent : goût, toucher et ouïe s'affinent chaque jour." },
+  { week: 23, fruit: "Mangue", emoji: "🥭", sizeCm: 29.0, weightG: 500, desc: "Bébé s'entraîne à respirer et bouge au rythme des chansons de maman et papa." },
+  { week: 24, fruit: "Épi de maïs", emoji: "🌽", sizeCm: 30.0, weightG: 600, desc: "Ses petites empreintes digitales de petit champion sont maintenant uniques !" },
+  { week: 25, fruit: "Navet gourmand", emoji: "🥬", sizeCm: 34.0, weightG: 750, desc: "Ses cheveux et ses cils commencent à pousser délicatement." },
+  {
+    week: 26,
+    fruit: "Belle Aubergine",
+    emoji: "🍆",
+    sizeCm: 35.5,
+    weightG: 900,
+    isCurrent: true,
+    desc: "Notre petit prince ouvre ses yeux pour la première fois et réagit à la lumière ! Ses petits muscles se renforcent à merveille."
+  },
+  { week: 27, fruit: "Chou-fleur", emoji: "🥦", sizeCm: 36.5, weightG: 1000, desc: "Le cap du premier kilo est franchi ! Notre petit aventurier rêve peut-être déjà." },
+  { week: 28, fruit: "Grande Laitue", emoji: "🥗", sizeCm: 37.5, weightG: 1100, desc: "Début du 3ème trimestre ! Ses paupières s'ouvrent et se ferment." },
+  { week: 29, fruit: "Courge Butternut", emoji: "🎃", sizeCm: 38.5, weightG: 1250, desc: "Ses petits os durcissent et ses muscles se renforcent chaque jour." },
+  { week: 30, fruit: "Chou pommé", emoji: "🥬", sizeCm: 40.0, weightG: 1400, desc: "Bébé commence à réguler sa propre température corporelle." },
+  { week: 31, fruit: "Noix de Coco", emoji: "🥥", sizeCm: 41.0, weightG: 1600, desc: "Ses 5 sens sont en alerte, il tourne la tête vers les voix d'Alizée & Lucas." },
+  { week: 32, fruit: "Chou chinois", emoji: "🥬", sizeCm: 42.5, weightG: 1800, desc: "Bébé prend du poids rapidement et s'arrondit de jolies fossettes." },
+  { week: 33, fruit: "Ananas", emoji: "🍍", sizeCm: 44.0, weightG: 2000, desc: "Son système immunitaire se prépare pour sa grande arrivée parmi nous." },
+  { week: 34, fruit: "Melon Cantaloup", emoji: "🍈", sizeCm: 45.0, weightG: 2200, desc: "Bébé reconnaît parfaitement la voix de maman Alizée et de papa Lucas !" },
+  { week: 35, fruit: "Papaye", emoji: "🥭", sizeCm: 46.0, weightG: 2450, desc: "La plupart de ses organes vitaux sont maintenant complètement matures." },
+  { week: 36, fruit: "Belle Blette", emoji: "🥬", sizeCm: 47.5, weightG: 2700, desc: "Il prend la position tête en bas pour préparer le grand jour de la rencontre." },
+  { week: 37, fruit: "Courge d'hiver", emoji: "🎃", sizeCm: 48.5, weightG: 2900, desc: "Bébé est considéré à terme précoce : notre petit prince peut arriver à tout moment !" },
+  { week: 38, fruit: "Grande Rhubarbe", emoji: "🌿", sizeCm: 49.5, weightG: 3100, desc: "Ses organes fonctionnent parfaitement, il attend patiemment le signal." },
+  { week: 39, fruit: "Pastèque", emoji: "🍉", sizeCm: 50.5, weightG: 3300, desc: "La valise de maternité est prête, le grand saut approche à grands pas !" },
+  { week: 40, fruit: "Belle Citrouille Dorée", emoji: "🎃", sizeCm: 51.5, weightG: 3500, desc: "Terme officiel : bienvenue dans le monde à notre petit champion d'amour ! 🦕✨" },
+  { week: 41, fruit: "Grande Citrouille Gourmande", emoji: "🎃", sizeCm: 52.0, weightG: 3600, desc: "Le grand jour est arrivé, toute la famille est prête à accueillir notre trésor !" }
+];
