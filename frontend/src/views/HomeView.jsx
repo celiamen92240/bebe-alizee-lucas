@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Calendar, Heart, Clock, Sparkles, Trophy, ArrowRight, Baby, Crown, Star, Flame, Lock, Lightbulb, Target, Mail } from 'lucide-react';
+import { Calendar, Heart, Clock, Sparkles, Trophy, ArrowRight, Baby, Crown, Star, Flame, Lock, Lightbulb, Target, Mail, Puzzle, MessageSquareText, ShieldCheck, ChevronRight, Sprout, CalendarHeart } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { useUser } from '../context/UserContext';
 import { fruitsData } from '../data/fruitsData';
@@ -171,198 +171,222 @@ export default function HomeView({ setTab, isBorn, actualBirth }) {
         )}
       </div>
 
-      {/* 2. ÉVOLUTION DU BÉBÉ (DESIGN COMPACT, ÉPURÉ & PEP'S) */}
-      <div className="bg-gradient-to-br from-[#EFE89F]/40 via-white to-[#C5D88F]/30 rounded-3xl p-5 shadow-md border-2 border-[#C5D88F] space-y-3.5 relative overflow-hidden">
-        {/* Header Title Row */}
-        <div className="flex items-center justify-between gap-2">
+      {/* 2. LE SAVIEZ-VOUS DU JOUR (DESIGN DU MOCKUP AVEC PHOTO DES PARENTS) */}
+      <div className="bg-[#FEFDF0] border border-[#F6ECC9] rounded-[32px] p-5 shadow-sm relative overflow-hidden flex items-center justify-between gap-3">
+        <div className="space-y-2 flex-1 min-w-0">
           <div className="flex items-center gap-2">
-            <span className="text-xl p-1.5 bg-[#EFE89F] rounded-xl shadow-2xs">🌱</span>
-            <h3 className="font-serif text-sm font-black text-[#1E4E42]">
-              Évolution semaine après semaine
-            </h3>
+            <div className="w-8 h-8 rounded-2xl bg-[#EFE89F]/70 text-[#5D372A] flex items-center justify-center shadow-2xs">
+              <Sprout className="w-4 h-4 text-[#D26E7B]" />
+            </div>
+            <span className="text-xs font-black text-[#D26E7B]">Le saviez-vous ?</span>
           </div>
-          <span className="text-[11px] font-black text-[#1E4E42] bg-[#EFE89F] border border-white/80 rounded-xl px-3 py-1 flex items-center gap-1 shadow-sm whitespace-nowrap flex-shrink-0">
-            <span>✨ Sem. {currentWeek}</span>
-          </span>
+          <h4 className="font-serif text-sm font-black text-slate-800 leading-snug">
+            {dailyFact?.title || "Les genoux sans rotules dures"}
+          </h4>
+          <p className="text-[11px] text-slate-600 leading-relaxed line-clamp-3">
+            {dailyFact?.content || "Les bébés naissent sans rotules dures ! Leurs genoux sont en cartilage tout doux pour faciliter leur position fœtale."}
+          </p>
+          <div className="flex items-center gap-1.5 pt-0.5">
+            <span className="w-2 h-2 rounded-full bg-[#D26E7B]"></span>
+            <span className="w-1.5 h-1.5 rounded-full bg-slate-200"></span>
+            <span className="w-1.5 h-1.5 rounded-full bg-slate-200"></span>
+          </div>
         </div>
 
-        {/* Fruit Detail Content */}
-        <div className="bg-white/95 backdrop-blur-md rounded-2xl p-4 border border-[#C5D88F]/60 flex items-center gap-4 shadow-xs">
-          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#EFE89F]/60 to-[#C5D88F]/40 shadow-xs border-2 border-[#C5D88F] flex items-center justify-center text-4xl flex-shrink-0 animate-bounce-subtle">
-            {fruitInfo.emoji}
+        {/* Photo des Parents / Logo dans un cadre doux */}
+        <div className="w-24 h-24 rounded-[26px] bg-gradient-to-br from-[#FFE4EE] to-[#FFD1E3] p-1 shadow-inner border-2 border-white flex-shrink-0 overflow-hidden flex items-center justify-center">
+          {headerPhoto ? (
+            <img src={headerPhoto} alt="Alizée & Lucas" className="w-full h-full object-cover rounded-[22px]" />
+          ) : (
+            <img src="/logo.jpg" alt="Alizée & Lucas" className="w-full h-full object-cover rounded-[22px]" />
+          )}
+        </div>
+      </div>
+
+      {/* 2.5 ÉVOLUTION DU BÉBÉ (SEMAINE PAR SEMAINE) */}
+      <div className="bg-gradient-to-br from-[#EFE89F]/40 via-white to-[#C5D88F]/30 rounded-3xl p-4 shadow-sm border border-[#C5D88F]/60 flex items-center gap-3.5">
+        <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#EFE89F]/60 to-[#C5D88F]/40 shadow-xs border border-[#C5D88F] flex items-center justify-center text-3xl flex-shrink-0">
+          {fruitInfo.emoji}
+        </div>
+        <div className="space-y-1 min-w-0 flex-1">
+          <div className="flex items-center gap-2">
+            <span className="font-extrabold text-xs text-[#1E4E42]">
+              Comme {fruitInfo.fruit}
+            </span>
+            <span className="text-[9px] bg-[#EFE89F] text-[#6E732E] px-2 py-0.5 rounded-full font-extrabold">
+              Sem. {currentWeek}
+            </span>
           </div>
+          <div className="flex items-center gap-2 text-[11px] text-[#92AFEC] font-bold">
+            <span>📏 {fruitInfo.sizeCm} cm</span>
+            <span>•</span>
+            <span>⚖️ ~{fruitInfo.weightG} g</span>
+          </div>
+          <p className="text-[10px] text-slate-500 italic truncate">
+            « {fruitInfo.desc} »
+          </p>
+        </div>
+      </div>
 
-          <div className="space-y-1.5 min-w-0 flex-1">
-            <div className="flex items-center gap-2 flex-wrap">
-              <span className="font-extrabold text-sm text-[#1E4E42]">
-                Comme {fruitInfo.fruit}
-              </span>
-              <span className="text-[10px] bg-[#EFE89F] text-[#6E732E] px-2.5 py-0.5 rounded-full font-extrabold whitespace-nowrap flex-shrink-0">
-                Sem. {currentWeek}
-              </span>
-            </div>
-
-            <div className="flex items-center gap-3 text-xs text-[#92AFEC] font-bold whitespace-nowrap">
-              <span>📏 {fruitInfo.sizeCm} cm</span>
-              <span>•</span>
-              <span>⚖️ ~{fruitInfo.weightG} g</span>
-            </div>
-
-            <p className="text-[11px] text-slate-600 italic leading-snug">
-              « {fruitInfo.desc} »
+      {/* 3. SECTION ACTIVITÉS & JEUX EN FAMILLE (MOCKUP BENTO CUBES) */}
+      <div className="space-y-3 pt-1">
+        <div className="flex items-center justify-between px-1">
+          <div>
+            <h3 className="font-serif text-base font-black text-[#1E4E42] leading-tight">
+              Activités & jeux en famille
+            </h3>
+            <p className="text-[11px] text-slate-400 font-medium flex items-center gap-1">
+              <span>Apprenez, jouez, partagez chaque jour</span>
+              <Heart className="w-3 h-3 text-[#D26E7B] fill-[#D26E7B] inline" />
             </p>
           </div>
-        </div>
-      </div>
-
-      {/* 2.5 LE SAVIEZ-VOUS DU JOUR (ROTATION QUOTIDIENNE) */}
-      <div className="bg-gradient-to-br from-[#EFE89F]/50 via-[#EFE89F]/25 to-white rounded-3xl p-4 shadow-md border-2 border-[#EFE89F] space-y-2 relative overflow-hidden">
-        <div className="flex items-center gap-2">
-          <div className="w-7 h-7 rounded-xl bg-white text-amber-500 flex items-center justify-center shadow-2xs border border-[#EFE89F]">
-            <Lightbulb className="w-4 h-4 text-amber-500 fill-amber-300" />
-          </div>
-          <h3 className="font-serif text-xs font-black text-[#1E4E42]">
-            Le saviez-vous ? • Astuce du Jour
-          </h3>
-        </div>
-
-        <div className="bg-white/95 rounded-2xl p-3.5 border border-[#EFE89F] space-y-1 shadow-2xs">
-          <p className="text-xs font-black text-[#D26E7B]">
-            {dailyFact?.title || "Le développement sensoriel ✨"}
-          </p>
-          <p className="text-[11px] text-slate-700 leading-relaxed font-medium">
-            {dailyFact?.content || "À ce stade, bébé réagit déjà aux voix de ses parents et aux caresses sur le ventre !"}
-          </p>
-        </div>
-      </div>
-
-      {/* 3. Raccourcis Activités & Jeux (Color-blocked 6 Palettes de l'Image) */}
-      <div className="space-y-3">
-        <div className="flex items-center justify-between px-1">
-          <h3 className="font-serif text-xs font-black text-[#1E4E42] uppercase tracking-wider">
-            Activités & Jeux en Famille
-          </h3>
-          <span className="text-[10px] text-[#D26E7B] font-black">Cliquez pour jouer !</span>
-        </div>
-
-        <div className="grid grid-cols-2 gap-3">
-          {/* Raccourci 1: Grand Prono (Dusty Rose - Slaughter Haus) */}
           <button
             type="button"
             onClick={() => navigate('predictions')}
-            className="bg-gradient-to-br from-[#D26E7B] to-[#be5361] text-white p-4 rounded-3xl shadow-md border-2 border-white hover:shadow-lg active:scale-95 text-left transition-all group flex flex-col justify-between h-30 cursor-pointer"
+            className="text-[11px] font-bold text-[#D26E7B] bg-white hover:bg-rose-50 px-3 py-1 rounded-full border border-rose-200/80 shadow-2xs flex items-center gap-1 transition-all cursor-pointer"
           >
-            <div className="flex justify-between items-start">
-              <div className="w-10 h-10 rounded-2xl bg-white/20 backdrop-blur-xs flex items-center justify-center shadow-xs border border-white/30">
-                <Target className="w-5 h-5 text-white" />
-              </div>
-              <ArrowRight className="w-4 h-4 text-white/80 group-hover:translate-x-0.5 transition-all" />
+            <span>Voir tout</span>
+            <ChevronRight className="w-3 h-3" />
+          </button>
+        </div>
+
+        {/* 4 Bento Cubes Grid 2x2 */}
+        <div className="grid grid-cols-2 gap-3.5">
+          {/* CUBE 1 : GRAND PRONO (Coral Pink) */}
+          <button
+            type="button"
+            onClick={() => navigate('predictions')}
+            className="bg-gradient-to-br from-[#FA9B9B] to-[#F57B7B] text-white p-4 rounded-[28px] shadow-sm hover:shadow-md active:scale-95 text-left transition-all group flex flex-col justify-between h-[145px] relative overflow-hidden cursor-pointer"
+          >
+            {/* Top-left Icon in White Circle */}
+            <div className="w-11 h-11 rounded-full bg-white/90 shadow-2xs flex items-center justify-center flex-shrink-0">
+              <CalendarHeart className="w-5 h-5 text-[#F57B7B]" />
             </div>
-            <div>
-              <p className="font-serif font-black text-sm text-white">Grand Prono</p>
+
+            {/* Bottom-right Circle with Arrow */}
+            <div className="w-8 h-8 rounded-full bg-white/95 text-[#F57B7B] shadow-2xs flex items-center justify-center absolute bottom-3.5 right-3.5 group-hover:scale-105 transition-all">
+              <ArrowRight className="w-3.5 h-3.5" />
+            </div>
+
+            {/* Bottom-left Content */}
+            <div className="pr-8">
+              <p className="font-serif font-black text-sm text-white leading-tight">Grand Prono</p>
               <p className="text-[10px] text-white/90 font-medium">Paris sur le jour J & prénom</p>
             </div>
           </button>
 
-          {/* Raccourci 2: Qui d'Alizée ou de Lucas ? (Synchronisé avec la photo du haut) */}
+          {/* CUBE 2 : QUI D'ALIZÉE OU DE LUCAS ? (Soft Sage Green) */}
           <button
             type="button"
             onClick={() => navigate('quiz')}
-            className="bg-gradient-to-br from-[#C5D88F] to-[#a8c668] text-[#1E4E42] p-4 rounded-3xl shadow-md border-2 border-white hover:shadow-lg active:scale-95 text-left transition-all group flex flex-col justify-between h-30 cursor-pointer"
+            className="bg-gradient-to-br from-[#D2E4AD] to-[#B8D389] text-[#26422A] p-4 rounded-[28px] shadow-sm hover:shadow-md active:scale-95 text-left transition-all group flex flex-col justify-between h-[145px] relative overflow-hidden cursor-pointer"
           >
-            <div className="flex justify-between items-start">
-              <div className="w-10 h-10 rounded-2xl bg-white/80 p-0.5 shadow-2xs border border-white/90 overflow-hidden flex items-center justify-center flex-shrink-0">
-                {headerPhoto ? (
-                  <img src={headerPhoto} alt="Alizée & Lucas" className="w-full h-full object-cover rounded-xl" />
-                ) : (
-                  <img src="/logo.jpg" alt="Alizée & Lucas" className="w-full h-full object-cover rounded-xl" />
-                )}
-              </div>
-              <ArrowRight className="w-4 h-4 text-[#1E4E42]/80 group-hover:translate-x-0.5 transition-all" />
+            {/* Top-left Icon in White Circle */}
+            <div className="w-11 h-11 rounded-full bg-white/90 shadow-2xs flex items-center justify-center flex-shrink-0">
+              <MessageSquareText className="w-5 h-5 text-[#466647]" />
             </div>
-            <div>
-              <p className="font-serif font-black text-sm text-[#1E4E42] leading-tight">Qui d'Alizée ou de Lucas ?</p>
-              <p className="text-[10px] text-[#1E4E42]/90 font-medium">Duel des futurs parents</p>
+
+            {/* Bottom-right Circle with Arrow */}
+            <div className="w-8 h-8 rounded-full bg-white/95 text-[#26422A] shadow-2xs flex items-center justify-center absolute bottom-3.5 right-3.5 group-hover:scale-105 transition-all">
+              <ArrowRight className="w-3.5 h-3.5" />
+            </div>
+
+            {/* Bottom-left Content */}
+            <div className="pr-8">
+              <p className="font-serif font-black text-sm text-[#26422A] leading-tight">Qui d'Alizée<br />ou de Lucas ?</p>
+              <p className="text-[10px] text-[#26422A]/85 font-medium">Duel des futurs parents</p>
             </div>
           </button>
 
-          {/* Raccourci 3: Jeux & Mots Fléchés (Periwinkle Blue - Sun Club) */}
+          {/* CUBE 3 : MOTS FLÉCHÉS (Periwinkle Blue) */}
           <button
             type="button"
             onClick={() => navigate('games')}
-            className="bg-gradient-to-br from-[#92AFEC] to-[#7194e4] text-white p-4 rounded-3xl shadow-md border-2 border-white hover:shadow-lg active:scale-95 text-left transition-all group flex flex-col justify-between h-30 cursor-pointer"
+            className="bg-gradient-to-br from-[#A5BBF9] to-[#88A4F3] text-white p-4 rounded-[28px] shadow-sm hover:shadow-md active:scale-95 text-left transition-all group flex flex-col justify-between h-[145px] relative overflow-hidden cursor-pointer"
           >
-            <div className="flex justify-between items-start">
-              <span className="text-3xl p-1 bg-white/20 rounded-2xl">🧩</span>
-              <ArrowRight className="w-4 h-4 text-white/80 group-hover:translate-x-0.5 transition-all" />
+            {/* Top-left Icon in White Circle */}
+            <div className="w-11 h-11 rounded-full bg-white/90 shadow-2xs flex items-center justify-center flex-shrink-0">
+              <Puzzle className="w-5 h-5 text-[#6B8CF2]" />
             </div>
-            <div>
-              <p className="font-serif font-black text-sm text-[#EFE89F]">Mots Fléchés</p>
+
+            {/* Bottom-right Circle with Arrow */}
+            <div className="w-8 h-8 rounded-full bg-white/95 text-[#6B8CF2] shadow-2xs flex items-center justify-center absolute bottom-3.5 right-3.5 group-hover:scale-105 transition-all">
+              <ArrowRight className="w-3.5 h-3.5" />
+            </div>
+
+            {/* Bottom-left Content */}
+            <div className="pr-8">
+              <p className="font-serif font-black text-sm text-white leading-tight">Mots Fléchés</p>
               <p className="text-[10px] text-white/90 font-medium">12 mots & chrono ⏱️</p>
             </div>
           </button>
 
-          {/* Raccourci 4: Hésitations & Dilemmes (Butter Yellow - Raine's Creative) */}
+          {/* CUBE 4 : PETITS DOUTES, GRANDES RÉPONSES (Buttercup Yellow) */}
           <button
             type="button"
             onClick={() => navigate('polls')}
-            className="bg-gradient-to-br from-[#EFE89F] to-[#dac94e] text-[#5f4d21] p-4 rounded-3xl shadow-md border-2 border-white hover:shadow-lg active:scale-95 text-left transition-all group flex flex-col justify-between h-30 cursor-pointer"
+            className="bg-gradient-to-br from-[#FEE79F] to-[#FBD76F] text-[#6B4D1B] p-4 rounded-[28px] shadow-sm hover:shadow-md active:scale-95 text-left transition-all group flex flex-col justify-between h-[145px] relative overflow-hidden cursor-pointer"
           >
-            <div className="flex justify-between items-start">
-              <div className="w-10 h-10 rounded-2xl bg-white/35 backdrop-blur-xs flex items-center justify-center shadow-xs border border-white/50">
-                <Lightbulb className="w-5 h-5 text-[#5f4d21] fill-[#EFE89F]" />
-              </div>
-              <ArrowRight className="w-4 h-4 text-[#5f4d21]/80 group-hover:translate-x-0.5 transition-all" />
+            {/* Top-left Icon in White Circle */}
+            <div className="w-11 h-11 rounded-full bg-white/90 shadow-2xs flex items-center justify-center flex-shrink-0">
+              <Lightbulb className="w-5 h-5 text-amber-500 fill-amber-300" />
             </div>
-            <div>
-              <p className="font-serif font-black text-sm text-[#5f4d21]">Hésitations</p>
-              <p className="text-[10px] text-[#5f4d21]/90 font-medium">Aidez Alizée & Lucas</p>
+
+            {/* Bottom-right Circle with Arrow */}
+            <div className="w-8 h-8 rounded-full bg-white/95 text-[#6B4D1B] shadow-2xs flex items-center justify-center absolute bottom-3.5 right-3.5 group-hover:scale-105 transition-all">
+              <ArrowRight className="w-3.5 h-3.5" />
+            </div>
+
+            {/* Bottom-left Content */}
+            <div className="pr-8">
+              <p className="font-serif font-black text-xs font-black text-[#6B4D1B] leading-tight">Petits Doutes,<br />grandes réponses</p>
+              <p className="text-[10px] text-[#6B4D1B]/85 font-medium">On vous aide, à deux</p>
             </div>
           </button>
         </div>
 
-        {/* Raccourci 5: Capsule d'Amour / Livre d'or (Lavender Pink - Garden Variety) */}
+        {/* BANNER 1 : CAPSULE D'AMOUR & MOTS DOUX */}
         <button
           type="button"
           onClick={() => navigate('guestbook')}
-          className="w-full bg-gradient-to-r from-[#ECCEE6]/60 via-white to-[#ECCEE6]/40 p-4 rounded-3xl shadow-md border-2 border-[#ECCEE6] hover:border-[#D26E7B] active:scale-[0.99] flex items-center justify-between group transition-all cursor-pointer"
+          className="w-full bg-[#FEEFF4] border border-[#FCD8E6] rounded-[26px] p-4 flex items-center justify-between shadow-xs relative overflow-hidden group cursor-pointer active:scale-[0.99] transition-all"
         >
-          <div className="flex items-center gap-3">
-            <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-[#fcf4f5] to-[#ECCEE6]/60 border border-[#ECCEE6] flex items-center justify-center shadow-2xs relative flex-shrink-0">
-              <Mail className="w-5 h-5 text-[#D26E7B] stroke-[2.2px]" />
-              <Heart className="w-2.5 h-2.5 text-[#D26E7B] fill-[#D26E7B] absolute top-1.5 right-1.5 drop-shadow-2xs" />
+          <div className="flex items-center gap-3.5">
+            <div className="w-12 h-12 rounded-full bg-white shadow-2xs flex items-center justify-center flex-shrink-0 relative border border-pink-100">
+              <Mail className="w-5 h-5 text-[#F2619C] stroke-[2.2px]" />
+              <Heart className="w-2.5 h-2.5 text-[#F2619C] fill-[#F2619C] absolute top-2 right-2 drop-shadow-2xs animate-pulse" />
             </div>
             <div className="text-left">
-              <p className="font-serif font-black text-sm text-[#5e3052]">Capsule d'Amour & Mots Doux</p>
-              <p className="text-[10px] text-[#863e75]">Laissez un message plein de tendresse pour sa naissance</p>
+              <p className="font-serif font-black text-sm text-[#4A154B] leading-tight">Capsule d'Amour & Mots Doux</p>
+              <p className="text-[10px] text-rose-500 font-medium">Écrivez-lui un message plein de tendresse</p>
             </div>
           </div>
-          <ArrowRight className="w-4 h-4 text-[#D26E7B] group-hover:translate-x-0.5 transition-all" />
+          <div className="w-8 h-8 rounded-full bg-white shadow-2xs flex items-center justify-center text-rose-400 flex-shrink-0 group-hover:translate-x-0.5 transition-all">
+            <ArrowRight className="w-3.5 h-3.5" />
+          </div>
         </button>
 
-        {/* Raccourci 6: Espace Parents (Vanilla Cream - Churn) */}
+        {/* BANNER 2 : ESPACE PARENTS */}
         <button
           type="button"
           onClick={() => navigate('parents')}
-          className="w-full bg-gradient-to-r from-[#FEFCE7] via-white to-[#f4f7fe] p-4 rounded-3xl shadow-xs border-2 border-[#92AFEC]/70 hover:border-[#D26E7B] active:scale-[0.99] flex items-center justify-between group transition-all cursor-pointer"
+          className="w-full bg-[#F5F8EE] border border-[#E3EDCE] rounded-[26px] p-4 flex items-center justify-between shadow-xs relative overflow-hidden group cursor-pointer active:scale-[0.99] transition-all"
         >
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-[#EFE89F] to-[#92AFEC] shadow-2xs border border-white flex items-center justify-center overflow-hidden">
-              {headerPhoto ? (
-                <img src={headerPhoto} alt="Photo Parents" className="w-full h-full object-cover rounded-xl" />
-              ) : (
-                <Lock className="w-5 h-5 text-[#1E4E42]" />
-              )}
+          <div className="flex items-center gap-3.5">
+            <div className="w-12 h-12 rounded-full bg-white shadow-2xs flex items-center justify-center flex-shrink-0 relative border border-green-100">
+              <ShieldCheck className="w-6 h-6 text-[#466647]" />
             </div>
             <div className="text-left">
-              <p className="font-serif font-black text-sm text-[#1E4E42] flex items-center gap-1.5">
+              <p className="font-serif font-black text-sm text-[#26422A] flex items-center gap-1.5 leading-tight">
                 <span>Espace Parents</span>
-                <Lock className="w-3.5 h-3.5 text-[#D26E7B]" />
+                <Lock className="w-3 h-3 text-[#466647]" />
               </p>
-              <p className="text-[10px] text-slate-500 font-medium">Organisation privée pour Alizée & Lucas</p>
+              <p className="text-[10px] text-slate-500 font-medium">Votre cocon privé pour tout organiser à deux</p>
             </div>
           </div>
-          <ArrowRight className="w-4 h-4 text-[#D26E7B] group-hover:translate-x-0.5 transition-all" />
+          <div className="w-8 h-8 rounded-full bg-white shadow-2xs flex items-center justify-center text-[#466647] flex-shrink-0 group-hover:translate-x-0.5 transition-all">
+            <ArrowRight className="w-3.5 h-3.5" />
+          </div>
         </button>
       </div>
     </div>
