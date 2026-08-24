@@ -3,12 +3,12 @@ import { Home, Target, HelpCircle, Gamepad2, Lightbulb, Lock } from 'lucide-reac
 
 export default function BottomNav({ currentTab, setTab }) {
   const navItems = [
-    { id: 'home', label: 'Accueil', icon: Home, badge: null },
-    { id: 'predictions', label: 'Pronos', icon: Target, badge: '🎯' },
-    { id: 'quiz', label: 'Quizz', icon: HelpCircle, badge: '50' },
-    { id: 'games', label: 'Jeux', icon: Gamepad2, badge: '⏱️' },
-    { id: 'polls', label: 'Idées', icon: Lightbulb, badge: null },
-    { id: 'parents', label: 'Parents', icon: Lock, badge: null }
+    { id: 'home', label: 'Accueil', icon: Home },
+    { id: 'predictions', label: 'Pronos', icon: Target },
+    { id: 'quiz', label: 'Quizz', icon: HelpCircle },
+    { id: 'games', label: 'Jeux', icon: Gamepad2 },
+    { id: 'polls', label: 'Idées', icon: Lightbulb },
+    { id: 'parents', label: 'Parents', icon: Lock }
   ];
 
   return (
@@ -30,14 +30,7 @@ export default function BottomNav({ currentTab, setTab }) {
               {isActive && (
                 <span className="absolute -top-2 w-7 h-1.5 bg-gradient-to-r from-[#D26E7B] via-[#EFE89F] to-[#92AFEC] rounded-full shadow-xs"></span>
               )}
-              <div className="relative">
-                <Icon className={`w-5 h-5 transition-transform ${isActive ? 'stroke-[2.8px] text-[#D26E7B]' : 'stroke-2'}`} />
-                {item.badge && !isActive && (
-                  <span className="absolute -top-1.5 -right-2.5 bg-[#D26E7B] text-white text-[8px] font-black px-1.5 py-0.2 rounded-full leading-none shadow-xs border border-white">
-                    {item.badge}
-                  </span>
-                )}
-              </div>
+              <Icon className={`w-5 h-5 transition-transform ${isActive ? 'stroke-[2.8px] text-[#D26E7B]' : 'stroke-2'}`} />
               <span className="text-[10px] mt-1 tracking-tight font-bold">
                 {item.label}
               </span>
