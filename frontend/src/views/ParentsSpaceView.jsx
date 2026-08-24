@@ -90,6 +90,9 @@ export default function ParentsSpaceView({ isBorn, actualBirth, onBirthSaved, on
   const [newRdvLocation, setNewRdvLocation] = useState('');
   const [currentMonthDate, setCurrentMonthDate] = useState(new Date(2026, 7, 1)); // August 2026
   const [selectedCalendarDay, setSelectedCalendarDay] = useState(null);
+  const [selectedRdvIndex, setSelectedRdvIndex] = useState(0);
+  const [touchStartY, setTouchStartY] = useState(null);
+  const [touchStartX, setTouchStartX] = useState(null);
 
   const fetchPurchases = async () => {
     try {
@@ -1099,94 +1102,153 @@ export default function ParentsSpaceView({ isBorn, actualBirth, onBirthSaved, on
               </button>
             </form>
 
-            {/* 🌟 RENDEZ-VOUS À VENIR (AVEC PROCHAIN RENDEZ-VOUS & SWIPE VERTICAL) */}
+            {/* 🌟 RENDEZ-VOUS À VENIR (AVEC SWIPE ET TRANSPARENCE DYNAMIQUE) */}
             {uncompletedRdvs.length > 0 ? (
-              <div className="space-y-2">
+              <div className="space-y-3">
                 <div className="flex items-center justify-between px-1">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                  <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">
                     Rendez-vous à venir ({uncompletedRdvs.length})
                   </span>
                   {uncompletedRdvs.length > 1 && (
-                    <span className="text-[10px] text-[#D26E7B] font-bold flex items-center gap-1">
-                      <span>↕ Swiper vers le bas</span>
-                    </span>
+                    <div className="flex items-center gap-1.5">
+                      <button
+                        type="button"
+                        onClick={() => setSelectedRdvIndex(prev => Math.max(0, prev - 1))}
+                        disabled={selectedRdvIndex === 0}
+                        className="w-6 h-6 rounded-full bg-amber-50 border border-[#EFE89F] flex items-center justify-center text-[#D26E7B] disabled:opacity-30 cursor-pointer"
+                        title="Rendez-vous précédent"
+                      >
+                        <ChevronLeft className="w-3.5 h-3.5" />
+                      </button>
+                      <span className="text-[10px] font-black text-[#D26E7B] px-1">
+                        {selectedRdvIndex + 1}/{uncompletedRdvs.length}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => setSelectedRdvIndex(prev => Math.min(uncompletedRdvs.length - 1, prev + 1))}
+                        disabled={selectedRdvIndex === uncompletedRdvs.length - 1}
+                        className="w-6 h-6 rounded-full bg-amber-50 border border-[#EFE89F] flex items-center justify-center text-[#D26E7B] disabled:opacity-30 cursor-pointer"
+                        title="Rendez-vous suivant"
+                      >
+                        <ChevronRight className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
                   )}
                 </div>
 
-                {/* Conteneur Swipe / Scroll Snap Vertical */}
-                <div className="space-y-3 max-h-[420px] overflow-y-auto snap-y snap-mandatory scroll-smooth p-1 no-scrollbar">
-                  {uncompletedRdvs.map((rdv, idx) => (
-                    <div
-                      key={rdv.id}
-                      className={`snap-start rounded-3xl p-5 shadow-sm border-2 transition-all relative overflow-hidden ${
-                        idx === 0
-                          ? 'bg-gradient-to-br from-amber-50 via-white to-rose-50 border-[#EFE89F]'
-                          : 'bg-white border-[#EFE89F] hover:border-sun-300'
-                      }`}
-                    >
-                      <div className="flex items-center justify-between mb-2">
-                        {idx === 0 ? (
-                          <span className="text-[9px] font-black uppercase tracking-wider text-[#D26E7B] bg-[#D26E7B]/10 px-2.5 py-0.5 rounded-full border border-[#D26E7B]/20 flex items-center gap-1">
-                            <Sparkles className="w-3 h-3 text-[#D26E7B]" />
-                            <span>Prochain rendez-vous</span>
-                          </span>
-                        ) : (
-                          <span className="text-[9px] font-bold uppercase tracking-wider text-slate-500 bg-slate-100 px-2.5 py-0.5 rounded-full">
-                            Rendez-vous suivant ({idx + 1}/{uncompletedRdvs.length})
-                          </span>
-                        )}
-
-                        <button
-                          type="button"
-                          onClick={() => handleDeleteAppointment(rdv.id)}
-                          className="text-slate-300 hover:text-red-500 p-1 cursor-pointer"
-                          title="Supprimer ce rendez-vous"
-                        >
-                          <Trash2 className="w-3.5 h-3.5" />
-                        </button>
-                      </div>
-
-                      <div className="flex items-start gap-3">
-                        <button
-                          type="button"
-                          onClick={async () => {
-                            await fetch(`/api/appointments/${rdv.id}/toggle`, { method: 'PATCH' });
-                            fetchAppointments();
-                          }}
-                          className="mt-1 cursor-pointer flex-shrink-0"
-                          title="Marquer comme effectué"
-                        >
-                          <Circle className="w-5 h-5 text-sun-400 hover:text-[#D26E7B]" />
-                        </button>
-
-                        <div className="space-y-1.5 flex-1">
-                          <h4 className="font-serif text-sm font-extrabold text-[#1E4E42] leading-tight">
-                            {rdv.title}
-                          </h4>
-
-                          <div className="flex flex-wrap items-center gap-2 text-xs font-bold text-[#D26E7B]">
-                            <span className="flex items-center gap-1 bg-white px-2.5 py-1 rounded-xl border border-[#EFE89F] shadow-2xs">
-                              <Calendar className="w-3.5 h-3.5" />
-                              <span>{new Date(rdv.date).toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })}</span>
+                {/* Conteneur avec détection de Swipe Touch */}
+                <div
+                  onTouchStart={(e) => {
+                    setTouchStartY(e.touches[0].clientY);
+                    setTouchStartX(e.touches[0].clientX);
+                  }}
+                  onTouchEnd={(e) => {
+                    if (touchStartY !== null && touchStartX !== null) {
+                      const deltaY = touchStartY - e.changedTouches[0].clientY;
+                      const deltaX = touchStartX - e.changedTouches[0].clientX;
+                      if (Math.abs(deltaY) > 35 || Math.abs(deltaX) > 35) {
+                        if (deltaY > 35 || deltaX > 35) {
+                          // Swipe suivant
+                          setSelectedRdvIndex(prev => Math.min(uncompletedRdvs.length - 1, prev + 1));
+                        } else if (deltaY < -35 || deltaX < -35) {
+                          // Swipe précédent
+                          setSelectedRdvIndex(prev => Math.max(0, prev - 1));
+                        }
+                      }
+                      setTouchStartY(null);
+                      setTouchStartX(null);
+                    }
+                  }}
+                  className="space-y-3"
+                >
+                  {uncompletedRdvs.map((rdv, idx) => {
+                    const isCurrentActive = idx === selectedRdvIndex;
+                    return (
+                      <div
+                        key={rdv.id}
+                        onClick={() => setSelectedRdvIndex(idx)}
+                        className={`rounded-3xl p-4.5 transition-all duration-300 relative overflow-hidden cursor-pointer ${
+                          isCurrentActive
+                            ? 'bg-gradient-to-br from-amber-50 via-white to-rose-50 border-2 border-[#D26E7B]/70 shadow-md scale-100 opacity-100 ring-2 ring-[#EFE89F]'
+                            : 'bg-white/60 border-2 border-dashed border-[#EFE89F]/80 shadow-2xs scale-[0.98] opacity-40 hover:opacity-75'
+                        }`}
+                      >
+                        <div className="flex items-center justify-between mb-2">
+                          {idx === 0 ? (
+                            <span className={`text-[9px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-full border flex items-center gap-1 ${
+                              isCurrentActive
+                                ? 'text-[#D26E7B] bg-[#D26E7B]/10 border-[#D26E7B]/20'
+                                : 'text-slate-500 bg-slate-100 border-slate-200'
+                            }`}>
+                              <Sparkles className="w-3 h-3 text-[#D26E7B]" />
+                              <span>Prochain rendez-vous</span>
                             </span>
-                            {rdv.time && (
-                              <span className="flex items-center gap-1 bg-white px-2 py-1 rounded-xl border border-[#EFE89F] shadow-2xs">
-                                <Clock className="w-3.5 h-3.5" />
-                                <span>{rdv.time}</span>
+                          ) : (
+                            <span className={`text-[9px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full border ${
+                              isCurrentActive
+                                ? 'text-[#D26E7B] bg-[#D26E7B]/10 border-[#D26E7B]/20'
+                                : 'text-slate-400 bg-slate-50 border-slate-200'
+                            }`}>
+                              Rendez-vous n°{idx + 1}
+                            </span>
+                          )}
+
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleDeleteAppointment(rdv.id);
+                            }}
+                            className="text-slate-300 hover:text-red-500 p-1 cursor-pointer"
+                            title="Supprimer ce rendez-vous"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+
+                        <div className="flex items-start gap-3">
+                          <button
+                            type="button"
+                            onClick={async (e) => {
+                              e.stopPropagation();
+                              await fetch(`/api/appointments/${rdv.id}/toggle`, { method: 'PATCH' });
+                              fetchAppointments();
+                            }}
+                            className="mt-1 cursor-pointer flex-shrink-0"
+                            title="Marquer comme effectué"
+                          >
+                            <Circle className={`w-5 h-5 ${isCurrentActive ? 'text-[#D26E7B] hover:text-[#be5361]' : 'text-slate-300'}`} />
+                          </button>
+
+                          <div className="space-y-1.5 flex-1">
+                            <h4 className={`font-serif text-sm font-extrabold leading-tight ${isCurrentActive ? 'text-[#1E4E42]' : 'text-slate-600'}`}>
+                              {rdv.title}
+                            </h4>
+
+                            <div className="flex flex-wrap items-center gap-2 text-xs font-bold text-[#D26E7B]">
+                              <span className="flex items-center gap-1 bg-white px-2.5 py-1 rounded-xl border border-[#EFE89F] shadow-2xs">
+                                <Calendar className="w-3.5 h-3.5" />
+                                <span>{new Date(rdv.date).toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })}</span>
                               </span>
+                              {rdv.time && (
+                                <span className="flex items-center gap-1 bg-white px-2 py-1 rounded-xl border border-[#EFE89F] shadow-2xs">
+                                  <Clock className="w-3.5 h-3.5" />
+                                  <span>{rdv.time}</span>
+                                </span>
+                              )}
+                            </div>
+
+                            {rdv.location && (
+                              <p className="text-xs text-slate-600 flex items-center gap-1 font-medium">
+                                <MapPin className="w-3.5 h-3.5 text-slate-400" />
+                                <span>{rdv.location}</span>
+                              </p>
                             )}
                           </div>
-
-                          {rdv.location && (
-                            <p className="text-xs text-slate-600 flex items-center gap-1 font-medium">
-                              <MapPin className="w-3.5 h-3.5 text-slate-400" />
-                              <span>{rdv.location}</span>
-                            </p>
-                          )}
                         </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
             ) : (
