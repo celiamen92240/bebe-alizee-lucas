@@ -21,6 +21,35 @@ export default function HomeView({ setTab, isBorn, actualBirth }) {
   const currentWeek = getAutoPregnancyWeek();
   const fruitInfo = fruitsData.find(f => f.week === currentWeek) || fruitsData.find(f => f.week === 26) || fruitsData[0];
 
+  // Header Photo State (Synced with Top-Left Photo)
+  const [headerPhoto, setHeaderPhoto] = useState(null);
+
+  useEffect(() => {
+    const fetchPhoto = () => {
+      fetch('/api/settings')
+        .then(res => res.json())
+        .then(data => {
+          if (data.success && data.settings?.customHeaderPhoto) {
+            setHeaderPhoto(data.settings.customHeaderPhoto);
+          }
+        })
+        .catch(err => console.error("Error loading home photo", err));
+    };
+
+    fetchPhoto();
+
+    const handlePhotoChanged = (e) => {
+      if (e.detail) {
+        setHeaderPhoto(e.detail);
+      } else {
+        fetchPhoto();
+      }
+    };
+
+    window.addEventListener('customHeaderPhotoChanged', handlePhotoChanged);
+    return () => window.removeEventListener('customHeaderPhotoChanged', handlePhotoChanged);
+  }, []);
+
   // Real-time ticking Countdown to Due Date (08/12/2026)
   const [timeLeft, setTimeLeft] = useState({
     days: 0,
@@ -206,19 +235,25 @@ export default function HomeView({ setTab, isBorn, actualBirth }) {
             </div>
           </button>
 
-          {/* Raccourci 2: Quizz Parents (Sage Green - Tassine Creperie) */}
+          {/* Raccourci 2: Qui d'Alizée ou de Lucas ? (Synchronisé avec la photo du haut) */}
           <button
             type="button"
             onClick={() => navigate('quiz')}
             className="bg-gradient-to-br from-[#C5D88F] to-[#a8c668] text-[#1E4E42] p-4 rounded-3xl shadow-md border-2 border-white hover:shadow-lg active:scale-95 text-left transition-all group flex flex-col justify-between h-30 cursor-pointer"
           >
             <div className="flex justify-between items-start">
-              <span className="text-3xl p-1 bg-white/40 rounded-2xl">⚖️</span>
+              <div className="w-10 h-10 rounded-2xl bg-white/80 p-0.5 shadow-2xs border border-white/90 overflow-hidden flex items-center justify-center flex-shrink-0">
+                {headerPhoto ? (
+                  <img src={headerPhoto} alt="Alizée & Lucas" className="w-full h-full object-cover rounded-xl" />
+                ) : (
+                  <span className="text-2xl">🦕</span>
+                )}
+              </div>
               <ArrowRight className="w-4 h-4 text-[#1E4E42]/80 group-hover:translate-x-0.5 transition-all" />
             </div>
             <div>
-              <p className="font-serif font-black text-sm text-[#1E4E42]">Quizz Parents</p>
-              <p className="text-[10px] text-[#1E4E42]/90 font-medium">50 questions 1 par 1</p>
+              <p className="font-serif font-black text-sm text-[#1E4E42] leading-tight">Qui d'Alizée ou de Lucas ?</p>
+              <p className="text-[10px] text-[#1E4E42]/90 font-medium">Duel des futurs parents</p>
             </div>
           </button>
 
@@ -278,8 +313,12 @@ export default function HomeView({ setTab, isBorn, actualBirth }) {
           className="w-full bg-gradient-to-r from-[#FEFCE7] via-white to-[#f4f7fe] p-4 rounded-3xl shadow-xs border-2 border-[#92AFEC]/70 hover:border-[#D26E7B] active:scale-[0.99] flex items-center justify-between group transition-all cursor-pointer"
         >
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-[#EFE89F] to-[#92AFEC] shadow-2xs border border-white flex items-center justify-center text-xl">
-              👑
+            <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-[#EFE89F] to-[#92AFEC] shadow-2xs border border-white flex items-center justify-center overflow-hidden">
+              {headerPhoto ? (
+                <img src={headerPhoto} alt="Photo Parents" className="w-full h-full object-cover rounded-xl" />
+              ) : (
+                <Lock className="w-5 h-5 text-[#1E4E42]" />
+              )}
             </div>
             <div className="text-left">
               <p className="font-serif font-black text-sm text-[#1E4E42] flex items-center gap-1.5">

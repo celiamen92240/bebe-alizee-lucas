@@ -25,6 +25,7 @@ export default function Header({ onAdminClick, isBorn }) {
       try {
         const compressed = await compressImage(file, 400, 400, 0.85);
         setHeaderPhoto(compressed);
+        window.dispatchEvent(new CustomEvent('customHeaderPhotoChanged', { detail: compressed }));
         await fetch('/api/settings', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
