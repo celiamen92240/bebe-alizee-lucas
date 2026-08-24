@@ -48,7 +48,7 @@ export default function Header({ onAdminClick, isBorn }) {
                 {headerPhoto ? (
                   <img src={headerPhoto} alt="Photo" className="w-full h-full object-cover rounded-xl" />
                 ) : (
-                  <span className="text-2xl">🦕</span>
+                  <img src="/logo.jpg" alt="Alizée & Lucas" className="w-full h-full object-cover rounded-xl" />
                 )}
               </div>
               <div

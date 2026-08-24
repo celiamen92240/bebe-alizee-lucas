@@ -246,7 +246,7 @@ export default function HomeView({ setTab, isBorn, actualBirth }) {
                 {headerPhoto ? (
                   <img src={headerPhoto} alt="Alizée & Lucas" className="w-full h-full object-cover rounded-xl" />
                 ) : (
-                  <span className="text-2xl">🦕</span>
+                  <img src="/logo.jpg" alt="Alizée & Lucas" className="w-full h-full object-cover rounded-xl" />
                 )}
               </div>
               <ArrowRight className="w-4 h-4 text-[#1E4E42]/80 group-hover:translate-x-0.5 transition-all" />
