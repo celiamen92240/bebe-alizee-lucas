@@ -19,9 +19,21 @@
   input[type="password"],
   input[type="number"],
   select {
+    display: block !important;
     box-sizing: border-box !important;
     max-width: 100% !important;
     min-width: 0 !important;
+    width: 100% !important;
+  }
+
+  input[type="date"]::-webkit-date-and-time-value,
+  input[type="time"]::-webkit-date-and-time-value {
+    text-align: left !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    min-height: 1.2em !important;
+    display: block !important;
+    width: 100% !important;
   }
 }
 
