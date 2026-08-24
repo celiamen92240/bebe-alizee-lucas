@@ -352,7 +352,7 @@ export default function DailyGameView() {
                 className="w-full bg-gradient-to-r from-sun-500 via-amber-500 to-mint-600 hover:from-sun-600 hover:to-mint-700 text-white font-black py-4 rounded-2xl shadow-xl text-sm transition-all flex items-center justify-center gap-2 glow-sun cursor-pointer active:scale-95"
               >
                 <Check className="w-5 h-5 stroke-[3px]" />
-                <span>Valider Définitivement & Voir mon Score 🏁</span>
+                <span>Valider</span>
               </button>
               <p className="text-center text-[10px] text-slate-400 mt-2">
                 Attention : ton score sera figé et non modifiable une fois validé !
@@ -449,7 +449,7 @@ export default function DailyGameView() {
                 onClick={() => { setIsPlaying(false); setIsSubmitted(false); setResultDetails(null); }}
                 className="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-3 rounded-xl text-xs transition-colors cursor-pointer"
               >
-                Passer au joueur suivant 👥
+                Passer au joueur suivant
               </button>
             </div>
           </div>
