@@ -1035,7 +1035,7 @@ export default function ParentsSpaceView({ isBorn, actualBirth, onBirthSaved, on
                 <span>Ajouter un Rendez-Vous</span>
               </h4>
 
-              <div>
+              <div className="w-full overflow-hidden">
                 <label className="block text-[11px] font-bold text-slate-700 mb-1">
                   Titre du rendez-vous *
                 </label>
@@ -1045,43 +1045,43 @@ export default function ParentsSpaceView({ isBorn, actualBirth, onBirthSaved, on
                   placeholder="Ex: Échographie T3, Consultation 8ème mois..."
                   value={newRdvTitle}
                   onChange={e => setNewRdvTitle(e.target.value)}
-                  className="w-full block px-3.5 text-xs font-medium rounded-xl border border-[#EFE89F] bg-[#FEFCE7] text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#D26E7B]"
-                  style={{ width: '100%', maxWidth: '100%', minWidth: '0', height: '42px', boxSizing: 'border-box' }}
+                  className="w-full block px-3 text-xs font-medium rounded-xl border border-[#EFE89F] bg-[#FEFCE7] text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#D26E7B]"
+                  style={{ width: '100%', maxWidth: '100%', minWidth: '0', height: '40px', boxSizing: 'border-box' }}
                 />
               </div>
 
-              <div>
+              <div className="w-full overflow-hidden">
                 <label className="block text-[11px] font-bold text-slate-700 mb-1">Date *</label>
                 <input
                   type="date"
                   required
                   value={newRdvDate}
                   onChange={e => setNewRdvDate(e.target.value)}
-                  className="w-full block px-3.5 text-xs font-medium rounded-xl border border-[#EFE89F] bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#D26E7B]"
-                  style={{ width: '100%', maxWidth: '100%', minWidth: '0', height: '42px', boxSizing: 'border-box' }}
+                  className="w-full block px-3 text-xs font-medium rounded-xl border border-[#EFE89F] bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#D26E7B]"
+                  style={{ width: '100%', maxWidth: '100%', minWidth: '0', height: '40px', boxSizing: 'border-box' }}
                 />
               </div>
 
-              <div>
+              <div className="w-full overflow-hidden">
                 <label className="block text-[11px] font-bold text-slate-700 mb-1">Heure</label>
                 <input
                   type="time"
                   value={newRdvTime}
                   onChange={e => setNewRdvTime(e.target.value)}
-                  className="w-full block px-3.5 text-xs font-medium rounded-xl border border-[#EFE89F] bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#D26E7B]"
-                  style={{ width: '100%', maxWidth: '100%', minWidth: '0', height: '42px', boxSizing: 'border-box' }}
+                  className="w-full block px-3 text-xs font-medium rounded-xl border border-[#EFE89F] bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#D26E7B]"
+                  style={{ width: '100%', maxWidth: '100%', minWidth: '0', height: '40px', boxSizing: 'border-box' }}
                 />
               </div>
 
-              <div>
+              <div className="w-full overflow-hidden">
                 <label className="block text-[11px] font-bold text-slate-700 mb-1">Lieu</label>
                 <input
                   type="text"
                   placeholder="Ex: Maternité, Cabinet médical..."
                   value={newRdvLocation}
                   onChange={e => setNewRdvLocation(e.target.value)}
-                  className="w-full block px-3.5 text-xs font-medium rounded-xl border border-[#EFE89F] bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#D26E7B]"
-                  style={{ width: '100%', maxWidth: '100%', minWidth: '0', height: '42px', boxSizing: 'border-box' }}
+                  className="w-full block px-3 text-xs font-medium rounded-xl border border-[#EFE89F] bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#D26E7B]"
+                  style={{ width: '100%', maxWidth: '100%', minWidth: '0', height: '40px', boxSizing: 'border-box' }}
                 />
               </div>
 

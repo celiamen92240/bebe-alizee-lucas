@@ -24,6 +24,9 @@
     max-width: 100% !important;
     min-width: 0 !important;
     width: 100% !important;
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+    appearance: none !important;
   }
 
   input[type="date"]::-webkit-date-and-time-value,
@@ -34,6 +37,13 @@
     min-height: 1.2em !important;
     display: block !important;
     width: 100% !important;
+    line-height: normal !important;
+  }
+
+  input[type="date"]::-webkit-datetime-edit,
+  input[type="time"]::-webkit-datetime-edit {
+    padding: 0 !important;
+    margin: 0 !important;
   }
 }
 
