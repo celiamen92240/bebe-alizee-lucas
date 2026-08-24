@@ -733,39 +733,39 @@ export default function ParentsSpaceView({ isBorn, actualBirth, onBirthSaved, on
               const catChecked = catItems.filter(i => i.completed).length;
 
               return (
-                <div key={cat} className="bg-white rounded-3xl p-4 shadow-sm border border-[#EFE89F] space-y-3">
-                  <div className="flex items-center justify-between border-b border-slate-100 pb-2">
+                <div key={cat} className="bg-white rounded-2xl p-3.5 shadow-2xs border border-[#EFE89F]/80 space-y-2.5">
+                  <div className="flex items-center justify-between border-b border-slate-100 pb-1.5 px-0.5">
                     <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 rounded-xl bg-amber-50 flex items-center justify-center text-[#D26E7B]">
-                        <ShoppingBag className="w-4 h-4" />
+                      <div className="w-7 h-7 rounded-lg bg-amber-50 flex items-center justify-center text-[#D26E7B]">
+                        <ShoppingBag className="w-3.5 h-3.5" />
                       </div>
-                      <h4 className="font-serif text-sm font-black text-slate-800">{cat}</h4>
+                      <h4 className="font-serif text-xs font-black text-slate-800">{cat}</h4>
                     </div>
                     <button
                       type="button"
                       onClick={() => handleDeleteCategory(cat)}
-                      className="text-slate-300 hover:text-red-500 p-1 cursor-pointer"
+                      className="text-slate-300 hover:text-red-500 p-1 rounded-md cursor-pointer"
                       title="Supprimer cette catégorie"
                     >
                       <X className="w-3.5 h-3.5" />
                     </button>
                   </div>
 
-                  <div className="space-y-1.5">
+                  <div className="space-y-1">
                     {catItems.length === 0 ? (
-                      <p className="text-xs text-slate-400 text-center py-2">Aucun article dans cette catégorie pour le moment.</p>
+                      <p className="text-[11px] text-slate-400 text-center py-1.5">Aucun article dans cette catégorie.</p>
                     ) : (
                       catItems.map(item => (
-                        <div key={item.id} className="p-2.5 rounded-2xl border border-slate-100 flex items-center justify-between hover:bg-slate-50/50">
+                        <div key={item.id} className="py-2 px-2.5 rounded-xl border border-slate-100/80 flex items-center justify-between hover:bg-slate-50/40 transition-colors">
                           <button
                             type="button"
                             onClick={() => handleTogglePurchase(item.id)}
                             className="flex items-center gap-2 text-xs text-left cursor-pointer flex-1"
                           >
-                            <div className={`w-5 h-5 rounded-lg border flex items-center justify-center ${
-                              item.completed ? 'bg-mint-500 border-mint-600 text-white' : 'border-slate-300'
+                            <div className={`w-4.5 h-4.5 rounded-md border flex items-center justify-center ${
+                              item.completed ? 'bg-mint-500 border-mint-600 text-white' : 'border-slate-300 bg-white'
                             }`}>
-                              {item.completed && <CheckCircle2 className="w-3.5 h-3.5" />}
+                              {item.completed && <CheckCircle2 className="w-3 h-3" />}
                             </div>
                             <span className={item.completed ? 'line-through text-slate-400 font-medium' : 'text-slate-800 font-bold'}>
                               {item.title}
@@ -780,18 +780,18 @@ export default function ParentsSpaceView({ isBorn, actualBirth, onBirthSaved, on
                   </div>
 
                   {/* Petit plus très discret avec écrit Achats */}
-                  <form onSubmit={(e) => handleInlineAddPurchase(e, cat)} className="flex items-center gap-2 pt-2 border-t border-slate-50">
+                  <form onSubmit={(e) => handleInlineAddPurchase(e, cat)} className="flex items-center gap-1.5 pt-1.5 border-t border-slate-50 px-0.5">
                     <input
                       type="text"
                       placeholder="+ Achats"
                       value={inlinePurchases[cat] || ''}
                       onChange={e => setInlinePurchases({ ...inlinePurchases, [cat]: e.target.value })}
-                      className="flex-1 px-3 py-1.5 rounded-xl border border-dashed border-[#EFE89F] text-xs bg-[#FEFCE7]/70 text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-solid focus:border-[#D26E7B] font-medium"
+                      className="flex-1 px-2.5 py-1.5 rounded-lg border border-dashed border-[#EFE89F] text-xs bg-[#FEFCE7]/70 text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-solid focus:border-[#D26E7B] font-medium"
                       style={{ width: '100%', boxSizing: 'border-box' }}
                     />
                     <button
                       type="submit"
-                      className="w-7 h-7 rounded-xl bg-amber-50 hover:bg-[#D26E7B] text-[#D26E7B] hover:text-white flex items-center justify-center transition-colors cursor-pointer text-xs font-bold flex-shrink-0"
+                      className="w-6.5 h-6.5 rounded-lg bg-amber-50 hover:bg-[#D26E7B] text-[#D26E7B] hover:text-white flex items-center justify-center transition-colors cursor-pointer text-xs font-bold flex-shrink-0"
                       title="Ajouter"
                     >
                       <Plus className="w-3.5 h-3.5 stroke-[3px]" />
@@ -832,17 +832,17 @@ export default function ParentsSpaceView({ isBorn, actualBirth, onBirthSaved, on
           </div>
 
           {/* Section 1 : Pour Bébé (Pastel Vanille / Or Doux) */}
-          <div className="bg-[#FEFDF0] rounded-3xl p-4.5 shadow-xs border-2 border-[#EFE89F] space-y-3">
-            <div className="flex items-center justify-between border-b border-[#EFE89F]/70 pb-2">
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-xl bg-amber-100/70 flex items-center justify-center text-[#854D0E]">
+          <div className="bg-[#FEFDF0] rounded-3xl p-5 sm:p-6 shadow-xs border-2 border-[#EFE89F] space-y-3.5">
+            <div className="flex items-center justify-between border-b border-[#EFE89F]/70 pb-2.5 px-1 pt-0.5">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-xl bg-amber-100/70 flex items-center justify-center text-[#854D0E] shadow-2xs">
                   <Baby className="w-4 h-4" />
                 </div>
                 <h4 className="font-serif text-sm font-black text-[#1E4E42]">Pour Bébé</h4>
               </div>
             </div>
 
-            <div className="space-y-1.5">
+            <div className="space-y-1.5 px-0.5">
               {babyItems.length === 0 ? (
                 <p className="text-xs text-[#854D0E]/60 text-center py-2">Aucun article pour bébé pour le moment.</p>
               ) : (
@@ -871,7 +871,7 @@ export default function ParentsSpaceView({ isBorn, actualBirth, onBirthSaved, on
             </div>
 
             {/* Inline Add Bébé */}
-            <form onSubmit={(e) => handleAddPersonItem(e, 'baby', inlineNewBaby, setInlineNewBaby)} className="flex items-center gap-2 pt-1">
+            <form onSubmit={(e) => handleAddPersonItem(e, 'baby', inlineNewBaby, setInlineNewBaby)} className="flex items-center gap-2 pt-1 px-0.5">
               <input
                 type="text"
                 placeholder="Ajouter un article pour bébé..."
@@ -890,17 +890,17 @@ export default function ParentsSpaceView({ isBorn, actualBirth, onBirthSaved, on
           </div>
 
           {/* Section 2 : Pour Alizée (Pastel Rose Poudré Doux) */}
-          <div className="bg-[#FFF5F7] rounded-3xl p-4.5 shadow-xs border-2 border-[#FBCFE8] space-y-3">
-            <div className="flex items-center justify-between border-b border-[#FBCFE8]/70 pb-2">
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-xl bg-rose-100/70 flex items-center justify-center text-[#9D174D]">
+          <div className="bg-[#FFF5F7] rounded-3xl p-5 sm:p-6 shadow-xs border-2 border-[#FBCFE8] space-y-3.5">
+            <div className="flex items-center justify-between border-b border-[#FBCFE8]/70 pb-2.5 px-1 pt-0.5">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-xl bg-rose-100/70 flex items-center justify-center text-[#9D174D] shadow-2xs">
                   <ShoppingBag className="w-4 h-4" />
                 </div>
                 <h4 className="font-serif text-sm font-black text-[#9D174D]">Pour Alizée</h4>
               </div>
             </div>
 
-            <div className="space-y-1.5">
+            <div className="space-y-1.5 px-0.5">
               {alizeeItems.length === 0 ? (
                 <p className="text-xs text-[#9D174D]/60 text-center py-2">Aucun article pour Alizée pour le moment.</p>
               ) : (
@@ -929,7 +929,7 @@ export default function ParentsSpaceView({ isBorn, actualBirth, onBirthSaved, on
             </div>
 
             {/* Inline Add Alizée */}
-            <form onSubmit={(e) => handleAddPersonItem(e, 'alizee', inlineNewAlizee, setInlineNewAlizee)} className="flex items-center gap-2 pt-1">
+            <form onSubmit={(e) => handleAddPersonItem(e, 'alizee', inlineNewAlizee, setInlineNewAlizee)} className="flex items-center gap-2 pt-1 px-0.5">
               <input
                 type="text"
                 placeholder="Ajouter un article pour Alizée..."
@@ -948,17 +948,17 @@ export default function ParentsSpaceView({ isBorn, actualBirth, onBirthSaved, on
           </div>
 
           {/* Section 3 : Pour Lucas (Pastel Sauge / Menthe Douce) */}
-          <div className="bg-[#F2FDF6] rounded-3xl p-4.5 shadow-xs border-2 border-[#BBF7D0] space-y-3">
-            <div className="flex items-center justify-between border-b border-[#BBF7D0]/70 pb-2">
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-xl bg-emerald-100/70 flex items-center justify-center text-[#166534]">
+          <div className="bg-[#F2FDF6] rounded-3xl p-5 sm:p-6 shadow-xs border-2 border-[#BBF7D0] space-y-3.5">
+            <div className="flex items-center justify-between border-b border-[#BBF7D0]/70 pb-2.5 px-1 pt-0.5">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-xl bg-emerald-100/70 flex items-center justify-center text-[#166534] shadow-2xs">
                   <Briefcase className="w-4 h-4" />
                 </div>
                 <h4 className="font-serif text-sm font-black text-[#166534]">Pour Lucas</h4>
               </div>
             </div>
 
-            <div className="space-y-1.5">
+            <div className="space-y-1.5 px-0.5">
               {lucasItems.length === 0 ? (
                 <p className="text-xs text-[#166534]/60 text-center py-2">Aucun article pour Lucas pour le moment.</p>
               ) : (
@@ -987,7 +987,7 @@ export default function ParentsSpaceView({ isBorn, actualBirth, onBirthSaved, on
             </div>
 
             {/* Inline Add Lucas */}
-            <form onSubmit={(e) => handleAddPersonItem(e, 'lucas', inlineNewLucas, setInlineNewLucas)} className="flex items-center gap-2 pt-1">
+            <form onSubmit={(e) => handleAddPersonItem(e, 'lucas', inlineNewLucas, setInlineNewLucas)} className="flex items-center gap-2 pt-1 px-0.5">
               <input
                 type="text"
                 placeholder="Ajouter un article pour Lucas..."
