@@ -1,12 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { Calendar, Heart, Clock, Sparkles, Trophy, ArrowRight, Baby, Crown, Star, Flame, Lock } from 'lucide-react';
+import { Calendar, Heart, Clock, Sparkles, Trophy, ArrowRight, Baby, Crown, Star, Flame, Lock, Lightbulb } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { useUser } from '../context/UserContext';
 import { fruitsData } from '../data/fruitsData';
+import { getTodayDailyFact } from '../data/dailyFacts';
 
 export default function HomeView({ setTab, isBorn, actualBirth }) {
   const { currentUser, setIsRegisterModalOpen } = useUser();
   const dueDate = new Date('2026-12-08T00:00:00');
+  const [dailyFact, setDailyFact] = useState(() => getTodayDailyFact());
+
+  useEffect(() => {
+    setDailyFact(getTodayDailyFact());
+  }, []);
 
   // Automatic Pregnancy Week calculation (41 weeks term ending 08/12/2026)
   const getAutoPregnancyWeek = () => {
@@ -206,6 +212,25 @@ export default function HomeView({ setTab, isBorn, actualBirth }) {
               « {fruitInfo.desc} »
             </p>
           </div>
+        </div>
+      </div>
+
+      {/* 2.5 LE SAVIEZ-VOUS DU JOUR (ROTATION QUOTIDIENNE) */}
+      <div className="bg-gradient-to-br from-[#EFE89F]/50 via-[#EFE89F]/25 to-white rounded-3xl p-4 shadow-md border-2 border-[#EFE89F] space-y-2 relative overflow-hidden">
+        <div className="flex items-center gap-2">
+          <span className="text-lg p-1 bg-white rounded-lg shadow-2xs">💡</span>
+          <h3 className="font-serif text-xs font-black text-[#1E4E42]">
+            Le saviez-vous ? • Astuce du Jour
+          </h3>
+        </div>
+
+        <div className="bg-white/95 rounded-2xl p-3.5 border border-[#EFE89F] space-y-1 shadow-2xs">
+          <p className="text-xs font-black text-[#D26E7B]">
+            {dailyFact?.title || "Le développement sensoriel ✨"}
+          </p>
+          <p className="text-[11px] text-slate-700 leading-relaxed font-medium">
+            {dailyFact?.content || "À ce stade, bébé réagit déjà aux voix de ses parents et aux caresses sur le ventre !"}
+          </p>
         </div>
       </div>
 
