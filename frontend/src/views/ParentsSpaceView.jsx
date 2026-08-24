@@ -365,12 +365,6 @@ export default function ParentsSpaceView({ isBorn, actualBirth, onBirthSaved, on
     }
   };
 
-  // Filtered lists
-  const filteredPurchases = purchases.filter(item => {
-    if (selectedCategoryFilter === 'all') return true;
-    return item.category === selectedCategoryFilter;
-  });
-
   const babyItems = maternityBag.filter(i => i.forWho === 'baby' || i.forWho === 'bébé' || i.category?.toLowerCase().includes('bébé') || (!i.forWho && !i.category));
   const alizeeItems = maternityBag.filter(i => i.forWho === 'alizee' || i.forWho === 'maman' || i.category?.toLowerCase().includes('maman') || i.category?.toLowerCase().includes('alizée'));
   const lucasItems = maternityBag.filter(i => i.forWho === 'lucas' || i.forWho === 'papa' || i.category?.toLowerCase().includes('papa') || i.category?.toLowerCase().includes('lucas'));
