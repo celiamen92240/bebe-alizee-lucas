@@ -12,6 +12,17 @@
     font-family: 'Fraunces', 'DM Serif Display', serif;
     letter-spacing: -0.01em;
   }
+
+  input[type="date"],
+  input[type="time"],
+  input[type="text"],
+  input[type="password"],
+  input[type="number"],
+  select {
+    box-sizing: border-box !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+  }
 }
 
 /* Glassmorphism 6-Palette: Dusty Rose, Lavender Pink, Butter Yellow, Sage Green, Vanilla Cream, Periwinkle Blue */
