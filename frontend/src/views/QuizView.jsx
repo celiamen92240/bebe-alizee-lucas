@@ -185,7 +185,7 @@ export default function QuizView() {
   const progressPct = questions.length > 0 ? Math.round(((currentIndex + 1) / questions.length) * 100) : 0;
 
   return (
-    <div className="space-y-5 pb-8">
+    <div className="px-5 space-y-5 pb-8">
       {/* Header Banner - Titre unique sans onglets */}
       <div className="bg-gradient-to-br from-[#EFE89F]/35 via-white to-[#C5D88F]/40 rounded-3xl p-5 border-2 border-[#C5D88F] shadow-md relative overflow-hidden space-y-2">
         <div className="space-y-1">

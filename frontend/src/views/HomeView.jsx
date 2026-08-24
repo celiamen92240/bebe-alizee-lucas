@@ -1,5 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Calendar, Heart, Clock, Sparkles, Trophy, ArrowRight, Baby, Crown, Star, Flame, Lock, Lightbulb, Target, Mail, MailOpen, Puzzle, MessageSquareText, ShieldCheck, ChevronRight, Sprout, CalendarHeart } from 'lucide-react';
+import {
+  Heart, Sparkles, Trophy, MessageSquareText,
+  CalendarHeart, ArrowRight, Lightbulb, ChevronRight, Lock, Mail, Sprout, MailOpen
+} from 'lucide-react';
+import BabyVectorLogo from '../components/BabyVectorLogo';
 import confetti from 'canvas-confetti';
 import { useUser } from '../context/UserContext';
 import { fruitsData } from '../data/fruitsData';
@@ -112,9 +116,8 @@ export default function HomeView({ setTab, isBorn, actualBirth }) {
             </p>
           </div>
 
-          <div className="w-14 h-14 bg-white/95 backdrop-blur-md rounded-2xl p-2 shadow-md border-2 border-white flex flex-col items-center justify-center text-center">
-            <span className="text-2xl leading-none">🦕</span>
-            <span className="text-[9px] font-black text-[#1E4E42] mt-1 leading-tight">Garçon</span>
+          <div className="flex items-center justify-center relative">
+            <BabyVectorLogo gender="boy" size={62} className="drop-shadow-md hover:scale-110 transition-transform" />
           </div>
         </div>
 
