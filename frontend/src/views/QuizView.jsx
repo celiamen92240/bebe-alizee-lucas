@@ -171,8 +171,8 @@ export default function QuizView() {
               </span>
             </div>
 
-            <h2 className="font-serif text-xl font-extrabold text-slate-800">
-              💙 Qui d'Alizée ou Lucas... ? 🦕
+            <h2 className="font-serif text-2xl font-black bg-gradient-to-r from-[#D26E7B] via-[#92AFEC] to-[#1E4E42] bg-clip-text text-transparent tracking-tight">
+              Qui d'Alizée ou de Lucas
             </h2>
             <p className="text-xs text-amber-800 font-medium">
               Votez et découvrez qui remportera les 5 grands titres de parents !

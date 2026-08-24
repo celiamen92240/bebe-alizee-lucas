@@ -230,7 +230,7 @@ export default function DailyGameView() {
       {/* 1. ÉCRAN INTRO : DÉMARRER OU VOIR SON SCORE DÉJÀ ENREGISTRÉ */}
       {!isPlaying && !isSubmitted && (
         <div className="bg-white rounded-3xl p-6 shadow-md border-2 border-[#EFE89F] text-center space-y-4 animate-in zoom-in-95">
-          <span className="text-4xl">⏱️ 🧩</span>
+          <span className="text-4xl">🧩</span>
 
           <div className="space-y-1">
             <h3 className="font-serif text-lg font-black text-[#1E4E42]">

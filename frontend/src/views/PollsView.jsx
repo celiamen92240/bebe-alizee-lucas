@@ -95,7 +95,7 @@ export default function PollsView() {
               Hésitations & Dilemmes
             </h2>
             <p className="text-xs text-amber-800 font-medium">
-              Aidez Alizée & Lucas à trancher sur les choix pour leur petit garçon 🦕 !
+              Aidez Alizée & Lucas à trancher sur les choix pour leur petit garçon !
             </p>
           </div>
           <span className="text-3xl">💡</span>
