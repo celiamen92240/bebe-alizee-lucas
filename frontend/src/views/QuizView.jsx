@@ -232,7 +232,7 @@ export default function QuizView() {
             Qui d'Alizée ou de Lucas ?
           </h2>
           <p className="text-xs text-[#1E4E42]/80 font-medium">
-            Votez et découvrez qui remportera les 5 grands titres de super parents ! (1 participation par proche)
+            Votez et découvrez qui remportera les 5 grands titres de super parents !
           </p>
         </div>
       </div>
