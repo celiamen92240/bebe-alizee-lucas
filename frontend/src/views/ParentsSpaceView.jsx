@@ -831,30 +831,30 @@ export default function ParentsSpaceView({ isBorn, actualBirth, onBirthSaved, on
             </div>
           </div>
 
-          {/* Section 1 : Pour Bébé (Pastel Vanille / Or Doux) */}
-          <div className="bg-[#FEFDF0] rounded-3xl p-5 sm:p-6 shadow-xs border-2 border-[#EFE89F] space-y-3.5">
-            <div className="flex items-center justify-between border-b border-[#EFE89F]/70 pb-2.5 px-1 pt-0.5">
+          {/* Section 1 : Pour Bébé (Pastel Bleu Ciel Très Clair) */}
+          <div className="bg-[#F0F7FF] rounded-3xl p-5 sm:p-6 shadow-xs border-2 border-[#BAE6FD] space-y-3.5">
+            <div className="flex items-center justify-between border-b border-[#BAE6FD]/60 pb-2.5 px-1 pt-0.5">
               <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-xl bg-amber-100/70 flex items-center justify-center text-[#854D0E] shadow-2xs">
+                <div className="w-8 h-8 rounded-xl bg-sky-100 flex items-center justify-center text-[#0284C7] shadow-2xs">
                   <Baby className="w-4 h-4" />
                 </div>
-                <h4 className="font-serif text-sm font-black text-[#1E4E42]">Pour Bébé</h4>
+                <h4 className="font-serif text-sm font-black text-[#0369A1]">Pour Bébé</h4>
               </div>
             </div>
 
             <div className="space-y-1.5 px-0.5">
               {babyItems.length === 0 ? (
-                <p className="text-xs text-[#854D0E]/60 text-center py-2">Aucun article pour bébé pour le moment.</p>
+                <p className="text-xs text-[#0284C7]/60 text-center py-2">Aucun article pour bébé pour le moment.</p>
               ) : (
                 babyItems.map(item => (
-                  <div key={item.id} className="p-2.5 rounded-2xl bg-white/90 border border-[#EFE89F]/70 flex items-center justify-between shadow-2xs hover:bg-white transition-all">
+                  <div key={item.id} className="p-2.5 rounded-2xl bg-white/90 border border-[#BAE6FD]/70 flex items-center justify-between shadow-2xs hover:bg-white transition-all">
                     <button
                       type="button"
                       onClick={() => handleToggleBagItem(item.id)}
                       className="flex items-center gap-2 text-xs text-left cursor-pointer flex-1"
                     >
                       <div className={`w-5 h-5 rounded-lg border flex items-center justify-center ${
-                        item.completed ? 'bg-[#D26E7B] border-[#be5361] text-white' : 'border-slate-300 bg-white'
+                        item.completed ? 'bg-[#0284C7] border-[#0369A1] text-white' : 'border-slate-300 bg-white'
                       }`}>
                         {item.completed && <CheckCircle2 className="w-3.5 h-3.5" />}
                       </div>
@@ -877,11 +877,11 @@ export default function ParentsSpaceView({ isBorn, actualBirth, onBirthSaved, on
                 placeholder="Ajouter un article pour bébé..."
                 value={inlineNewBaby}
                 onChange={e => setInlineNewBaby(e.target.value)}
-                className="flex-1 px-3 py-2 rounded-xl border border-[#EFE89F] text-xs bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#D26E7B]"
+                className="flex-1 px-3 py-2 rounded-xl border border-[#BAE6FD] text-xs bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-sky-400"
               />
               <button
                 type="submit"
-                className="w-8 h-8 rounded-xl bg-[#D26E7B] text-white flex items-center justify-center shadow-xs cursor-pointer active:scale-95 flex-shrink-0"
+                className="w-8 h-8 rounded-xl bg-[#0284C7] text-white flex items-center justify-center shadow-xs cursor-pointer active:scale-95 flex-shrink-0"
                 title="Ajouter"
               >
                 <Plus className="w-4 h-4 stroke-[3px]" />
@@ -890,29 +890,29 @@ export default function ParentsSpaceView({ isBorn, actualBirth, onBirthSaved, on
           </div>
 
           {/* Section 2 : Pour Alizée (Pastel Rose Poudré Doux) */}
-          <div className="bg-[#FFF5F7] rounded-3xl p-5 sm:p-6 shadow-xs border-2 border-[#FBCFE8] space-y-3.5">
-            <div className="flex items-center justify-between border-b border-[#FBCFE8]/70 pb-2.5 px-1 pt-0.5">
+          <div className="bg-[#FFF5F7] rounded-3xl p-5 sm:p-6 shadow-xs border-2 border-[#FECDD3] space-y-3.5">
+            <div className="flex items-center justify-between border-b border-[#FECDD3]/60 pb-2.5 px-1 pt-0.5">
               <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-xl bg-rose-100/70 flex items-center justify-center text-[#9D174D] shadow-2xs">
+                <div className="w-8 h-8 rounded-xl bg-rose-100/70 flex items-center justify-center text-rose-700 shadow-2xs">
                   <ShoppingBag className="w-4 h-4" />
                 </div>
-                <h4 className="font-serif text-sm font-black text-[#9D174D]">Pour Alizée</h4>
+                <h4 className="font-serif text-sm font-black text-rose-950">Pour Alizée</h4>
               </div>
             </div>
 
             <div className="space-y-1.5 px-0.5">
               {alizeeItems.length === 0 ? (
-                <p className="text-xs text-[#9D174D]/60 text-center py-2">Aucun article pour Alizée pour le moment.</p>
+                <p className="text-xs text-rose-700/60 text-center py-2">Aucun article pour Alizée pour le moment.</p>
               ) : (
                 alizeeItems.map(item => (
-                  <div key={item.id} className="p-2.5 rounded-2xl bg-white/90 border border-[#FBCFE8]/70 flex items-center justify-between shadow-2xs hover:bg-white transition-all">
+                  <div key={item.id} className="p-2.5 rounded-2xl bg-white/90 border border-rose-200/60 flex items-center justify-between shadow-2xs hover:bg-white transition-all">
                     <button
                       type="button"
                       onClick={() => handleToggleBagItem(item.id)}
                       className="flex items-center gap-2 text-xs text-left cursor-pointer flex-1"
                     >
                       <div className={`w-5 h-5 rounded-lg border flex items-center justify-center ${
-                        item.completed ? 'bg-[#D26E7B] border-[#be5361] text-white' : 'border-slate-300 bg-white'
+                        item.completed ? 'bg-rose-500 border-rose-600 text-white' : 'border-slate-300 bg-white'
                       }`}>
                         {item.completed && <CheckCircle2 className="w-3.5 h-3.5" />}
                       </div>
@@ -935,11 +935,11 @@ export default function ParentsSpaceView({ isBorn, actualBirth, onBirthSaved, on
                 placeholder="Ajouter un article pour Alizée..."
                 value={inlineNewAlizee}
                 onChange={e => setInlineNewAlizee(e.target.value)}
-                className="flex-1 px-3 py-2 rounded-xl border border-[#FBCFE8] text-xs bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#D26E7B]"
+                className="flex-1 px-3 py-2 rounded-xl border border-rose-200 text-xs bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-rose-400"
               />
               <button
                 type="submit"
-                className="w-8 h-8 rounded-xl bg-[#D26E7B] text-white flex items-center justify-center shadow-xs cursor-pointer active:scale-95 flex-shrink-0"
+                className="w-8 h-8 rounded-xl bg-rose-500 text-white flex items-center justify-center shadow-xs cursor-pointer active:scale-95 flex-shrink-0"
                 title="Ajouter"
               >
                 <Plus className="w-4 h-4 stroke-[3px]" />
