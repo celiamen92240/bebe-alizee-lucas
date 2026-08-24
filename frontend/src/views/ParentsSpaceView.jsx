@@ -1218,15 +1218,15 @@ export default function ParentsSpaceView({ isBorn, actualBirth, onBirthSaved, on
                               )}
                             </div>
 
-                            {rdv.location && (
-                              <p className="text-[11px] text-slate-600 flex items-center gap-1.5 font-medium break-words">
+                            {isCurrentActive && rdv.location && (
+                              <p className="text-[11px] text-slate-600 flex items-center gap-1.5 font-medium break-words pt-0.5 animate-in fade-in-50">
                                 <MapPin className="w-3.5 h-3.5 text-slate-400 flex-shrink-0" />
                                 <span>{rdv.location}</span>
                               </p>
                             )}
 
-                            {rdv.notes && (
-                              <p className="text-[11px] text-slate-600 italic bg-white/80 rounded-xl p-2.5 border border-[#EFE89F]/70 break-words leading-relaxed">
+                            {isCurrentActive && rdv.notes && (
+                              <p className="text-[11px] text-slate-600 italic bg-white/80 rounded-xl p-2.5 border border-[#EFE89F]/70 break-words leading-relaxed animate-in fade-in-50">
                                 « {rdv.notes} »
                               </p>
                             )}
