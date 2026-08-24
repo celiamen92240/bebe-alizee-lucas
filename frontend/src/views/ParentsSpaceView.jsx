@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Lock, Baby, ShoppingBag, Briefcase, Calendar, Plus, CheckCircle2, Trash2, Camera, Sparkles, PlusCircle, X, Tag, ChevronLeft, ChevronRight, Clock, MapPin, AlertCircle } from 'lucide-react';
+import { Lock, Baby, ShoppingBag, Briefcase, Calendar, Plus, CheckCircle2, Trash2, Camera, Sparkles, PlusCircle, X, Tag, ChevronLeft, ChevronRight, Clock, MapPin, AlertCircle, Key, ShieldCheck } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { compressImage } from '../utils/imageCompressor';
 
@@ -7,18 +7,26 @@ export default function ParentsSpaceView({ isBorn, actualBirth, onBirthSaved, on
   const [isAuthenticated, setIsAuthenticated] = useState(localStorage.getItem('parents_auth_alizee') === 'true');
   const [inputCode, setInputCode] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
-  const [activeTab, setActiveTab] = useState('birth'); // 'birth', 'purchases', 'bag', 'appointments'
+  const [activeTab, setActiveTab] = useState('birth'); // 'birth', 'purchases', 'bag', 'appointments', 'code'
   
   const handleLogin = async (e) => {
     e.preventDefault();
+    const code = inputCode.trim();
+    if (code === '1234') {
+      setIsAuthenticated(true);
+      localStorage.setItem('parents_auth_alizee', 'true');
+      setErrorMsg('');
+      confetti({ particleCount: 50, spread: 60, colors: ['#facc15', '#4ade80', '#38bdf8'] });
+      return;
+    }
     try {
       const res = await fetch('/api/config/verify-pin', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ pin: inputCode.trim() })
+        body: JSON.stringify({ pin: code })
       });
       const data = await res.json();
-      if (data.success || inputCode.trim() === '1234') {
+      if (data.success) {
         setIsAuthenticated(true);
         localStorage.setItem('parents_auth_alizee', 'true');
         setErrorMsg('');
@@ -27,13 +35,7 @@ export default function ParentsSpaceView({ isBorn, actualBirth, onBirthSaved, on
         setErrorMsg("Code secret incorrect.");
       }
     } catch (err) {
-      if (inputCode.trim() === '1234') {
-        setIsAuthenticated(true);
-        localStorage.setItem('parents_auth_alizee', 'true');
-        setErrorMsg('');
-      } else {
-        setErrorMsg("Code secret incorrect.");
-      }
+      setErrorMsg("Code secret incorrect.");
     }
   };
 
@@ -65,9 +67,16 @@ export default function ParentsSpaceView({ isBorn, actualBirth, onBirthSaved, on
 
   // MATERNITY BAG (Alizée, Lucas, Bébé)
   const [maternityBag, setMaternityBag] = useState([]);
-  const [bagFilter, setBagFilter] = useState('all'); // 'all', 'baby', 'alizee', 'lucas'
-  const [newBagTitle, setNewBagTitle] = useState('');
-  const [newBagForWho, setNewBagForWho] = useState('baby'); // 'baby', 'alizee', 'lucas'
+  const [inlineNewBaby, setInlineNewBaby] = useState('');
+  const [inlineNewAlizee, setInlineNewAlizee] = useState('');
+  const [inlineNewLucas, setInlineNewLucas] = useState('');
+
+  // Security / PIN Change State
+  const [oldPinInput, setOldPinInput] = useState('');
+  const [newPinInput, setNewPinInput] = useState('');
+  const [confirmPinInput, setConfirmPinInput] = useState('');
+  const [pinChangeSuccess, setPinChangeSuccess] = useState('');
+  const [pinChangeError, setPinChangeError] = useState('');
 
   // APPOINTMENTS & CALENDAR
   const [appointments, setAppointments] = useState([]);
@@ -244,19 +253,19 @@ export default function ParentsSpaceView({ isBorn, actualBirth, onBirthSaved, on
   };
 
   // --- MATERNITY BAG ACTIONS (Alizée, Lucas, Bébé) ---
-  const handleAddBagItem = async (e) => {
+  const handleAddPersonItem = async (e, forWho, text, setText) => {
     e.preventDefault();
-    if (!newBagTitle.trim()) return;
+    if (!text.trim()) return;
     try {
       const res = await fetch('/api/maternity-bag', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ title: newBagTitle.trim(), forWho: newBagForWho })
+        body: JSON.stringify({ title: text.trim(), forWho })
       });
       const data = await res.json();
       if (data.success) {
         setMaternityBag(data.items);
-        setNewBagTitle('');
+        setText('');
       }
     } catch (err) {
       console.error(err);
@@ -283,6 +292,45 @@ export default function ParentsSpaceView({ isBorn, actualBirth, onBirthSaved, on
     }
   };
 
+  // --- PIN CHANGE ACTION ---
+  const handleChangePin = async (e) => {
+    e.preventDefault();
+    setPinChangeSuccess('');
+    setPinChangeError('');
+
+    if (newPinInput.length < 4) {
+      setPinChangeError("Le nouveau code doit contenir au moins 4 chiffres.");
+      return;
+    }
+    if (newPinInput !== confirmPinInput) {
+      setPinChangeError("Les nouveaux codes ne correspondent pas.");
+      return;
+    }
+
+    try {
+      const res = await fetch('/api/config/change-pin', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          oldPin: oldPinInput.trim(),
+          newPin: newPinInput.trim()
+        })
+      });
+      const data = await res.json();
+      if (data.success) {
+        setPinChangeSuccess("Votre code secret a été mis à jour avec succès ! ✨");
+        setOldPinInput('');
+        setNewPinInput('');
+        setConfirmPinInput('');
+        confetti({ particleCount: 50, spread: 60 });
+      } else {
+        setPinChangeError(data.error || "Code actuel incorrect.");
+      }
+    } catch (err) {
+      setPinChangeError("Erreur lors de la modification.");
+    }
+  };
+
   // --- APPOINTMENTS ACTIONS ---
   const handleAddAppointment = async (e) => {
     e.preventDefault();
@@ -291,12 +339,13 @@ export default function ParentsSpaceView({ isBorn, actualBirth, onBirthSaved, on
       const res = await fetch('/api/appointments', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ title: newRdvTitle.trim(), date: newRdvDate, time: "10:00" })
+        body: JSON.stringify({ title: newRdvTitle.trim(), date: newRdvDate, time: newRdvTime, location: newRdvLocation.trim() })
       });
       const data = await res.json();
       if (data.success) {
         setAppointments(data.items);
         setNewRdvTitle('');
+        setNewRdvLocation('');
       }
     } catch (err) {
       console.error(err);
@@ -319,19 +368,13 @@ export default function ParentsSpaceView({ isBorn, actualBirth, onBirthSaved, on
     return item.category === selectedCategoryFilter;
   });
 
-  const filteredBag = maternityBag.filter(item => {
-    if (bagFilter === 'all') return true;
-    return item.forWho === bagFilter;
-  });
+  const babyItems = maternityBag.filter(i => i.forWho === 'baby' || i.forWho === 'bébé' || i.category?.toLowerCase().includes('bébé') || (!i.forWho && !i.category));
+  const alizeeItems = maternityBag.filter(i => i.forWho === 'alizee' || i.forWho === 'maman' || i.category?.toLowerCase().includes('maman') || i.category?.toLowerCase().includes('alizée'));
+  const lucasItems = maternityBag.filter(i => i.forWho === 'lucas' || i.forWho === 'papa' || i.category?.toLowerCase().includes('papa') || i.category?.toLowerCase().includes('lucas'));
 
-  const bagCountBaby = maternityBag.filter(i => i.forWho === 'baby').length;
-  const bagDoneBaby = maternityBag.filter(i => i.forWho === 'baby' && i.completed).length;
-
-  const bagCountAlizee = maternityBag.filter(i => i.forWho === 'alizee').length;
-  const bagDoneAlizee = maternityBag.filter(i => i.forWho === 'alizee' && i.completed).length;
-
-  const bagCountLucas = maternityBag.filter(i => i.forWho === 'lucas').length;
-  const bagDoneLucas = maternityBag.filter(i => i.forWho === 'lucas' && i.completed).length;
+  const bagTotal = maternityBag.length;
+  const bagDoneTotal = maternityBag.filter(i => i.completed).length;
+  const bagPercent = bagTotal > 0 ? Math.round((bagDoneTotal / bagTotal) * 100) : 0;
 
   if (!isAuthenticated) {
     return (
@@ -418,7 +461,7 @@ export default function ParentsSpaceView({ isBorn, actualBirth, onBirthSaved, on
       </div>
 
       {/* Navigation Sub-Tabs */}
-      <div className="grid grid-cols-4 gap-1.5 bg-amber-100/60 p-1.5 rounded-2xl border border-sun-200 text-xs font-bold">
+      <div className="grid grid-cols-5 gap-1 bg-amber-100/60 p-1.5 rounded-2xl border border-sun-200 text-xs font-bold">
         <button
           type="button"
           onClick={() => setActiveTab('birth')}
@@ -462,6 +505,17 @@ export default function ParentsSpaceView({ isBorn, actualBirth, onBirthSaved, on
           <Calendar className="w-4 h-4 text-[#D26E7B]" />
           <span className="text-[10px]">RDV</span>
         </button>
+
+        <button
+          type="button"
+          onClick={() => setActiveTab('code')}
+          className={`py-2 rounded-xl text-center transition-all cursor-pointer flex flex-col items-center gap-1 ${
+            activeTab === 'code' ? 'bg-white text-sun-800 shadow-xs scale-102 font-extrabold' : 'text-slate-500 hover:text-slate-800'
+          }`}
+        >
+          <Key className="w-4 h-4 text-[#D26E7B]" />
+          <span className="text-[10px]">Code</span>
+        </button>
       </div>
 
       {/* 1. TAB: NAISSANCE OFFICIELLE */}
@@ -502,7 +556,7 @@ export default function ParentsSpaceView({ isBorn, actualBirth, onBirthSaved, on
                     if (onResetBirth) onResetBirth();
                   }
                 }}
-                className="text-xs text-red-500 underline font-bold"
+                className="text-xs text-red-500 underline font-bold cursor-pointer"
               >
                 Réinitialiser la naissance
               </button>
@@ -520,132 +574,131 @@ export default function ParentsSpaceView({ isBorn, actualBirth, onBirthSaved, on
 
               {/* Photo Upload */}
               <div className="flex flex-col items-center gap-1.5">
-                <label className="relative cursor-pointer">
-                  <div className="w-20 h-20 rounded-2xl border-2 border-dashed border-sun-300 bg-amber-50/50 flex items-center justify-center text-3xl overflow-hidden shadow-2xs">
-                    {photo ? <img src={photo} alt="Bébé" className="w-full h-full object-cover" /> : <span>🦕</span>}
-                  </div>
-                  <div className="absolute -bottom-1 -right-1 bg-emerald-600 text-white p-1 rounded-full shadow">
-                    <Camera className="w-3 h-3" />
-                  </div>
-                  <input type="file" accept="image/*" onChange={handlePhotoUpload} className="hidden" />
-                </label>
-                <span className="text-[10px] text-slate-400 font-bold">Ajouter la photo du bébé</span>
+                <div className="w-24 h-24 rounded-3xl bg-amber-50 border-2 border-dashed border-sun-300 flex items-center justify-center overflow-hidden relative group cursor-pointer shadow-inner">
+                  {photo ? (
+                    <img src={photo} alt="Aperçu" className="w-full h-full object-cover" />
+                  ) : (
+                    <Camera className="w-8 h-8 text-sun-400" />
+                  )}
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handlePhotoUpload}
+                    className="absolute inset-0 opacity-0 cursor-pointer"
+                  />
+                </div>
+                <span className="text-[10px] text-slate-400 font-medium">Ajouter la première photo</span>
               </div>
 
               <div className="space-y-1">
-                <label className="text-xs font-bold text-slate-700">Prénom officiel :</label>
+                <label className="text-[10px] font-bold text-slate-700 block">Prénom officiel :</label>
                 <input
                   type="text"
                   required
-                  placeholder="Ex: Jules, Léo, Gabriel..."
+                  placeholder="Ex: Léo, Gabriel, Raphaël..."
                   value={firstName}
                   onChange={e => setFirstName(e.target.value)}
-                  className="w-full px-3 py-2 rounded-xl border border-sun-200 text-xs font-bold bg-amber-50/20"
+                  className="w-full px-3 py-2 rounded-xl border border-sun-200 text-xs bg-amber-50/20 font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#D26E7B]"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-2">
                 <div className="space-y-1">
-                  <label className="text-[11px] font-bold text-slate-600">Date réelle :</label>
+                  <label className="text-[10px] font-bold text-slate-700 block">Date de naissance :</label>
                   <input
                     type="date"
                     required
                     value={date}
                     onChange={e => setDate(e.target.value)}
-                    className="w-full px-3 py-2 rounded-xl border border-sun-200 text-xs"
+                    className="w-full px-2.5 py-1.5 rounded-xl border border-sun-200 text-xs bg-white text-slate-800"
                   />
                 </div>
                 <div className="space-y-1">
-                  <label className="text-[11px] font-bold text-slate-600">Heure :</label>
+                  <label className="text-[10px] font-bold text-slate-700 block">Heure exacte :</label>
                   <input
                     type="time"
                     required
                     value={time}
                     onChange={e => setTime(e.target.value)}
-                    className="w-full px-3 py-2 rounded-xl border border-sun-200 text-xs"
+                    className="w-full px-2.5 py-1.5 rounded-xl border border-sun-200 text-xs bg-white text-slate-800"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-2">
                 <div className="space-y-1">
-                  <label className="text-[11px] font-bold text-slate-600">Poids réel (kg) :</label>
+                  <label className="text-[10px] font-bold text-slate-700 block">Poids (kg) :</label>
                   <input
-                    type="text"
+                    type="number"
+                    step="0.01"
                     required
-                    placeholder="Ex: 3.420"
+                    placeholder="Ex: 3.45"
                     value={weight}
                     onChange={e => setWeight(e.target.value)}
-                    className="w-full px-3 py-2 rounded-xl border border-sun-200 text-xs"
+                    className="w-full px-2.5 py-1.5 rounded-xl border border-sun-200 text-xs bg-white text-slate-800"
                   />
                 </div>
                 <div className="space-y-1">
-                  <label className="text-[11px] font-bold text-slate-600">Taille réelle (cm) :</label>
+                  <label className="text-[10px] font-bold text-slate-700 block">Taille (cm) :</label>
                   <input
-                    type="text"
+                    type="number"
+                    step="0.5"
                     required
-                    placeholder="Ex: 51"
+                    placeholder="Ex: 50.5"
                     value={height}
                     onChange={e => setHeight(e.target.value)}
-                    className="w-full px-3 py-2 rounded-xl border border-sun-200 text-xs"
+                    className="w-full px-2.5 py-1.5 rounded-xl border border-sun-200 text-xs bg-white text-slate-800"
                   />
                 </div>
               </div>
 
               <button
                 type="submit"
-                className="w-full bg-gradient-to-r from-sun-500 to-mint-600 hover:from-sun-600 hover:to-mint-700 text-white font-bold py-3.5 rounded-2xl shadow-md text-xs transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-95"
+                className="w-full bg-gradient-to-r from-[#D26E7B] to-[#be5361] text-white font-bold py-3 rounded-2xl shadow-md text-xs transition-all active:scale-95 cursor-pointer mt-2"
               >
-                <CheckCircle2 className="w-4 h-4" />
-                <span>Publier l'Annonce de Naissance 👑</span>
+                Publier l'Annonce Officielle
               </button>
             </form>
           )}
         </div>
       )}
 
-      {/* 2. TAB: ACHATS & MATÉRIEL AVEC CATÉGORIES MODIFIABLES */}
+      {/* 2. TAB: LISTE D'ACHATS AVEC CATÉGORIES DYNAMIQUES */}
       {activeTab === 'purchases' && (
         <div className="space-y-4">
-          {/* Categories Manager Bar */}
           <div className="space-y-2">
             <div className="flex items-center justify-between px-1">
-              <span className="text-xs font-black text-slate-700 flex items-center gap-1.5">
-                <Tag className="w-3.5 h-3.5 text-sun-600" />
-                <span>Filtrer par Catégorie :</span>
-              </span>
+              <span className="text-[10px] font-black uppercase text-slate-400">Filtrer par catégorie</span>
               <button
                 type="button"
                 onClick={() => setShowAddCategoryModal(true)}
-                className="text-[11px] font-bold text-emerald-800 bg-mint-100 hover:bg-mint-200 px-2.5 py-1 rounded-xl border border-mint-300 flex items-center gap-1 cursor-pointer transition-colors shadow-2xs"
+                className="text-[10px] font-bold text-[#D26E7B] hover:underline flex items-center gap-1 cursor-pointer"
               >
-                <Plus className="w-3 h-3 stroke-[3px]" />
-                <span>+ Nouvelle Catégorie</span>
+                <PlusCircle className="w-3 h-3" />
+                <span>Nouvelle catégorie</span>
               </button>
             </div>
 
-            {/* Horizontal Category Filter Chips */}
-            <div className="flex gap-1.5 overflow-x-auto pb-1.5 pt-0.5">
+            <div className="flex gap-1.5 overflow-x-auto pb-1 no-scrollbar">
               <button
                 type="button"
                 onClick={() => setSelectedCategoryFilter('all')}
-                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex-shrink-0 cursor-pointer ${
+                className={`px-3 py-1.5 rounded-xl text-xs whitespace-nowrap transition-all cursor-pointer border ${
                   selectedCategoryFilter === 'all'
-                    ? 'bg-sun-500 text-white shadow-xs font-extrabold'
-                    : 'bg-white text-slate-600 border border-sun-200 hover:bg-sun-50'
+                    ? 'bg-sun-500 text-white border-sun-600 shadow-xs font-extrabold'
+                    : 'bg-white text-slate-700 border-sun-200 hover:bg-sun-50'
                 }`}
               >
                 Tous ({purchases.length})
               </button>
 
-              {categories.map((cat) => {
+              {categories.map(cat => {
                 const count = purchases.filter(p => p.category === cat).length;
                 const isSelected = selectedCategoryFilter === cat;
-
                 return (
                   <div
                     key={cat}
-                    className={`flex items-center gap-1 px-2.5 py-1.5 rounded-xl border text-xs font-bold flex-shrink-0 transition-all ${
+                    className={`flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs whitespace-nowrap transition-all border ${
                       isSelected
                         ? 'bg-sun-500 text-white border-sun-600 shadow-xs font-extrabold'
                         : 'bg-white text-slate-700 border-sun-200 hover:bg-sun-50'
@@ -680,13 +733,13 @@ export default function ParentsSpaceView({ isBorn, actualBirth, onBirthSaved, on
               <form onSubmit={handleAddCategory} className="bg-white rounded-3xl p-5 shadow-2xl border-2 border-sun-300 max-w-xs w-full space-y-3 animate-in zoom-in-95">
                 <div className="flex justify-between items-center border-b border-sun-100 pb-2">
                   <h4 className="font-serif text-sm font-bold text-slate-800">Ajouter une Catégorie</h4>
-                  <button type="button" onClick={() => setShowAddCategoryModal(false)} className="text-slate-400">✕</button>
+                  <button type="button" onClick={() => setShowAddCategoryModal(false)} className="text-slate-400 cursor-pointer">✕</button>
                 </div>
                 <input
                   type="text"
                   required
                   autoFocus
-                  placeholder="Ex: Décoration 🎨, Sécurité 🔒..."
+                  placeholder="Ex: Décoration, Sécurité..."
                   value={newCategoryName}
                   onChange={e => setNewCategoryName(e.target.value)}
                   className="w-full px-3 py-2.5 rounded-xl border border-sun-200 text-xs bg-amber-50/20 font-bold"
@@ -695,7 +748,7 @@ export default function ParentsSpaceView({ isBorn, actualBirth, onBirthSaved, on
                   type="submit"
                   className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-xl text-xs shadow transition-colors cursor-pointer"
                 >
-                  Créer la catégorie ✨
+                  Créer la catégorie
                 </button>
               </form>
             </div>
@@ -763,7 +816,7 @@ export default function ParentsSpaceView({ isBorn, actualBirth, onBirthSaved, on
                   <button
                     type="button"
                     onClick={() => handleDeletePurchase(item.id)}
-                    className="text-slate-300 hover:text-red-500 p-1"
+                    className="text-slate-300 hover:text-red-500 p-1 cursor-pointer"
                   >
                     <Trash2 className="w-3.5 h-3.5" />
                   </button>
@@ -774,124 +827,214 @@ export default function ParentsSpaceView({ isBorn, actualBirth, onBirthSaved, on
         </div>
       )}
 
-      {/* 3. TAB: VALISE MATERNITÉ (Alizée 👩, Lucas 👨, Bébé 🦕) */}
+      {/* 3. TAB: VALISE MATERNITÉ (AVEC JAUGE DE PROGRESSION GLOBALE ET 3 SECTIONS ÉPURÉES) */}
       {activeTab === 'bag' && (
         <div className="space-y-4">
-          {/* Person Filter Tabs for Bag */}
-          <div className="grid grid-cols-4 gap-1 bg-amber-50/80 p-1 rounded-2xl border border-sun-200 text-xs font-bold">
-            <button
-              type="button"
-              onClick={() => setBagFilter('all')}
-              className={`py-2 rounded-xl text-center transition-all cursor-pointer ${
-                bagFilter === 'all' ? 'bg-white text-sun-800 shadow-2xs font-black' : 'text-slate-500 hover:text-slate-800'
-              }`}
-            >
-              Tous ({maternityBag.length})
-            </button>
-            <button
-              type="button"
-              onClick={() => setBagFilter('baby')}
-              className={`py-2 rounded-xl text-center transition-all cursor-pointer ${
-                bagFilter === 'baby' ? 'bg-white text-emerald-800 shadow-2xs font-black border border-mint-200' : 'text-slate-500 hover:text-slate-800'
-              }`}
-            >
-              🦕 Bébé ({bagDoneBaby}/{bagCountBaby})
-            </button>
-            <button
-              type="button"
-              onClick={() => setBagFilter('alizee')}
-              className={`py-2 rounded-xl text-center transition-all cursor-pointer ${
-                bagFilter === 'alizee' ? 'bg-white text-amber-800 shadow-2xs font-black border border-amber-200' : 'text-slate-500 hover:text-slate-800'
-              }`}
-            >
-              👩 Alizée ({bagDoneAlizee}/{bagCountAlizee})
-            </button>
-            <button
-              type="button"
-              onClick={() => setBagFilter('lucas')}
-              className={`py-2 rounded-xl text-center transition-all cursor-pointer ${
-                bagFilter === 'lucas' ? 'bg-white text-blue-800 shadow-2xs font-black border border-blue-200' : 'text-slate-500 hover:text-slate-800'
-              }`}
-            >
-              👨 Lucas ({bagDoneLucas}/{bagCountLucas})
-            </button>
+          {/* Jauge globale de progression en haut */}
+          <div className="bg-white rounded-3xl p-5 shadow-sm border border-[#EFE89F] space-y-2.5">
+            <div className="flex items-center justify-between">
+              <div>
+                <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">
+                  Préparation Valise de Maternité
+                </span>
+                <h3 className="font-serif text-base font-bold text-slate-800">
+                  {bagDoneTotal} sur {bagTotal} articles prêts
+                </h3>
+              </div>
+              <span className="text-base font-black text-[#D26E7B] bg-[#D26E7B]/10 px-3 py-1 rounded-2xl border border-[#D26E7B]/20">
+                {bagPercent}%
+              </span>
+            </div>
+
+            <div className="w-full h-3 bg-amber-50 rounded-full overflow-hidden p-0.5 border border-[#EFE89F] shadow-inner">
+              <div
+                className="h-full bg-gradient-to-r from-[#D26E7B] via-[#EFE89F] to-[#C5D88F] rounded-full transition-all duration-500"
+                style={{ width: `${bagPercent}%` }}
+              />
+            </div>
           </div>
 
-          {/* Add Bag Item Form */}
-          <form onSubmit={handleAddBagItem} className="bg-white p-3.5 rounded-2xl border border-sun-200 shadow-xs space-y-2">
-            <div className="flex gap-2">
+          {/* Section 1 : Pour Bébé */}
+          <div className="bg-white rounded-3xl p-4 shadow-sm border border-[#EFE89F] space-y-3">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-2">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-xl bg-mint-50 flex items-center justify-center text-emerald-700">
+                  <Baby className="w-4 h-4" />
+                </div>
+                <h4 className="font-serif text-sm font-black text-slate-800">Pour Bébé</h4>
+              </div>
+              <span className="text-[10px] font-bold text-emerald-800 bg-mint-50 px-2 py-0.5 rounded-full border border-mint-200">
+                {babyItems.filter(i => i.completed).length}/{babyItems.length} prêts
+              </span>
+            </div>
+
+            <div className="space-y-1.5">
+              {babyItems.length === 0 ? (
+                <p className="text-xs text-slate-400 text-center py-2">Aucun article pour bébé pour le moment.</p>
+              ) : (
+                babyItems.map(item => (
+                  <div key={item.id} className="p-2.5 rounded-2xl border border-slate-100 flex items-center justify-between hover:bg-slate-50/50">
+                    <button
+                      type="button"
+                      onClick={() => handleToggleBagItem(item.id)}
+                      className="flex items-center gap-2 text-xs text-left cursor-pointer flex-1"
+                    >
+                      <div className={`w-5 h-5 rounded-lg border flex items-center justify-center ${
+                        item.completed ? 'bg-mint-500 border-mint-600 text-white' : 'border-slate-300'
+                      }`}>
+                        {item.completed && <CheckCircle2 className="w-3.5 h-3.5" />}
+                      </div>
+                      <span className={item.completed ? 'line-through text-slate-400 font-medium' : 'text-slate-800 font-bold'}>
+                        {item.title}
+                      </span>
+                    </button>
+                    <button type="button" onClick={() => handleDeleteBagItem(item.id)} className="text-slate-300 hover:text-red-500 p-1 cursor-pointer">
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                ))
+              )}
+            </div>
+
+            {/* Inline Add Bébé */}
+            <form onSubmit={(e) => handleAddPersonItem(e, 'baby', inlineNewBaby, setInlineNewBaby)} className="flex items-center gap-2 pt-1">
               <input
                 type="text"
-                required
-                placeholder="Objet à mettre dans la valise..."
-                value={newBagTitle}
-                onChange={e => setNewBagTitle(e.target.value)}
-                className="flex-1 px-3 py-2 rounded-xl border border-sun-200 text-xs bg-amber-50/20"
+                placeholder="Ajouter un article pour bébé..."
+                value={inlineNewBaby}
+                onChange={e => setInlineNewBaby(e.target.value)}
+                className="flex-1 px-3 py-2 rounded-xl border border-[#EFE89F] text-xs bg-[#FEFCE7] text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#D26E7B]"
               />
-              <select
-                value={newBagForWho}
-                onChange={e => setNewBagForWho(e.target.value)}
-                className="px-2 py-2 rounded-xl border border-sun-200 text-xs bg-white font-bold"
+              <button
+                type="submit"
+                className="w-8 h-8 rounded-xl bg-[#D26E7B] text-white flex items-center justify-center shadow-xs cursor-pointer active:scale-95 flex-shrink-0"
+                title="Ajouter"
               >
-                <option value="baby">Pour Bébé 🦕</option>
-                <option value="alizee">Pour Alizée 👩</option>
-                <option value="lucas">Pour Lucas 👨</option>
-              </select>
-            </div>
-            <button
-              type="submit"
-              className="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-2 rounded-xl text-xs font-bold shadow-xs cursor-pointer transition-colors flex items-center justify-center gap-1.5"
-            >
-              <Plus className="w-3.5 h-3.5" />
-              <span>Ajouter à la valise de maternité</span>
-            </button>
-          </form>
+                <Plus className="w-4 h-4 stroke-[3px]" />
+              </button>
+            </form>
+          </div>
 
-          {/* Bag Items List */}
-          <div className="space-y-2">
-            {filteredBag.length === 0 ? (
-              <div className="bg-white rounded-2xl p-5 text-center border border-sun-200 text-xs text-slate-400">
-                Aucun objet dans cette section de la valise.
-              </div>
-            ) : (
-              filteredBag.map(item => (
-                <div
-                  key={item.id}
-                  className="bg-white p-3 rounded-2xl border border-sun-100 flex items-center justify-between shadow-2xs"
-                >
-                  <button
-                    type="button"
-                    onClick={() => handleToggleBagItem(item.id)}
-                    className="flex items-center gap-2.5 text-xs text-left cursor-pointer flex-1"
-                  >
-                    <div className={`w-5 h-5 rounded-lg border flex items-center justify-center ${
-                      item.completed ? 'bg-mint-500 border-mint-600 text-white' : 'border-slate-300'
-                    }`}>
-                      {item.completed && <CheckCircle2 className="w-3.5 h-3.5" />}
-                    </div>
-                    <span className={item.completed ? 'line-through text-slate-400 font-medium' : 'text-slate-800 font-bold'}>
-                      {item.title}
-                    </span>
-                  </button>
-                  <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full border mr-2 ${
-                    item.forWho === 'baby'
-                      ? 'bg-mint-50 text-emerald-800 border-mint-200'
-                      : item.forWho === 'alizee'
-                      ? 'bg-amber-50 text-amber-800 border-amber-200'
-                      : 'bg-blue-50 text-blue-800 border-blue-200'
-                  }`}>
-                    {item.forWho === 'baby' ? 'Bébé 🦕' : item.forWho === 'alizee' ? 'Alizée 👩' : 'Lucas 👨'}
-                  </span>
-                  <button
-                    type="button"
-                    onClick={() => handleDeleteBagItem(item.id)}
-                    className="text-slate-300 hover:text-red-500 p-1"
-                  >
-                    <Trash2 className="w-3.5 h-3.5" />
-                  </button>
+          {/* Section 2 : Pour Alizée */}
+          <div className="bg-white rounded-3xl p-4 shadow-sm border border-[#EFE89F] space-y-3">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-2">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-xl bg-amber-50 flex items-center justify-center text-[#D26E7B]">
+                  <ShoppingBag className="w-4 h-4" />
                 </div>
-              ))
-            )}
+                <h4 className="font-serif text-sm font-black text-slate-800">Pour Alizée</h4>
+              </div>
+              <span className="text-[10px] font-bold text-[#D26E7B] bg-amber-50 px-2 py-0.5 rounded-full border border-amber-100">
+                {alizeeItems.filter(i => i.completed).length}/{alizeeItems.length} prêts
+              </span>
+            </div>
+
+            <div className="space-y-1.5">
+              {alizeeItems.length === 0 ? (
+                <p className="text-xs text-slate-400 text-center py-2">Aucun article pour Alizée pour le moment.</p>
+              ) : (
+                alizeeItems.map(item => (
+                  <div key={item.id} className="p-2.5 rounded-2xl border border-slate-100 flex items-center justify-between hover:bg-slate-50/50">
+                    <button
+                      type="button"
+                      onClick={() => handleToggleBagItem(item.id)}
+                      className="flex items-center gap-2 text-xs text-left cursor-pointer flex-1"
+                    >
+                      <div className={`w-5 h-5 rounded-lg border flex items-center justify-center ${
+                        item.completed ? 'bg-mint-500 border-mint-600 text-white' : 'border-slate-300'
+                      }`}>
+                        {item.completed && <CheckCircle2 className="w-3.5 h-3.5" />}
+                      </div>
+                      <span className={item.completed ? 'line-through text-slate-400 font-medium' : 'text-slate-800 font-bold'}>
+                        {item.title}
+                      </span>
+                    </button>
+                    <button type="button" onClick={() => handleDeleteBagItem(item.id)} className="text-slate-300 hover:text-red-500 p-1 cursor-pointer">
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                ))
+              )}
+            </div>
+
+            {/* Inline Add Alizée */}
+            <form onSubmit={(e) => handleAddPersonItem(e, 'alizee', inlineNewAlizee, setInlineNewAlizee)} className="flex items-center gap-2 pt-1">
+              <input
+                type="text"
+                placeholder="Ajouter un article pour Alizée..."
+                value={inlineNewAlizee}
+                onChange={e => setInlineNewAlizee(e.target.value)}
+                className="flex-1 px-3 py-2 rounded-xl border border-[#EFE89F] text-xs bg-[#FEFCE7] text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#D26E7B]"
+              />
+              <button
+                type="submit"
+                className="w-8 h-8 rounded-xl bg-[#D26E7B] text-white flex items-center justify-center shadow-xs cursor-pointer active:scale-95 flex-shrink-0"
+                title="Ajouter"
+              >
+                <Plus className="w-4 h-4 stroke-[3px]" />
+              </button>
+            </form>
+          </div>
+
+          {/* Section 3 : Pour Lucas */}
+          <div className="bg-white rounded-3xl p-4 shadow-sm border border-[#EFE89F] space-y-3">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-2">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-xl bg-blue-50 flex items-center justify-center text-blue-700">
+                  <Briefcase className="w-4 h-4" />
+                </div>
+                <h4 className="font-serif text-sm font-black text-slate-800">Pour Lucas</h4>
+              </div>
+              <span className="text-[10px] font-bold text-blue-800 bg-blue-50 px-2 py-0.5 rounded-full border border-blue-200">
+                {lucasItems.filter(i => i.completed).length}/{lucasItems.length} prêts
+              </span>
+            </div>
+
+            <div className="space-y-1.5">
+              {lucasItems.length === 0 ? (
+                <p className="text-xs text-slate-400 text-center py-2">Aucun article pour Lucas pour le moment.</p>
+              ) : (
+                lucasItems.map(item => (
+                  <div key={item.id} className="p-2.5 rounded-2xl border border-slate-100 flex items-center justify-between hover:bg-slate-50/50">
+                    <button
+                      type="button"
+                      onClick={() => handleToggleBagItem(item.id)}
+                      className="flex items-center gap-2 text-xs text-left cursor-pointer flex-1"
+                    >
+                      <div className={`w-5 h-5 rounded-lg border flex items-center justify-center ${
+                        item.completed ? 'bg-mint-500 border-mint-600 text-white' : 'border-slate-300'
+                      }`}>
+                        {item.completed && <CheckCircle2 className="w-3.5 h-3.5" />}
+                      </div>
+                      <span className={item.completed ? 'line-through text-slate-400 font-medium' : 'text-slate-800 font-bold'}>
+                        {item.title}
+                      </span>
+                    </button>
+                    <button type="button" onClick={() => handleDeleteBagItem(item.id)} className="text-slate-300 hover:text-red-500 p-1 cursor-pointer">
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                ))
+              )}
+            </div>
+
+            {/* Inline Add Lucas */}
+            <form onSubmit={(e) => handleAddPersonItem(e, 'lucas', inlineNewLucas, setInlineNewLucas)} className="flex items-center gap-2 pt-1">
+              <input
+                type="text"
+                placeholder="Ajouter un article pour Lucas..."
+                value={inlineNewLucas}
+                onChange={e => setInlineNewLucas(e.target.value)}
+                className="flex-1 px-3 py-2 rounded-xl border border-[#EFE89F] text-xs bg-[#FEFCE7] text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#D26E7B]"
+              />
+              <button
+                type="submit"
+                className="w-8 h-8 rounded-xl bg-[#D26E7B] text-white flex items-center justify-center shadow-xs cursor-pointer active:scale-95 flex-shrink-0"
+                title="Ajouter"
+              >
+                <Plus className="w-4 h-4 stroke-[3px]" />
+              </button>
+            </form>
           </div>
         </div>
       )}
@@ -923,7 +1066,9 @@ export default function ParentsSpaceView({ isBorn, actualBirth, onBirthSaved, on
               {/* Navigation Mois & Année */}
               <div className="flex items-center justify-between px-1">
                 <div className="flex items-center gap-2">
-                  <span className="text-xl">📅</span>
+                  <div className="w-8 h-8 rounded-xl bg-amber-50 flex items-center justify-center text-[#D26E7B] border border-[#EFE89F]">
+                    <Calendar className="w-4 h-4" />
+                  </div>
                   <div>
                     <h4 className="font-serif text-sm font-black text-[#1E4E42] capitalize leading-tight">
                       {monthName}
@@ -947,7 +1092,7 @@ export default function ParentsSpaceView({ isBorn, actualBirth, onBirthSaved, on
                     className="text-[10px] font-black px-2.5 py-1 bg-[#ECCEE6] text-[#D26E7B] rounded-xl border border-[#D26E7B]/30 hover:bg-[#ECCEE6]/80 cursor-pointer shadow-2xs"
                     title="Aller au jour du terme (08 Décembre 2026)"
                   >
-                    Terme 🎀
+                    Terme (08/12)
                   </button>
                   <button
                     type="button"
@@ -1013,7 +1158,7 @@ export default function ParentsSpaceView({ isBorn, actualBirth, onBirthSaved, on
 
                       {/* Marqueur visuel sous le chiffre */}
                       {isTerm && !isSelected ? (
-                        <span className="text-[8px] leading-none mt-0.5">🎀</span>
+                        <span className="w-1.5 h-1.5 rounded-full bg-[#D26E7B] mt-0.5" />
                       ) : hasRdv && !isSelected ? (
                         <div className="flex gap-0.5 mt-0.5">
                           {dayRdvs.slice(0, 2).map((_, rIdx) => (
@@ -1033,7 +1178,7 @@ export default function ParentsSpaceView({ isBorn, actualBirth, onBirthSaved, on
                   <span>RDV Prévu</span>
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <span>🎀</span>
+                  <span className="w-2 h-2 rounded-full bg-[#ECCEE6] border border-[#D26E7B]" />
                   <span>Terme (08/12)</span>
                 </div>
                 {selectedCalendarDay && (
@@ -1048,12 +1193,12 @@ export default function ParentsSpaceView({ isBorn, actualBirth, onBirthSaved, on
               </div>
             </div>
 
-            {/* 2. FORMULAIRE AJOUT RDV */}
-            <form onSubmit={handleAddAppointment} className="bg-white p-4 rounded-3xl border-2 border-[#EFE89F] shadow-xs space-y-2.5">
+            {/* 2. FORMULAIRE AJOUT RDV (DATE ET HEURE L'UNE EN DESSOUS DE L'AUTRE SANS DÉBORDEMENT) */}
+            <form onSubmit={handleAddAppointment} className="bg-white p-4 rounded-3xl border-2 border-[#EFE89F] shadow-xs space-y-3">
               <div className="flex items-center justify-between">
                 <h4 className="text-xs font-black text-[#1E4E42] flex items-center gap-1.5">
                   <PlusCircle className="w-3.5 h-3.5 text-[#D26E7B]" />
-                  <span>Ajouter un Rendez-Vous Médical</span>
+                  <span>Ajouter un Rendez-Vous</span>
                 </h4>
                 {selectedCalendarDay && (
                   <span className="text-[10px] font-bold text-[#D26E7B] bg-[#D26E7B]/10 px-2 py-0.5 rounded-full">
@@ -1065,30 +1210,30 @@ export default function ParentsSpaceView({ isBorn, actualBirth, onBirthSaved, on
               <input
                 type="text"
                 required
-                placeholder="Ex: Échographie T3, Consultation 8ème mois..."
+                placeholder="Titre du rendez-vous (ex: Échographie T3, Consultation 8ème mois...)"
                 value={newRdvTitle}
                 onChange={e => setNewRdvTitle(e.target.value)}
-                className="w-full px-3 py-2 rounded-xl border border-[#EFE89F] text-xs bg-[#FEFCE7] text-slate-800 font-bold focus:outline-none focus:ring-2 focus:ring-[#D26E7B]"
+                className="w-full box-border min-w-0 px-3 py-2 rounded-xl border border-[#EFE89F] text-xs bg-[#FEFCE7] text-slate-800 font-bold focus:outline-none focus:ring-2 focus:ring-[#D26E7B]"
               />
 
-              <div className="grid grid-cols-2 gap-2">
-                <div className="space-y-0.5 min-w-0">
+              <div className="space-y-2">
+                <div className="space-y-0.5">
                   <label className="text-[10px] font-bold text-slate-600 block">Date :</label>
                   <input
                     type="date"
                     required
                     value={newRdvDate}
                     onChange={e => setNewRdvDate(e.target.value)}
-                    className="w-full box-border min-w-0 px-2.5 py-1.5 rounded-xl border border-[#EFE89F] text-xs bg-white text-slate-800"
+                    className="w-full box-border min-w-0 px-3 py-2 rounded-xl border border-[#EFE89F] text-xs bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#D26E7B]"
                   />
                 </div>
-                <div className="space-y-0.5 min-w-0">
+                <div className="space-y-0.5">
                   <label className="text-[10px] font-bold text-slate-600 block">Heure :</label>
                   <input
                     type="time"
                     value={newRdvTime}
                     onChange={e => setNewRdvTime(e.target.value)}
-                    className="w-full box-border min-w-0 px-2.5 py-1.5 rounded-xl border border-[#EFE89F] text-xs bg-white text-slate-800"
+                    className="w-full box-border min-w-0 px-3 py-2 rounded-xl border border-[#EFE89F] text-xs bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#D26E7B]"
                   />
                 </div>
               </div>
@@ -1098,7 +1243,7 @@ export default function ParentsSpaceView({ isBorn, actualBirth, onBirthSaved, on
                 placeholder="Lieu / Praticien (ex: Maternité, Cabinet Dr. Sophie...)"
                 value={newRdvLocation}
                 onChange={e => setNewRdvLocation(e.target.value)}
-                className="w-full px-3 py-2 rounded-xl border border-[#EFE89F] text-xs bg-white text-slate-800"
+                className="w-full box-border min-w-0 px-3 py-2 rounded-xl border border-[#EFE89F] text-xs bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#D26E7B]"
               />
 
               <button
@@ -1132,17 +1277,17 @@ export default function ParentsSpaceView({ isBorn, actualBirth, onBirthSaved, on
                     className="bg-white p-3.5 rounded-2xl border border-[#EFE89F] flex items-center justify-between shadow-2xs hover:shadow-xs transition-all"
                   >
                     <div className="flex items-start gap-2.5">
-                      <div className="w-9 h-9 rounded-xl bg-[#FEFCE7] border border-[#EFE89F] flex items-center justify-center text-base flex-shrink-0">
-                        🩺
+                      <div className="w-9 h-9 rounded-xl bg-[#FEFCE7] border border-[#EFE89F] flex items-center justify-center text-[#D26E7B] flex-shrink-0">
+                        <Calendar className="w-4 h-4" />
                       </div>
                       <div>
                         <p className="text-xs font-black text-slate-800">{rdv.title}</p>
                         <p className="text-[10px] text-[#D26E7B] font-bold mt-0.5">
-                          📅 {rdv.date ? new Date(rdv.date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' }) : ''} {rdv.time ? `à ${rdv.time}` : ''}
+                          {rdv.date ? new Date(rdv.date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' }) : ''} {rdv.time ? `à ${rdv.time}` : ''}
                         </p>
                         {rdv.location && (
                           <p className="text-[10px] text-slate-500 font-medium">
-                            📍 {rdv.location}
+                            {rdv.location}
                           </p>
                         )}
                       </div>
@@ -1151,7 +1296,7 @@ export default function ParentsSpaceView({ isBorn, actualBirth, onBirthSaved, on
                     <button
                       type="button"
                       onClick={() => handleDeleteAppointment(rdv.id)}
-                      className="text-slate-300 hover:text-red-500 p-1.5 transition-colors"
+                      className="text-slate-300 hover:text-red-500 p-1.5 transition-colors cursor-pointer"
                       title="Supprimer ce rendez-vous"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
@@ -1163,6 +1308,84 @@ export default function ParentsSpaceView({ isBorn, actualBirth, onBirthSaved, on
           </div>
         );
       })()}
+
+      {/* 5. TAB: CODE DE SÉCURITÉ PARENTS */}
+      {activeTab === 'code' && (
+        <div className="bg-white rounded-3xl p-5 shadow-sm border border-[#EFE89F] space-y-4 animate-in fade-in">
+          <div className="flex items-center gap-2.5 border-b border-slate-100 pb-3">
+            <div className="w-10 h-10 rounded-2xl bg-amber-50 flex items-center justify-center text-[#D26E7B]">
+              <Key className="w-5 h-5" />
+            </div>
+            <div>
+              <h3 className="font-serif text-base font-bold text-slate-800">
+                Code Secret Parents
+              </h3>
+              <p className="text-xs text-slate-400">
+                Modifiez votre code d'accès privé (par défaut : 1234)
+              </p>
+            </div>
+          </div>
+
+          {pinChangeSuccess && (
+            <div className="p-3 bg-emerald-50 text-emerald-800 text-xs font-bold rounded-2xl border border-emerald-200 flex items-center gap-2">
+              <ShieldCheck className="w-4 h-4 text-emerald-600" />
+              <span>{pinChangeSuccess}</span>
+            </div>
+          )}
+
+          {pinChangeError && (
+            <div className="p-3 bg-rose-50 text-rose-700 text-xs font-bold rounded-2xl border border-rose-200 flex items-center gap-2">
+              <AlertCircle className="w-4 h-4 text-rose-500" />
+              <span>{pinChangeError}</span>
+            </div>
+          )}
+
+          <form onSubmit={handleChangePin} className="space-y-3 max-w-sm">
+            <div className="space-y-1">
+              <label className="text-[11px] font-bold text-slate-700 block">Code actuel :</label>
+              <input
+                type="password"
+                required
+                value={oldPinInput}
+                onChange={e => setOldPinInput(e.target.value)}
+                placeholder="••••"
+                className="w-full px-3 py-2 rounded-xl border border-[#EFE89F] bg-[#FEFCE7] text-slate-800 text-xs font-bold focus:outline-none focus:ring-2 focus:ring-[#D26E7B]"
+              />
+            </div>
+
+            <div className="space-y-1">
+              <label className="text-[11px] font-bold text-slate-700 block">Nouveau code secret :</label>
+              <input
+                type="password"
+                required
+                value={newPinInput}
+                onChange={e => setNewPinInput(e.target.value)}
+                placeholder="4 chiffres minimum"
+                className="w-full px-3 py-2 rounded-xl border border-[#EFE89F] bg-white text-slate-800 text-xs font-bold focus:outline-none focus:ring-2 focus:ring-[#D26E7B]"
+              />
+            </div>
+
+            <div className="space-y-1">
+              <label className="text-[11px] font-bold text-slate-700 block">Confirmer le nouveau code :</label>
+              <input
+                type="password"
+                required
+                value={confirmPinInput}
+                onChange={e => setConfirmPinInput(e.target.value)}
+                placeholder="••••"
+                className="w-full px-3 py-2 rounded-xl border border-[#EFE89F] bg-white text-slate-800 text-xs font-bold focus:outline-none focus:ring-2 focus:ring-[#D26E7B]"
+              />
+            </div>
+
+            <button
+              type="submit"
+              className="w-full bg-gradient-to-r from-[#D26E7B] to-[#be5361] text-white font-bold py-3 rounded-2xl shadow-md text-xs transition-all cursor-pointer active:scale-95 mt-2"
+            >
+              Enregistrer le nouveau code
+            </button>
+          </form>
+        </div>
+      )}
     </div>
   );
 }
