@@ -3,6 +3,7 @@ import { Heart, Send, Sparkles, Trash2, Smile, Mail } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { useUser } from '../context/UserContext';
 import ParticipantSelector from '../components/ParticipantSelector';
+import LoveEnvelopeIcon from '../components/LoveEnvelopeIcon';
 
 export default function GuestbookView() {
   const { currentUser, setIsRegisterModalOpen } = useUser();
@@ -79,9 +80,8 @@ export default function GuestbookView() {
               Laissez un message plein de tendresse pour Alizée, Lucas & leur petit prince 🦕 !
             </p>
           </div>
-          <div className="w-12 h-12 rounded-2xl bg-white/90 border border-[#ECCEE6] flex items-center justify-center shadow-2xs relative flex-shrink-0">
-            <Mail className="w-6 h-6 text-[#D26E7B] stroke-[2.2px]" />
-            <Heart className="w-3 h-3 text-[#D26E7B] fill-[#D26E7B] absolute top-1.5 right-1.5 drop-shadow-2xs animate-pulse" />
+          <div className="w-12 h-12 rounded-2xl bg-white/95 border border-[#ECCEE6] flex items-center justify-center shadow-2xs relative flex-shrink-0">
+            <LoveEnvelopeIcon size={30} />
           </div>
         </div>
       </div>
