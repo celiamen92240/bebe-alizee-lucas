@@ -171,48 +171,67 @@ export default function HomeView({ setTab, isBorn, actualBirth }) {
         )}
       </div>
 
-      {/* 2. LE SAVIEZ-VOUS DU JOUR (SANS LA PHOTO DES PARENTS) */}
-      <div className="bg-[#FEFDF0] border border-[#F6ECC9] rounded-[32px] p-5 shadow-sm relative overflow-hidden space-y-2">
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-2xl bg-[#EFE89F]/70 text-[#5D372A] flex items-center justify-center shadow-2xs">
-            <Sprout className="w-4 h-4 text-[#D26E7B]" />
+      {/* 2. ÉVOLUTION DU BÉBÉ (DESIGN COMPACT, ÉPURÉ & PEP'S) */}
+      <div className="bg-gradient-to-br from-[#EFE89F]/40 via-white to-[#C5D88F]/30 rounded-3xl p-5 shadow-md border-2 border-[#C5D88F] space-y-3.5 relative overflow-hidden">
+        {/* Header Title Row */}
+        <div className="flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2">
+            <span className="text-xl p-1.5 bg-[#EFE89F] rounded-xl shadow-2xs">🌱</span>
+            <h3 className="font-serif text-sm font-black text-[#1E4E42]">
+              Évolution semaine après semaine
+            </h3>
           </div>
-          <span className="text-xs font-black text-[#D26E7B]">Le saviez-vous ?</span>
+          <span className="text-[11px] font-black text-[#1E4E42] bg-[#EFE89F] border border-white/80 rounded-xl px-3 py-1 flex items-center gap-1 shadow-sm whitespace-nowrap flex-shrink-0">
+            <span>✨ Sem. {currentWeek}</span>
+          </span>
         </div>
-        <h4 className="font-serif text-sm font-black text-slate-800 leading-snug">
-          {dailyFact?.title || "Les genoux sans rotules dures"}
-        </h4>
-        <p className="text-[11px] text-slate-600 leading-relaxed font-medium">
-          {dailyFact?.content || "Les bébés naissent sans rotules dures ! Leurs genoux sont en cartilage tout doux pour faciliter leur position fœtale."}
-        </p>
-        <div className="flex items-center gap-1.5 pt-0.5">
-          <span className="w-2 h-2 rounded-full bg-[#D26E7B]"></span>
-          <span className="w-1.5 h-1.5 rounded-full bg-slate-200"></span>
-          <span className="w-1.5 h-1.5 rounded-full bg-slate-200"></span>
+
+        {/* Fruit Detail Content */}
+        <div className="bg-white/95 backdrop-blur-md rounded-2xl p-4 border border-[#C5D88F]/60 flex items-center gap-4 shadow-xs">
+          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#EFE89F]/60 to-[#C5D88F]/40 shadow-xs border-2 border-[#C5D88F] flex items-center justify-center text-4xl flex-shrink-0 animate-bounce-subtle">
+            {fruitInfo.emoji}
+          </div>
+
+          <div className="space-y-1.5 min-w-0 flex-1">
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="font-extrabold text-sm text-[#1E4E42]">
+                Comme {fruitInfo.fruit}
+              </span>
+              <span className="text-[10px] bg-[#EFE89F] text-[#6E732E] px-2.5 py-0.5 rounded-full font-extrabold whitespace-nowrap flex-shrink-0">
+                Sem. {currentWeek}
+              </span>
+            </div>
+
+            <div className="flex items-center gap-3 text-xs text-[#92AFEC] font-bold whitespace-nowrap">
+              <span>📏 {fruitInfo.sizeCm} cm</span>
+              <span>•</span>
+              <span>⚖️ ~{fruitInfo.weightG} g</span>
+            </div>
+
+            <p className="text-[11px] text-slate-600 italic leading-snug">
+              « {fruitInfo.desc} »
+            </p>
+          </div>
         </div>
       </div>
 
-      {/* 2.5 ÉVOLUTION DU BÉBÉ (NAVET GOURMAND PLUS GRAND & PLUS DESIGN) */}
-      <div className="bg-gradient-to-br from-[#EFE89F]/40 via-white to-[#C5D88F]/30 rounded-3xl p-4.5 shadow-sm border border-[#C5D88F]/60 flex items-center gap-4">
-        <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#EFE89F]/70 via-white to-[#C5D88F]/50 shadow-xs border-2 border-[#C5D88F] flex items-center justify-center text-4xl flex-shrink-0 animate-bounce-subtle">
-          🌱
+      {/* 2.5 LE SAVIEZ-VOUS DU JOUR (ROTATION QUOTIDIENNE) */}
+      <div className="bg-gradient-to-br from-[#EFE89F]/50 via-[#EFE89F]/25 to-white rounded-3xl p-4 shadow-md border-2 border-[#EFE89F] space-y-2 relative overflow-hidden">
+        <div className="flex items-center gap-2">
+          <div className="w-7 h-7 rounded-xl bg-white text-amber-500 flex items-center justify-center shadow-2xs border border-[#EFE89F]">
+            <Lightbulb className="w-4 h-4 text-amber-500 fill-amber-300" />
+          </div>
+          <h3 className="font-serif text-xs font-black text-[#1E4E42]">
+            Le saviez-vous ? • Astuce du Jour
+          </h3>
         </div>
-        <div className="space-y-1.5 min-w-0 flex-1">
-          <div className="flex items-center gap-2 flex-wrap">
-            <span className="font-extrabold text-sm text-[#1E4E42]">
-              Comme un navet gourmand
-            </span>
-            <span className="text-[10px] bg-[#EFE89F] text-[#6E732E] px-2.5 py-0.5 rounded-full font-black">
-              Sem. {currentWeek}
-            </span>
-          </div>
-          <div className="flex items-center gap-2.5 text-xs text-[#92AFEC] font-black">
-            <span>📏 ~35.6 cm</span>
-            <span>•</span>
-            <span>⚖️ ~900 g</span>
-          </div>
-          <p className="text-[10.5px] text-slate-500 italic leading-snug">
-            « Bébé commence à ouvrir grand ses yeux et reconnaît la voix de Lucas et d'Alizée ! »
+
+        <div className="bg-white/95 rounded-2xl p-3.5 border border-[#EFE89F] space-y-1 shadow-2xs">
+          <p className="text-xs font-black text-[#D26E7B]">
+            {dailyFact?.title || "Le développement sensoriel ✨"}
+          </p>
+          <p className="text-[11px] text-slate-700 leading-relaxed font-medium">
+            {dailyFact?.content || "À ce stade, bébé réagit déjà aux voix de ses parents et aux caresses sur le ventre !"}
           </p>
         </div>
       </div>
