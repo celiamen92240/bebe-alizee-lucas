@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Calendar, Heart, Clock, Sparkles, Trophy, ArrowRight, Baby, Crown, Star, Flame, Lock, Lightbulb, Target, Mail, Puzzle, MessageSquareText, ShieldCheck, ChevronRight, Sprout, CalendarHeart } from 'lucide-react';
+import { Calendar, Heart, Clock, Sparkles, Trophy, ArrowRight, Baby, Crown, Star, Flame, Lock, Lightbulb, Target, Mail, MailOpen, Puzzle, MessageSquareText, ShieldCheck, ChevronRight, Sprout, CalendarHeart } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { useUser } from '../context/UserContext';
 import { fruitsData } from '../data/fruitsData';
@@ -171,59 +171,48 @@ export default function HomeView({ setTab, isBorn, actualBirth }) {
         )}
       </div>
 
-      {/* 2. LE SAVIEZ-VOUS DU JOUR (DESIGN DU MOCKUP AVEC PHOTO DES PARENTS) */}
-      <div className="bg-[#FEFDF0] border border-[#F6ECC9] rounded-[32px] p-5 shadow-sm relative overflow-hidden flex items-center justify-between gap-3">
-        <div className="space-y-2 flex-1 min-w-0">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-2xl bg-[#EFE89F]/70 text-[#5D372A] flex items-center justify-center shadow-2xs">
-              <Sprout className="w-4 h-4 text-[#D26E7B]" />
-            </div>
-            <span className="text-xs font-black text-[#D26E7B]">Le saviez-vous ?</span>
+      {/* 2. LE SAVIEZ-VOUS DU JOUR (SANS LA PHOTO DES PARENTS) */}
+      <div className="bg-[#FEFDF0] border border-[#F6ECC9] rounded-[32px] p-5 shadow-sm relative overflow-hidden space-y-2">
+        <div className="flex items-center gap-2">
+          <div className="w-8 h-8 rounded-2xl bg-[#EFE89F]/70 text-[#5D372A] flex items-center justify-center shadow-2xs">
+            <Sprout className="w-4 h-4 text-[#D26E7B]" />
           </div>
-          <h4 className="font-serif text-sm font-black text-slate-800 leading-snug">
-            {dailyFact?.title || "Les genoux sans rotules dures"}
-          </h4>
-          <p className="text-[11px] text-slate-600 leading-relaxed line-clamp-3">
-            {dailyFact?.content || "Les bébés naissent sans rotules dures ! Leurs genoux sont en cartilage tout doux pour faciliter leur position fœtale."}
-          </p>
-          <div className="flex items-center gap-1.5 pt-0.5">
-            <span className="w-2 h-2 rounded-full bg-[#D26E7B]"></span>
-            <span className="w-1.5 h-1.5 rounded-full bg-slate-200"></span>
-            <span className="w-1.5 h-1.5 rounded-full bg-slate-200"></span>
-          </div>
+          <span className="text-xs font-black text-[#D26E7B]">Le saviez-vous ?</span>
         </div>
-
-        {/* Photo des Parents / Logo dans un cadre doux */}
-        <div className="w-24 h-24 rounded-[26px] bg-gradient-to-br from-[#FFE4EE] to-[#FFD1E3] p-1 shadow-inner border-2 border-white flex-shrink-0 overflow-hidden flex items-center justify-center">
-          {headerPhoto ? (
-            <img src={headerPhoto} alt="Alizée & Lucas" className="w-full h-full object-cover rounded-[22px]" />
-          ) : (
-            <img src="/logo.jpg" alt="Alizée & Lucas" className="w-full h-full object-cover rounded-[22px]" />
-          )}
+        <h4 className="font-serif text-sm font-black text-slate-800 leading-snug">
+          {dailyFact?.title || "Les genoux sans rotules dures"}
+        </h4>
+        <p className="text-[11px] text-slate-600 leading-relaxed font-medium">
+          {dailyFact?.content || "Les bébés naissent sans rotules dures ! Leurs genoux sont en cartilage tout doux pour faciliter leur position fœtale."}
+        </p>
+        <div className="flex items-center gap-1.5 pt-0.5">
+          <span className="w-2 h-2 rounded-full bg-[#D26E7B]"></span>
+          <span className="w-1.5 h-1.5 rounded-full bg-slate-200"></span>
+          <span className="w-1.5 h-1.5 rounded-full bg-slate-200"></span>
         </div>
       </div>
 
-      {/* 2.5 ÉVOLUTION DU BÉBÉ (SEMAINE PAR SEMAINE) */}
-      <div className="bg-gradient-to-br from-[#EFE89F]/40 via-white to-[#C5D88F]/30 rounded-3xl p-4 shadow-sm border border-[#C5D88F]/60 flex items-center gap-3.5">
-        <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#EFE89F]/60 to-[#C5D88F]/40 shadow-xs border border-[#C5D88F] flex items-center justify-center text-3xl flex-shrink-0">
-          {fruitInfo.emoji}
+      {/* 2.5 ÉVOLUTION DU BÉBÉ (NAVET GOURMAND PLUS GRAND & PLUS DESIGN) */}
+      <div className="bg-gradient-to-br from-[#EFE89F]/40 via-white to-[#C5D88F]/30 rounded-3xl p-4.5 shadow-sm border border-[#C5D88F]/60 flex items-center gap-4">
+        <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#EFE89F]/70 via-white to-[#C5D88F]/50 shadow-xs border-2 border-[#C5D88F] flex items-center justify-center text-4xl flex-shrink-0 animate-bounce-subtle">
+          🌱
         </div>
-        <div className="space-y-1 min-w-0 flex-1">
-          <div className="flex items-center gap-2">
-            <span className="font-extrabold text-xs text-[#1E4E42]">
-              Comme {fruitInfo.fruit}
+        <div className="space-y-1.5 min-w-0 flex-1">
+          <div className="flex items-center gap-2 flex-wrap">
+            <span className="font-extrabold text-sm text-[#1E4E42]">
+              Comme un navet gourmand
             </span>
-            <span className="text-[9px] bg-[#EFE89F] text-[#6E732E] px-2 py-0.5 rounded-full font-extrabold">
+            <span className="text-[10px] bg-[#EFE89F] text-[#6E732E] px-2.5 py-0.5 rounded-full font-black">
               Sem. {currentWeek}
             </span>
           </div>
-          <div className="flex items-center gap-2 text-[11px] text-[#92AFEC] font-bold">
-            <span>📏 {fruitInfo.sizeCm} cm</span>
+          <div className="flex items-center gap-2.5 text-xs text-[#92AFEC] font-black">
+            <span>📏 ~35.6 cm</span>
             <span>•</span>
-            <span>⚖️ ~{fruitInfo.weightG} g</span>
+            <span>⚖️ ~900 g</span>
           </div>
-          <p className="text-[10px] text-slate-500 italic truncate">
-            « {fruitInfo.desc} »
+          <p className="text-[10.5px] text-slate-500 italic leading-snug">
+            « Bébé commence à ouvrir grand ses yeux et reconnaît la voix de Lucas et d'Alizée ! »
           </p>
         </div>
       </div>
@@ -353,8 +342,8 @@ export default function HomeView({ setTab, isBorn, actualBirth }) {
         >
           <div className="flex items-center gap-3.5">
             <div className="w-12 h-12 rounded-full bg-white shadow-2xs flex items-center justify-center flex-shrink-0 relative border border-pink-100">
-              <Mail className="w-5 h-5 text-[#F2619C] stroke-[2.2px]" />
-              <Heart className="w-2.5 h-2.5 text-[#F2619C] fill-[#F2619C] absolute top-2 right-2 drop-shadow-2xs animate-pulse" />
+              <MailOpen className="w-5 h-5 text-[#F2619C] stroke-[2.2px]" />
+              <Heart className="w-2.5 h-2.5 text-[#F2619C] fill-[#F2619C] absolute -top-1 right-2 drop-shadow-2xs animate-pulse" />
             </div>
             <div className="text-left">
               <p className="font-serif font-black text-sm text-[#4A154B] leading-tight">Capsule d'Amour & Mots Doux</p>
