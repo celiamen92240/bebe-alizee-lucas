@@ -191,11 +191,11 @@ export default function HomeView({ setTab, isBorn, actualBirth }) {
             <FruitIllustration fruit={fruitInfo.fruit} size={48} className="drop-shadow-xs" />
           </div>
           <div className="space-y-1.5 min-w-0 flex-1">
-            <div className="flex items-center justify-between gap-1.5 min-w-0">
-              <span className="font-extrabold text-xs sm:text-sm text-[#1E4E42] truncate">
+            <div className="flex items-center justify-between gap-2 min-w-0">
+              <span className="font-extrabold text-[11px] sm:text-xs text-[#1E4E42] leading-tight flex-1">
                 Comme {fruitInfo.fruit}
               </span>
-              <span className="text-[10px] bg-[#EFE89F] text-[#6E732E] px-2.5 py-0.5 rounded-full font-extrabold whitespace-nowrap flex-shrink-0">
+              <span className="text-[9px] bg-[#EFE89F] text-[#6E732E] px-2 py-0.5 rounded-full font-black whitespace-nowrap flex-shrink-0 border border-[#C5D88F]/60">
                 Sem. {currentWeek}
               </span>
             </div>
