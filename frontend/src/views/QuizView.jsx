@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { HelpCircle, Sparkles, CheckCircle2, RotateCcw, ChevronLeft, ChevronRight, Trophy, User, ArrowRight, UserCheck, BarChart3, Award, Heart, ShoppingBag, Smile, Compass, Moon, Users, UserPlus } from 'lucide-react';
+import { HelpCircle, Sparkles, CheckCircle2, RotateCcw, ChevronLeft, ChevronRight, Trophy, User, ArrowRight, UserCheck, BarChart3, Award, Heart, ShoppingBag, Smile, Compass, Moon, Users, UserPlus, Lock } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import ParticipantSelector from '../components/ParticipantSelector';
 
@@ -124,6 +124,7 @@ export default function QuizView() {
   const hasAlreadyCompleted = Boolean(
     selectedPlayer && (
       (summary?.completedVoters || []).some(v => (v || '').toLowerCase() === selectedPlayer.toLowerCase()) ||
+      (summary?.votedVoters || []).some(v => (v || '').toLowerCase() === selectedPlayer.toLowerCase()) ||
       localStorage.getItem(`quiz_completed_alizee_${selectedPlayer.toLowerCase()}`) === 'true' ||
       (Object.keys(myVotes).length >= (questions.length || 50) && questions.length > 0)
     )
@@ -383,13 +384,22 @@ export default function QuizView() {
 
               return (
                 <div className="space-y-4">
+                  {hasAlreadyCompleted && (
+                    <div className="bg-amber-50 rounded-xl p-2.5 border border-amber-200 text-center text-[11px] font-bold text-amber-800 flex items-center justify-center gap-1.5 animate-in fade-in">
+                      <Lock className="w-3.5 h-3.5 text-amber-600 flex-shrink-0" />
+                      <span>Mode consultation : Votre vote pour ce duel a déjà été enregistré.</span>
+                    </div>
+                  )}
+
                   <div className="grid grid-cols-2 gap-3.5">
                     <button
                       key={`btn-alizee-${qId}`}
                       type="button"
-                      disabled={isVoting}
+                      disabled={isVoting || hasAlreadyCompleted}
                       onClick={() => handleVote(qId, 'Alizée')}
-                      className={`py-6 px-3 rounded-2xl font-black text-sm flex flex-col items-center justify-center gap-2 transition-all cursor-pointer active:scale-95 ${
+                      className={`py-6 px-3 rounded-2xl font-black text-sm flex flex-col items-center justify-center gap-2 transition-all ${
+                        hasAlreadyCompleted ? 'cursor-default opacity-90' : 'cursor-pointer active:scale-95'
+                      } ${
                         userChoice === 'Alizée'
                           ? 'bg-gradient-to-r from-[#D26E7B] to-[#be5361] text-white shadow-lg ring-4 ring-[#EFE89F] scale-102 font-extrabold'
                           : 'bg-[#fcf4f5] hover:bg-[#f9eaec] text-[#9f414e] border-2 border-[#ebb6bc] shadow-xs'
@@ -406,9 +416,11 @@ export default function QuizView() {
                     <button
                       key={`btn-lucas-${qId}`}
                       type="button"
-                      disabled={isVoting}
+                      disabled={isVoting || hasAlreadyCompleted}
                       onClick={() => handleVote(qId, 'Lucas')}
-                      className={`py-6 px-3 rounded-2xl font-black text-sm flex flex-col items-center justify-center gap-2 transition-all cursor-pointer active:scale-95 ${
+                      className={`py-6 px-3 rounded-2xl font-black text-sm flex flex-col items-center justify-center gap-2 transition-all ${
+                        hasAlreadyCompleted ? 'cursor-default opacity-90' : 'cursor-pointer active:scale-95'
+                      } ${
                         userChoice === 'Lucas'
                           ? 'bg-gradient-to-r from-[#92AFEC] to-[#5578dc] text-white shadow-lg ring-4 ring-[#C5D88F] scale-102 font-extrabold'
                           : 'bg-[#f4f7fd] hover:bg-[#e8effb] text-[#354ab9] border-2 border-[#d6e2f8] shadow-xs'

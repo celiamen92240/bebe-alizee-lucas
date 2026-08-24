@@ -1103,14 +1103,15 @@ module.exports = {
       };
     });
 
-    const uniqueVoters = new Set((data.quizVotes || []).map(v => (v.voter || '').trim().toLowerCase()).filter(Boolean));
-    const uniqueVotersCount = uniqueVoters.size;
+    const uniqueVoters = Array.from(new Set((data.quizVotes || []).map(v => (v.voter || '').trim().toLowerCase()).filter(Boolean)));
+    const uniqueVotersCount = uniqueVoters.length;
 
     return {
       questions: Object.values(stats),
       summary: {
         totalVotes: totalAllVotes,
         uniqueVotersCount,
+        votedVoters: uniqueVoters,
         completedVoters,
         alizeeScore: totalAlizee,
         lucasScore: totalLucas,
