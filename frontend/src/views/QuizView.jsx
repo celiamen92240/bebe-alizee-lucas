@@ -156,9 +156,9 @@ export default function QuizView() {
 
   return (
     <div className="space-y-4 pb-8">
-      {/* Header Banner - Design Professionnel & Épuré */}
-      <div className="bg-gradient-to-br from-[#EFE89F]/40 via-white to-[#C5D88F]/30 rounded-3xl p-5 border-2 border-[#C5D88F] shadow-md relative overflow-hidden space-y-3">
-        <div className="flex items-center justify-between">
+      {/* Header Banner - Design Pinterest & Épuré */}
+      <div className="bg-gradient-to-br from-[#EFE89F]/35 via-white to-[#C5D88F]/40 rounded-3xl p-5 border-2 border-[#C5D88F] shadow-md relative overflow-hidden space-y-4">
+        <div className="flex items-center justify-between gap-3">
           <div className="space-y-1">
             <div className="flex items-center gap-2 flex-wrap">
               <span className="text-[10px] font-black uppercase tracking-wider text-[#6E732E] bg-[#EFE89F] px-2.5 py-0.5 rounded-full border border-white/80 flex items-center gap-1 shadow-2xs">
@@ -166,45 +166,50 @@ export default function QuizView() {
                 <span>Duel des Parents • 50 Questions</span>
               </span>
               
-              <span className="text-[10px] font-bold text-slate-500 bg-white/90 px-2.5 py-0.5 rounded-full border border-[#C5D88F] flex items-center gap-1 shadow-2xs">
+              <span className="text-[10px] font-bold text-slate-600 bg-white/70 backdrop-blur-xs px-2.5 py-0.5 rounded-full border border-[#C5D88F]/60 flex items-center gap-1 shadow-2xs">
                 👥 {summary.uniqueVotersCount || 0} {(summary.uniqueVotersCount || 0) > 1 ? 'participants' : 'participant'}
               </span>
             </div>
 
-            <h2 className="font-serif text-2xl font-black text-[#1E4E42] tracking-tight">
+            <h2 className="font-serif text-2xl font-black text-[#1E4E42] tracking-tight leading-tight pt-0.5">
               Qui d'Alizée ou de Lucas ?
             </h2>
-            <p className="text-xs text-slate-600 font-medium">
+            <p className="text-xs text-[#1E4E42]/80 font-medium">
               Votez et découvrez qui remportera les 5 grands titres de super parents !
             </p>
           </div>
-          <span className="text-3xl p-2 bg-white/80 rounded-2xl shadow-xs border border-white">⚖️</span>
+
+          <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-[#D26E7B]/20 via-[#EFE89F]/40 to-[#C5D88F]/50 border border-[#C5D88F]/50 flex items-center justify-center text-xl shadow-xs flex-shrink-0">
+            ✨
+          </div>
         </div>
 
-        {/* Segmented Control Professionnel : Quiz vs Résultats */}
-        <div className="grid grid-cols-2 p-1 bg-white/90 rounded-2xl border border-[#C5D88F] shadow-2xs text-xs font-bold gap-1">
+        {/* Segmented Control Pinterest Style : Sans fond blanc agressif */}
+        <div className="bg-[#C5D88F]/30 backdrop-blur-md p-1.5 rounded-2xl border border-[#C5D88F]/60 shadow-2xs flex gap-1.5">
           <button
             type="button"
             onClick={() => { setActiveTab('play'); }}
-            className={`py-2.5 rounded-xl transition-all cursor-pointer text-center font-extrabold ${
+            className={`flex-1 py-2.5 px-3 rounded-xl transition-all cursor-pointer text-center text-xs font-black tracking-wide flex items-center justify-center gap-1.5 ${
               activeTab === 'play'
-                ? 'bg-gradient-to-r from-[#D26E7B] to-[#be5361] text-white shadow-sm'
-                : 'text-slate-600 hover:text-slate-900'
+                ? 'bg-[#D26E7B] text-white shadow-md scale-[1.02]'
+                : 'text-[#1E4E42] hover:bg-white/40'
             }`}
           >
-            🎯 Répondre au Quiz
+            <Sparkles className="w-3.5 h-3.5" />
+            <span>Répondre au Quiz</span>
           </button>
 
           <button
             type="button"
             onClick={() => { setActiveTab('results'); fetchQuizData(); }}
-            className={`py-2.5 rounded-xl transition-all cursor-pointer text-center font-extrabold ${
+            className={`flex-1 py-2.5 px-3 rounded-xl transition-all cursor-pointer text-center text-xs font-black tracking-wide flex items-center justify-center gap-1.5 ${
               activeTab === 'results'
-                ? 'bg-[#1E4E42] text-white shadow-sm'
-                : 'text-slate-600 hover:text-slate-900'
+                ? 'bg-[#1E4E42] text-white shadow-md scale-[1.02]'
+                : 'text-[#1E4E42] hover:bg-white/40'
             }`}
           >
-            📊 Résultats en Direct
+            <Trophy className="w-3.5 h-3.5" />
+            <span>Tendances & Résultats</span>
           </button>
         </div>
       </div>

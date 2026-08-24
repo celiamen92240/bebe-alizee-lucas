@@ -114,9 +114,9 @@ export default {
         }
       },
       fontFamily: {
-        serif: ['Fraunces', 'DM Serif Display', 'Playfair Display', 'Georgia', 'serif'],
-        display: ['Fraunces', 'serif'],
-        sans: ['Outfit', 'Plus Jakarta Sans', 'system-ui', '-apple-system', 'sans-serif'],
+        serif: ['Calistoga', 'Fraunces', 'DM Serif Display', 'Playfair Display', 'Georgia', 'serif'],
+        display: ['Calistoga', 'Fraunces', 'serif'],
+        sans: ['Plus Jakarta Sans', 'Outfit', 'system-ui', '-apple-system', 'sans-serif'],
         handwriting: ['Caveat', 'cursive']
       }
     },
