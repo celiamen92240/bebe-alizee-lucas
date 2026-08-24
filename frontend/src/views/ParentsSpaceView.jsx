@@ -741,19 +741,14 @@ export default function ParentsSpaceView({ isBorn, actualBirth, onBirthSaved, on
                       </div>
                       <h4 className="font-serif text-sm font-black text-slate-800">{cat}</h4>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <span className="text-[10px] font-bold text-[#D26E7B] bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200">
-                        {catChecked}/{catItems.length} achetés
-                      </span>
-                      <button
-                        type="button"
-                        onClick={() => handleDeleteCategory(cat)}
-                        className="text-slate-300 hover:text-red-500 p-1 cursor-pointer"
-                        title="Supprimer cette catégorie"
-                      >
-                        <X className="w-3.5 h-3.5" />
-                      </button>
-                    </div>
+                    <button
+                      type="button"
+                      onClick={() => handleDeleteCategory(cat)}
+                      className="text-slate-300 hover:text-red-500 p-1 cursor-pointer"
+                      title="Supprimer cette catégorie"
+                    >
+                      <X className="w-3.5 h-3.5" />
+                    </button>
                   </div>
 
                   <div className="space-y-1.5">
@@ -845,9 +840,6 @@ export default function ParentsSpaceView({ isBorn, actualBirth, onBirthSaved, on
                 </div>
                 <h4 className="font-serif text-sm font-black text-[#1E4E42]">Pour Bébé</h4>
               </div>
-              <span className="text-[10px] font-bold text-[#854D0E] bg-amber-100/80 px-2.5 py-0.5 rounded-full border border-[#EFE89F]">
-                {babyItems.filter(i => i.completed).length}/{babyItems.length} prêts
-              </span>
             </div>
 
             <div className="space-y-1.5">
@@ -906,9 +898,6 @@ export default function ParentsSpaceView({ isBorn, actualBirth, onBirthSaved, on
                 </div>
                 <h4 className="font-serif text-sm font-black text-[#9D174D]">Pour Alizée</h4>
               </div>
-              <span className="text-[10px] font-bold text-[#9D174D] bg-rose-100/80 px-2.5 py-0.5 rounded-full border border-[#FBCFE8]">
-                {alizeeItems.filter(i => i.completed).length}/{alizeeItems.length} prêts
-              </span>
             </div>
 
             <div className="space-y-1.5">
@@ -967,9 +956,6 @@ export default function ParentsSpaceView({ isBorn, actualBirth, onBirthSaved, on
                 </div>
                 <h4 className="font-serif text-sm font-black text-[#166534]">Pour Lucas</h4>
               </div>
-              <span className="text-[10px] font-bold text-[#166534] bg-emerald-100/80 px-2.5 py-0.5 rounded-full border border-[#BBF7D0]">
-                {lucasItems.filter(i => i.completed).length}/{lucasItems.length} prêts
-              </span>
             </div>
 
             <div className="space-y-1.5">
