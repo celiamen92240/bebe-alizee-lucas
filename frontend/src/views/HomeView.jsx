@@ -4,6 +4,7 @@ import {
   CalendarHeart, ArrowRight, Lightbulb, ChevronRight, Lock, Mail, Sprout, MailOpen, Puzzle, ShieldCheck
 } from 'lucide-react';
 import BabyVectorLogo from '../components/BabyVectorLogo';
+import FruitIllustration from '../components/FruitIllustration';
 import confetti from 'canvas-confetti';
 import { useUser } from '../context/UserContext';
 import { fruitsData } from '../data/fruitsData';
@@ -175,24 +176,18 @@ export default function HomeView({ setTab, isBorn, actualBirth }) {
       </div>
 
       {/* 2. ÉVOLUTION DU BÉBÉ (DESIGN COMPACT, ÉPURÉ & PEP'S) */}
-      <div className="bg-gradient-to-br from-[#EFE89F]/40 via-white to-[#C5D88F]/30 rounded-3xl p-5 shadow-md border-2 border-[#C5D88F] space-y-3.5 relative overflow-hidden">
-        {/* Header Title Row */}
-        <div className="flex items-center justify-between gap-2">
-          <div className="flex items-center gap-2">
-            <span className="text-xl p-1.5 bg-[#EFE89F] rounded-xl shadow-2xs">🌱</span>
-            <h3 className="font-serif text-sm font-black text-[#1E4E42]">
-              Évolution semaine après semaine
-            </h3>
-          </div>
-          <span className="text-[11px] font-black text-[#1E4E42] bg-[#EFE89F] border border-white/80 rounded-xl px-3 py-1 flex items-center gap-1 shadow-sm whitespace-nowrap flex-shrink-0">
-            <span>✨ Sem. {currentWeek}</span>
-          </span>
+      <div className="bg-gradient-to-br from-[#EFE89F]/40 via-white to-[#C5D88F]/30 rounded-3xl p-5 shadow-md border-2 border-[#C5D88F] space-y-3 relative overflow-hidden">
+        {/* Header Title Row sur une seule ligne épurée */}
+        <div>
+          <h3 className="font-serif text-xs font-black text-[#1E4E42] tracking-wide">
+            Évolution semaine après semaine
+          </h3>
         </div>
 
         {/* Fruit Detail Content */}
         <div className="bg-white/95 backdrop-blur-md rounded-2xl p-4 border border-[#C5D88F]/60 flex items-center gap-4 shadow-xs">
-          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#EFE89F]/60 to-[#C5D88F]/40 shadow-xs border-2 border-[#C5D88F] flex items-center justify-center text-4xl flex-shrink-0 animate-bounce-subtle">
-            {fruitInfo.emoji}
+          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#EFE89F]/40 to-[#C5D88F]/30 shadow-xs border border-[#C5D88F] flex items-center justify-center flex-shrink-0">
+            <FruitIllustration fruit={fruitInfo.fruit} size={48} className="drop-shadow-xs" />
           </div>
 
           <div className="space-y-1.5 min-w-0 flex-1">
