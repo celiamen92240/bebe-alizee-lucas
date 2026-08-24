@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Target, Sparkles, Trophy, Plus, CheckCircle, Calendar, Clock, Weight, Ruler, Eye, User, Camera, ArrowRight, ChevronDown } from 'lucide-react';
+import { Target, Sparkles, Trophy, Plus, CheckCircle, Calendar, Clock, Weight, Ruler, Eye, User, Camera, ArrowRight, ChevronDown, MousePointerClick } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { useUser } from '../context/UserContext';
 import ParticipantSelector from '../components/ParticipantSelector';
@@ -321,12 +321,14 @@ export default function PredictionsView({ isBorn, actualBirth, onOpenAdmin }) {
           </span>
         </div>
 
-        {/* Phrase d'indication cool */}
+        {/* Phrase d'indication design sur une seule ligne */}
         {predictions.length > 0 && (
-          <p className="text-xs text-[#1E4E42] font-semibold flex items-center gap-1.5 px-1 bg-[#C5D88F]/20 p-2 rounded-xl border border-[#C5D88F]/40">
-            <span className="text-sm animate-pulse">👉</span>
-            <span>Clique sur un proche pour découvrir son pronostic secret !</span>
-          </p>
+          <div className="flex items-center justify-center gap-1.5 px-3 py-1.5 bg-[#C5D88F]/20 rounded-xl border border-[#C5D88F]/40 shadow-2xs">
+            <MousePointerClick className="w-3.5 h-3.5 text-[#1E4E42] flex-shrink-0" />
+            <span className="text-[11px] text-[#1E4E42] font-medium italic truncate whitespace-nowrap">
+              Clique sur un proche pour découvrir son pronostic secret !
+            </span>
+          </div>
         )}
 
         {predictions.length === 0 ? (
@@ -372,10 +374,9 @@ export default function PredictionsView({ isBorn, actualBirth, onOpenAdmin }) {
                     </div>
 
                     <div className="flex items-center gap-2 flex-shrink-0">
-                      <span className="text-[11px] font-bold text-[#1E4E42] bg-[#C5D88F]/30 px-2.5 py-1 rounded-xl border border-[#C5D88F]/50 flex items-center gap-1">
-                        <span>{isExpanded ? 'Fermer' : 'Voir'}</span>
-                        <ChevronDown className={`w-3 h-3 text-[#1E4E42] transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`} />
-                      </span>
+                      <div className="w-7 h-7 rounded-xl bg-[#C5D88F]/30 border border-[#C5D88F]/50 flex items-center justify-center text-[#1E4E42] transition-colors">
+                        <ChevronDown className={`w-3.5 h-3.5 text-[#1E4E42] transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`} />
+                      </div>
                     </div>
                   </div>
 
