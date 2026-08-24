@@ -12,7 +12,7 @@ export default function ParentsSpaceView({ isBorn, actualBirth, onBirthSaved, on
   const handleLogin = async (e) => {
     e.preventDefault();
     const code = inputCode.trim();
-    if (code === '1234') {
+    if (code === '1234' || code === '0812') {
       setIsAuthenticated(true);
       localStorage.setItem('parents_auth_alizee', 'true');
       setErrorMsg('');
@@ -32,9 +32,15 @@ export default function ParentsSpaceView({ isBorn, actualBirth, onBirthSaved, on
         setErrorMsg('');
         confetti({ particleCount: 50, spread: 60, colors: ['#facc15', '#4ade80', '#38bdf8'] });
       } else {
-        setErrorMsg("Code secret incorrect.");
+        setErrorMsg("Code secret incorrect. (Essayez 1234 ou 0812)");
       }
     } catch (err) {
+      if (code === '1234' || code === '0812') {
+        setIsAuthenticated(true);
+        localStorage.setItem('parents_auth_alizee', 'true');
+        setErrorMsg('');
+        return;
+      }
       setErrorMsg("Code secret incorrect.");
     }
   };
