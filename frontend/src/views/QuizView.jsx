@@ -156,93 +156,91 @@ export default function QuizView() {
 
   return (
     <div className="space-y-4 pb-8">
-      {/* Header Banner */}
-      <div className="glass-card-sun rounded-3xl p-5 border border-sun-300 shadow-md relative overflow-hidden">
+      {/* Header Banner - Design Professionnel & Épuré */}
+      <div className="bg-gradient-to-br from-[#EFE89F]/40 via-white to-[#C5D88F]/30 rounded-3xl p-5 border-2 border-[#C5D88F] shadow-md relative overflow-hidden space-y-3">
         <div className="flex items-center justify-between">
           <div className="space-y-1">
             <div className="flex items-center gap-2 flex-wrap">
-              <span className="text-[10px] font-extrabold uppercase tracking-wider text-sun-800 bg-white/80 px-2.5 py-0.5 rounded-full border border-sun-200 flex items-center gap-1 w-fit">
-                <Sparkles className="w-3 h-3 text-sun-600" />
+              <span className="text-[10px] font-black uppercase tracking-wider text-[#6E732E] bg-[#EFE89F] px-2.5 py-0.5 rounded-full border border-white/80 flex items-center gap-1 shadow-2xs">
+                <Sparkles className="w-3 h-3 text-[#D26E7B]" />
                 <span>Duel des Parents • 50 Questions</span>
               </span>
               
-              <span className="text-[10px] font-bold text-slate-600 bg-white/90 px-2.5 py-0.5 rounded-full border border-sun-200 flex items-center gap-1 shadow-2xs">
-                👥 {summary.uniqueVotersCount || 0} {(summary.uniqueVotersCount || 0) > 1 ? 'personnes ont répondu' : 'personne a répondu'}
+              <span className="text-[10px] font-bold text-slate-500 bg-white/90 px-2.5 py-0.5 rounded-full border border-[#C5D88F] flex items-center gap-1 shadow-2xs">
+                👥 {summary.uniqueVotersCount || 0} {(summary.uniqueVotersCount || 0) > 1 ? 'participants' : 'participant'}
               </span>
             </div>
 
-            <h2 className="font-serif text-2xl font-black bg-gradient-to-r from-[#D26E7B] via-[#92AFEC] to-[#1E4E42] bg-clip-text text-transparent tracking-tight">
-              Qui d'Alizée ou de Lucas
+            <h2 className="font-serif text-2xl font-black text-[#1E4E42] tracking-tight">
+              Qui d'Alizée ou de Lucas ?
             </h2>
-            <p className="text-xs text-amber-800 font-medium">
-              Votez et découvrez qui remportera les 5 grands titres de parents !
+            <p className="text-xs text-slate-600 font-medium">
+              Votez et découvrez qui remportera les 5 grands titres de super parents !
             </p>
           </div>
-          <span className="text-3xl">⚖️</span>
+          <span className="text-3xl p-2 bg-white/80 rounded-2xl shadow-xs border border-white">⚖️</span>
         </div>
 
-        {/* Clean Segmented Control: Quizz vs Résultats */}
-        <div className="grid grid-cols-2 p-1 bg-white/80 rounded-2xl border border-sun-200 mt-3.5 shadow-2xs text-xs font-bold">
+        {/* Segmented Control Professionnel : Quiz vs Résultats */}
+        <div className="grid grid-cols-2 p-1 bg-white/90 rounded-2xl border border-[#C5D88F] shadow-2xs text-xs font-bold gap-1">
           <button
             type="button"
             onClick={() => { setActiveTab('play'); }}
-            className={`py-2 rounded-xl transition-all cursor-pointer text-center ${
+            className={`py-2.5 rounded-xl transition-all cursor-pointer text-center font-extrabold ${
               activeTab === 'play'
-                ? 'bg-amber-500 text-white shadow-xs font-extrabold'
+                ? 'bg-gradient-to-r from-[#D26E7B] to-[#be5361] text-white shadow-sm'
                 : 'text-slate-600 hover:text-slate-900'
             }`}
           >
-            Quizz
+            🎯 Répondre au Quiz
           </button>
 
           <button
             type="button"
             onClick={() => { setActiveTab('results'); fetchQuizData(); }}
-            className={`py-2 rounded-xl transition-all cursor-pointer text-center ${
+            className={`py-2.5 rounded-xl transition-all cursor-pointer text-center font-extrabold ${
               activeTab === 'results'
-                ? 'bg-mint-600 text-white shadow-xs font-extrabold'
+                ? 'bg-[#1E4E42] text-white shadow-sm'
                 : 'text-slate-600 hover:text-slate-900'
             }`}
           >
-            Résultats
+            📊 Résultats en Direct
           </button>
         </div>
       </div>
 
       {/* ======================================================== */}
-      {/* 1. ONGLET JOUER AU QUIZZ (ACCUEIL OU QUESTIONS)         */}
+      {/* 1. ONGLET JOUER AU QUIZ (SÉLECTION JOUEUR OU QUESTIONS) */}
       {/* ======================================================== */}
       {activeTab === 'play' && (
         <>
           {!hasStarted ? (
-            /* ÉCRAN 0 : SÉLECTION DU JOUEUR & DÉMARRAGE */
-            <div className="bg-white rounded-3xl p-6 shadow-md border-2 border-[#EFE89F] text-center space-y-4 animate-in zoom-in-95">
-              <span className="text-4xl">👑</span>
-
+            /* ÉCRAN 0 : SÉLECTION DU JOUEUR SANS DOUBLON DE TITRE */
+            <div className="bg-white rounded-3xl p-6 shadow-md border-2 border-[#C5D88F] text-center space-y-4 animate-in zoom-in-95">
               <div className="space-y-1">
-                <h3 className="font-serif text-lg font-black text-[#1E4E42]">
-                  Qui d'Alizée ou Lucas... ?
+                <h3 className="font-serif text-base font-black text-[#1E4E42]">
+                  Prêt(e) à voter pour ce duel ?
                 </h3>
-                <p className="text-xs text-sun-800 font-medium">
-                  50 questions réparties en 5 grandes catégories familiales !
+                <p className="text-xs text-slate-500 font-medium">
+                  Sélectionne ton profil ci-dessous pour enregistrer tes choix
                 </p>
               </div>
 
-              {/* Clean Player Selection with photo, role and creation modal */}
+              {/* Sélection du joueur propre et élégante */}
               <div className="text-left pt-1">
                 <ParticipantSelector
                   selectedName={selectedPlayer}
                   onSelect={(name) => handleSelectPlayer(name)}
-                  label="Sélectionner un joueur :"
+                  label="Qui participe au quiz ?"
                 />
               </div>
 
               <button
                 type="button"
                 onClick={handleStart}
-                className="w-full bg-gradient-to-r from-[#D26E7B] to-[#be5361] text-white font-bold py-3.5 rounded-2xl shadow-lg text-xs transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-95"
+                className="w-full bg-gradient-to-r from-[#D26E7B] to-[#be5361] text-white font-bold py-3.5 rounded-2xl shadow-md hover:shadow-lg text-xs transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-95"
               >
-                <span>Commencer le Quizz 🚀</span>
+                <span>Lancer le Duel</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
             </div>
