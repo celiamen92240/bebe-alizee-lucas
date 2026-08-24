@@ -94,7 +94,7 @@ export default function PredictionsView({ isBorn, actualBirth, onOpenAdmin }) {
         <div className="flex items-center justify-between">
           <div className="space-y-0.5">
             <span className="text-[10px] font-extrabold uppercase tracking-wider text-sun-800 bg-white/80 px-2.5 py-0.5 rounded-full border border-sun-200">
-              Grand Jeu des Pronostics 🎯
+              Grand Jeu des Pronostics
             </span>
             <h2 className="font-serif text-xl font-extrabold text-slate-800">
               Les Paris de Naissance
@@ -103,15 +103,17 @@ export default function PredictionsView({ isBorn, actualBirth, onOpenAdmin }) {
               Devinez le jour J, le prénom et la bouille du bébé d'Alizée & Lucas !
             </p>
           </div>
-          <span className="text-3xl">🦕</span>
+          <img src="/logo.jpg" alt="Logo" className="w-10 h-10 rounded-2xl object-cover shadow-2xs border border-[#C5D88F]" />
         </div>
       </div>
 
       {/* 1. ÉTAPE PRÉLIMINAIRE : SÉLECTION DU JOUEUR AVANT LE PRONOSTIC */}
       {!isBorn && !showForm && (
         <div className="bg-white rounded-3xl p-5 shadow-lg border-2 border-[#EFE89F] space-y-4 animate-in zoom-in-95">
-          <div className="text-center space-y-1">
-            <span className="text-3xl">🎯</span>
+          <div className="text-center space-y-2">
+            <div className="w-12 h-12 mx-auto rounded-2xl bg-gradient-to-tr from-[#D26E7B]/20 via-[#EFE89F]/40 to-[#C5D88F]/30 border border-[#C5D88F]/50 flex items-center justify-center text-[#D26E7B] shadow-2xs">
+              <Sparkles className="w-6 h-6" />
+            </div>
             <h3 className="font-serif text-base font-black text-slate-800">
               Participer au Grand Pronostic
             </h3>
@@ -144,7 +146,7 @@ export default function PredictionsView({ isBorn, actualBirth, onOpenAdmin }) {
             }}
             className="w-full bg-gradient-to-r from-[#D26E7B] to-[#be5361] text-white font-bold py-3.5 rounded-2xl shadow-lg text-xs transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-95"
           >
-            <span>Commencer mon pronostic 🚀</span>
+            <span>Commencer mon pronostic</span>
             <ArrowRight className="w-4 h-4" />
           </button>
         </div>
@@ -298,7 +300,7 @@ export default function PredictionsView({ isBorn, actualBirth, onOpenAdmin }) {
             className="w-full bg-gradient-to-r from-[#D26E7B] to-[#be5361] text-white font-bold py-3.5 rounded-2xl shadow-md text-xs transition-all flex items-center justify-center gap-1.5 cursor-pointer active:scale-95"
           >
             <CheckCircle className="w-4 h-4" />
-            <span>Enregistrer mon pronostic 🎯</span>
+            <span>Enregistrer mon pronostic</span>
           </button>
         </form>
       )}
@@ -313,7 +315,9 @@ export default function PredictionsView({ isBorn, actualBirth, onOpenAdmin }) {
 
         {predictions.length === 0 ? (
           <div className="bg-white rounded-3xl p-6 text-center border border-[#EFE89F] space-y-2">
-            <span className="text-3xl">🎯</span>
+            <div className="w-12 h-12 mx-auto rounded-2xl bg-gradient-to-tr from-[#D26E7B]/20 via-[#EFE89F]/40 to-[#C5D88F]/30 border border-[#C5D88F]/50 flex items-center justify-center text-[#D26E7B] shadow-2xs">
+              <Sparkles className="w-6 h-6" />
+            </div>
             <p className="text-xs font-bold text-slate-700">Aucun pronostic pour le moment</p>
             <p className="text-[11px] text-slate-400">Sois le tout premier à deviner le jour J !</p>
           </div>
@@ -330,7 +334,7 @@ export default function PredictionsView({ isBorn, actualBirth, onOpenAdmin }) {
                       {p.photo ? (
                         <img src={p.photo} alt={p.author} className="w-full h-full object-cover" />
                       ) : (
-                        <span>🦁</span>
+                        <img src="/logo.jpg" alt={p.author} className="w-full h-full object-cover" />
                       )}
                     </div>
                     <div>
@@ -342,7 +346,7 @@ export default function PredictionsView({ isBorn, actualBirth, onOpenAdmin }) {
                   </div>
                   {p.firstName && (
                     <span className="text-[10px] font-black text-[#D26E7B] bg-[#D26E7B]/10 px-2.5 py-1 rounded-full border border-[#D26E7B]/30">
-                      👑 {p.firstName}
+                      {p.firstName}
                     </span>
                   )}
                 </div>
@@ -351,7 +355,7 @@ export default function PredictionsView({ isBorn, actualBirth, onOpenAdmin }) {
                   {/* Poids */}
                   <div className="bg-[#FEFCE7] rounded-xl p-2 border border-[#EFE89F] shadow-2xs">
                     <p className="text-[9px] uppercase tracking-wider text-slate-400 font-extrabold flex items-center justify-center gap-1">
-                      <span>⚖️ Poids</span>
+                      <span>Poids</span>
                     </p>
                     <p className="text-xs font-black text-[#1E4E42] mt-0.5">{p.weight ? (p.weight > 100 ? `${p.weight} g` : `${p.weight} kg`) : `${p.weightG || 3350} g`}</p>
                   </div>
@@ -359,7 +363,7 @@ export default function PredictionsView({ isBorn, actualBirth, onOpenAdmin }) {
                   {/* Taille */}
                   <div className="bg-[#ECCEE6]/25 rounded-xl p-2 border border-[#ECCEE6] shadow-2xs">
                     <p className="text-[9px] uppercase tracking-wider text-slate-400 font-extrabold flex items-center justify-center gap-1">
-                      <span>📏 Taille</span>
+                      <span>Taille</span>
                     </p>
                     <p className="text-xs font-black text-[#1E4E42] mt-0.5">{p.height || p.sizeCm || 50} cm</p>
                   </div>
@@ -368,7 +372,7 @@ export default function PredictionsView({ isBorn, actualBirth, onOpenAdmin }) {
                   {p.firstName && (
                     <div className="bg-[#92AFEC]/20 rounded-xl p-2 border border-[#92AFEC]/50 shadow-2xs col-span-2 sm:col-span-1">
                       <p className="text-[9px] uppercase tracking-wider text-slate-400 font-extrabold flex items-center justify-center gap-1">
-                        <span>👑 Prénom</span>
+                        <span>Prénom</span>
                       </p>
                       <p className="text-xs font-black text-[#D26E7B] truncate mt-0.5">{p.firstName}</p>
                     </div>
@@ -377,7 +381,7 @@ export default function PredictionsView({ isBorn, actualBirth, onOpenAdmin }) {
                   {/* Yeux */}
                   <div className="bg-[#FEFCE7] rounded-xl p-2 border border-[#EFE89F] shadow-2xs">
                     <p className="text-[9px] uppercase tracking-wider text-slate-400 font-extrabold flex items-center justify-center gap-1">
-                      <span>👁️ Yeux</span>
+                      <span>Yeux</span>
                     </p>
                     <p className="text-xs font-black text-[#1E4E42] mt-0.5">{p.eyeColor || 'Bleus'}</p>
                   </div>
@@ -385,7 +389,7 @@ export default function PredictionsView({ isBorn, actualBirth, onOpenAdmin }) {
                   {/* Cheveux */}
                   <div className="bg-[#D26E7B]/10 rounded-xl p-2 border border-[#D26E7B]/30 shadow-2xs">
                     <p className="text-[9px] uppercase tracking-wider text-slate-400 font-extrabold flex items-center justify-center gap-1">
-                      <span>💇 Cheveux</span>
+                      <span>Cheveux</span>
                     </p>
                     <p className="text-xs font-black text-[#1E4E42] mt-0.5">{p.hairColor || 'Bruns'}</p>
                   </div>
@@ -393,7 +397,7 @@ export default function PredictionsView({ isBorn, actualBirth, onOpenAdmin }) {
                   {/* Date & Heure */}
                   <div className="bg-[#C5D88F]/25 rounded-xl p-2 border border-[#C5D88F]/60 shadow-2xs col-span-2 sm:col-span-1">
                     <p className="text-[9px] uppercase tracking-wider text-slate-400 font-extrabold flex items-center justify-center gap-1">
-                      <span>📅 Jour J</span>
+                      <span>Jour J</span>
                     </p>
                     <p className="text-xs font-black text-[#1E4E42] truncate mt-0.5">
                       {p.date ? new Date(p.date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' }) : ''} à {p.time}

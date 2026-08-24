@@ -393,7 +393,7 @@ export default function ParentsSpaceView({ isBorn, actualBirth, onBirthSaved, on
         <div className="flex items-center justify-between">
           <div className="space-y-0.5">
             <span className="text-[10px] font-extrabold uppercase tracking-wider text-emerald-800 bg-mint-100 px-2.5 py-0.5 rounded-full border border-mint-300">
-              Espace Privé d'Alizée & Lucas 👑
+              Espace Privé d'Alizée & Lucas
             </span>
             <h2 className="font-serif text-xl font-extrabold text-slate-800">
               Organisation & Valise
@@ -418,48 +418,48 @@ export default function ParentsSpaceView({ isBorn, actualBirth, onBirthSaved, on
       </div>
 
       {/* Navigation Sub-Tabs */}
-      <div className="grid grid-cols-4 gap-1 bg-amber-100/60 p-1.5 rounded-2xl border border-sun-200 text-xs font-bold">
+      <div className="grid grid-cols-4 gap-1.5 bg-amber-100/60 p-1.5 rounded-2xl border border-sun-200 text-xs font-bold">
         <button
           type="button"
           onClick={() => setActiveTab('birth')}
-          className={`py-2 rounded-xl text-center transition-all cursor-pointer ${
+          className={`py-2 rounded-xl text-center transition-all cursor-pointer flex flex-col items-center gap-1 ${
             activeTab === 'birth' ? 'bg-white text-sun-800 shadow-xs scale-102 font-extrabold' : 'text-slate-500 hover:text-slate-800'
           }`}
         >
-          <span className="block text-sm">👑</span>
+          <Baby className="w-4 h-4 text-[#D26E7B]" />
           <span className="text-[10px]">Jour J</span>
         </button>
 
         <button
           type="button"
           onClick={() => setActiveTab('purchases')}
-          className={`py-2 rounded-xl text-center transition-all cursor-pointer ${
+          className={`py-2 rounded-xl text-center transition-all cursor-pointer flex flex-col items-center gap-1 ${
             activeTab === 'purchases' ? 'bg-white text-sun-800 shadow-xs scale-102 font-extrabold' : 'text-slate-500 hover:text-slate-800'
           }`}
         >
-          <span className="block text-sm">🛍️</span>
+          <ShoppingBag className="w-4 h-4 text-[#D26E7B]" />
           <span className="text-[10px]">Achats</span>
         </button>
 
         <button
           type="button"
           onClick={() => setActiveTab('bag')}
-          className={`py-2 rounded-xl text-center transition-all cursor-pointer ${
+          className={`py-2 rounded-xl text-center transition-all cursor-pointer flex flex-col items-center gap-1 ${
             activeTab === 'bag' ? 'bg-white text-sun-800 shadow-xs scale-102 font-extrabold' : 'text-slate-500 hover:text-slate-800'
           }`}
         >
-          <span className="block text-sm">🧳</span>
+          <Briefcase className="w-4 h-4 text-[#D26E7B]" />
           <span className="text-[10px]">Valise</span>
         </button>
 
         <button
           type="button"
           onClick={() => setActiveTab('appointments')}
-          className={`py-2 rounded-xl text-center transition-all cursor-pointer ${
+          className={`py-2 rounded-xl text-center transition-all cursor-pointer flex flex-col items-center gap-1 ${
             activeTab === 'appointments' ? 'bg-white text-sun-800 shadow-xs scale-102 font-extrabold' : 'text-slate-500 hover:text-slate-800'
           }`}
         >
-          <span className="block text-sm">📅</span>
+          <Calendar className="w-4 h-4 text-[#D26E7B]" />
           <span className="text-[10px]">RDV</span>
         </button>
       </div>
@@ -469,13 +469,15 @@ export default function ParentsSpaceView({ isBorn, actualBirth, onBirthSaved, on
         <div className="space-y-4">
           {isBorn && actualBirth ? (
             <div className="bg-white rounded-3xl p-6 shadow-md border-2 border-sun-300 text-center space-y-4 animate-in zoom-in-95">
-              <span className="text-4xl">👑 💛</span>
+              <div className="w-16 h-16 mx-auto rounded-3xl bg-gradient-to-tr from-[#D26E7B]/20 via-[#EFE89F]/40 to-[#C5D88F]/30 border border-[#C5D88F]/50 flex items-center justify-center text-[#D26E7B] shadow-2xs">
+                <Baby className="w-8 h-8" />
+              </div>
               <div className="space-y-1">
                 <h3 className="font-serif text-xl font-black text-slate-800">
                   Notre Petit Prince est Arrivé !
                 </h3>
                 <p className="text-xs text-sun-700 font-bold">
-                  Bienvenue au trésor d'Alizée & Lucas 🦕
+                  Bienvenue au trésor d'Alizée & Lucas
                 </p>
               </div>
 
@@ -486,10 +488,10 @@ export default function ParentsSpaceView({ isBorn, actualBirth, onBirthSaved, on
               )}
 
               <div className="grid grid-cols-2 gap-2 text-xs font-bold text-slate-700 text-left bg-amber-50/50 p-4 rounded-2xl border border-sun-200">
-                <p>👑 Prénom : <strong>{actualBirth.firstName}</strong></p>
-                <p>📅 Né le : <strong>{actualBirth.date}</strong></p>
-                <p>⚖️ Poids : <strong>{actualBirth.weight} kg</strong></p>
-                <p>📏 Taille : <strong>{actualBirth.height} cm</strong></p>
+                <p>Prénom : <strong>{actualBirth.firstName}</strong></p>
+                <p>Né le : <strong>{actualBirth.date}</strong></p>
+                <p>Poids : <strong>{actualBirth.weight} kg</strong></p>
+                <p>Taille : <strong>{actualBirth.height} cm</strong></p>
               </div>
 
               <button
@@ -509,7 +511,7 @@ export default function ParentsSpaceView({ isBorn, actualBirth, onBirthSaved, on
             <form onSubmit={handleSaveBirth} className="bg-white rounded-3xl p-5 shadow-sm border border-sun-200 space-y-3.5">
               <div className="border-b border-sun-100 pb-2">
                 <h3 className="font-serif text-sm font-bold text-slate-800">
-                  Annoncer la Naissance Officielle 👑
+                  Annoncer la Naissance Officielle
                 </h3>
                 <p className="text-[11px] text-slate-400">
                   Ces informations départageront le grand gagnant des pronostics !

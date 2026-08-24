@@ -192,7 +192,7 @@ export default function DailyGameView() {
               Bébé, enfants, Noël, famille & aventures ! 1 tentative officielle par jour.
             </p>
           </div>
-          <span className="text-3xl">🧩</span>
+          <img src="/logo.jpg" alt="Logo" className="w-10 h-10 rounded-2xl object-cover shadow-2xs border border-[#C5D88F]" />
         </div>
 
         {/* Today's Theme Pill (Toujours sur la même ligne) */}
@@ -230,7 +230,9 @@ export default function DailyGameView() {
       {/* 1. ÉCRAN INTRO : DÉMARRER OU VOIR SON SCORE DÉJÀ ENREGISTRÉ */}
       {!isPlaying && !isSubmitted && (
         <div className="bg-white rounded-3xl p-6 shadow-md border-2 border-[#EFE89F] text-center space-y-4 animate-in zoom-in-95">
-          <span className="text-4xl">🧩</span>
+          <div className="w-14 h-14 mx-auto rounded-3xl bg-gradient-to-tr from-[#D26E7B]/20 via-[#EFE89F]/40 to-[#C5D88F]/30 border border-[#C5D88F]/50 flex items-center justify-center text-[#D26E7B] shadow-2xs">
+            <Sparkles className="w-7 h-7" />
+          </div>
 
           <div className="space-y-1">
             <h3 className="font-serif text-lg font-black text-[#1E4E42]">
@@ -464,24 +466,26 @@ export default function DailyGameView() {
             <button
               type="button"
               onClick={() => setLeaderboardTab('today')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+              className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
                 leaderboardTab === 'today'
                   ? 'bg-white text-sun-800 shadow-2xs font-extrabold'
                   : 'text-slate-500 hover:text-slate-800'
               }`}
             >
-              📅 Podium du Jour
+              <Calendar className="w-3.5 h-3.5 text-[#D26E7B]" />
+              <span>Podium du Jour</span>
             </button>
             <button
               type="button"
               onClick={() => setLeaderboardTab('global')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+              className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
                 leaderboardTab === 'global'
                   ? 'bg-white text-sun-800 shadow-2xs font-extrabold'
                   : 'text-slate-500 hover:text-slate-800'
               }`}
             >
-              👑 Classement Général
+              <Trophy className="w-3.5 h-3.5 text-[#D26E7B]" />
+              <span>Classement Général</span>
             </button>
           </div>
         </div>
@@ -495,8 +499,10 @@ export default function DailyGameView() {
             </div>
 
             {todayScores.length === 0 ? (
-              <div className="text-center py-6 space-y-1">
-                <span className="text-2xl">⏳</span>
+              <div className="text-center py-6 space-y-2">
+                <div className="w-12 h-12 mx-auto rounded-2xl bg-[#EFE89F]/30 border border-[#C5D88F]/50 flex items-center justify-center text-[#D26E7B] shadow-2xs">
+                  <Calendar className="w-5 h-5" />
+                </div>
                 <p className="text-xs font-bold text-slate-700">Aucun score enregistré aujourd'hui</p>
                 <p className="text-[10px] text-slate-400">Sois le premier à relever la grille de 12 mots !</p>
               </div>
@@ -514,8 +520,10 @@ export default function DailyGameView() {
                     }`}
                   >
                     <div className="flex items-center gap-2.5">
-                      <span className="w-6 h-6 rounded-full bg-white shadow-2xs flex items-center justify-center text-xs font-black">
-                        {idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : `#${idx + 1}`}
+                      <span className={`w-7 h-7 rounded-xl shadow-2xs flex items-center justify-center text-xs font-black ${
+                        idx === 0 ? 'bg-[#FFE066] text-[#78350f] border border-white' : idx === 1 ? 'bg-slate-200 text-slate-700' : idx === 2 ? 'bg-amber-200/80 text-amber-800' : 'bg-white text-slate-400'
+                      }`}>
+                        #{idx + 1}
                       </span>
                       <div>
                         <p className="text-slate-800 font-extrabold">{s.playerName}</p>
@@ -526,8 +534,9 @@ export default function DailyGameView() {
                     </div>
 
                     <div className="flex items-center gap-2">
-                      <span className="font-mono text-slate-600 bg-white px-2 py-0.5 rounded-lg border border-sun-100">
-                        ⏱️ {s.timeFormatted}
+                      <span className="font-mono text-slate-600 bg-white px-2 py-0.5 rounded-lg border border-sun-100 flex items-center gap-1">
+                        <Timer className="w-3 h-3 text-slate-400" />
+                        <span>{s.timeFormatted}</span>
                       </span>
                       <span className="font-black text-sun-800 bg-amber-100 px-2 py-0.5 rounded-lg">
                         +{s.points} pts
@@ -549,8 +558,10 @@ export default function DailyGameView() {
             </div>
 
             {globalLeaderboard.length === 0 ? (
-              <div className="text-center py-6 space-y-1">
-                <span className="text-2xl">🏆</span>
+              <div className="text-center py-6 space-y-2">
+                <div className="w-12 h-12 mx-auto rounded-2xl bg-[#92AFEC]/20 border border-[#92AFEC]/40 flex items-center justify-center text-[#92AFEC] shadow-2xs">
+                  <Trophy className="w-5 h-5" />
+                </div>
                 <p className="text-xs font-bold text-slate-700">Le classement général démarre</p>
                 <p className="text-[10px] text-slate-400">Joue chaque jour pour cumuler des points !</p>
               </div>
@@ -568,8 +579,10 @@ export default function DailyGameView() {
                     }`}
                   >
                     <div className="flex items-center gap-2.5">
-                      <span className="w-6 h-6 rounded-full bg-white shadow-2xs flex items-center justify-center text-xs font-black">
-                        {idx === 0 ? '👑' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : `#${idx + 1}`}
+                      <span className={`w-7 h-7 rounded-xl shadow-2xs flex items-center justify-center text-xs font-black ${
+                        idx === 0 ? 'bg-[#FFE066] text-[#78350f] border border-white' : idx === 1 ? 'bg-slate-200 text-slate-700' : idx === 2 ? 'bg-amber-200/80 text-amber-800' : 'bg-white text-slate-400'
+                      }`}>
+                        #{idx + 1}
                       </span>
                       <div>
                         <p className="font-extrabold text-slate-800">{item.playerName}</p>
