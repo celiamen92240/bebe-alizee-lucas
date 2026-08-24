@@ -10,8 +10,16 @@ app.use(cors());
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
-// Serve frontend static build files
-app.use(express.static(path.join(__dirname, '../frontend/dist')));
+// Serve frontend static build files (HTML is never cached so new builds show instantly)
+app.use(express.static(path.join(__dirname, '../frontend/dist'), {
+  setHeaders: (res, filePath) => {
+    if (filePath.endsWith('.html')) {
+      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+      res.setHeader('Pragma', 'no-cache');
+      res.setHeader('Expires', '0');
+    }
+  }
+}));
 
 // 1. Settings
 app.get('/api/settings', (req, res) => {
@@ -442,6 +450,9 @@ app.delete('/api/quiz/votes/:voter', (req, res) => {
 
 // SPA Fallback
 app.get('*', (req, res) => {
+  res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+  res.setHeader('Pragma', 'no-cache');
+  res.setHeader('Expires', '0');
   res.sendFile(path.join(__dirname, '../frontend/dist/index.html'));
 });
 
