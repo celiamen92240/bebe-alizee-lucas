@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Target, Sparkles, Trophy, Plus, CheckCircle, Calendar, Clock, Weight, Ruler, Eye, User, Camera, ArrowRight } from 'lucide-react';
+import { Target, Sparkles, Trophy, Plus, CheckCircle, Calendar, Clock, Weight, Ruler, Eye, User, Camera, ArrowRight, ChevronDown } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { useUser } from '../context/UserContext';
 import ParticipantSelector from '../components/ParticipantSelector';
@@ -9,6 +9,11 @@ export default function PredictionsView({ isBorn, actualBirth, onOpenAdmin }) {
   const [predictions, setPredictions] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [expandedIds, setExpandedIds] = useState({});
+
+  const toggleExpand = (id) => {
+    setExpandedIds(prev => ({ ...prev, [id]: !prev[id] }));
+  };
 
   // Form State
   const [author, setAuthor] = useState(currentUser?.name || '');
@@ -308,10 +313,21 @@ export default function PredictionsView({ isBorn, actualBirth, onOpenAdmin }) {
       {/* Predictions Feed */}
       <div className="space-y-3">
         <div className="flex items-center justify-between px-1">
-          <h3 className="font-serif text-sm font-bold text-slate-800">
-            Pronostics de la Famille ({predictions.length})
+          <h3 className="font-serif text-sm font-bold text-slate-800 flex items-center gap-2">
+            <span>Tous les pronostics</span>
           </h3>
+          <span className="text-[11px] font-bold text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">
+            {predictions.length} parieurs
+          </span>
         </div>
+
+        {/* Phrase d'indication cool */}
+        {predictions.length > 0 && (
+          <p className="text-xs text-[#1E4E42] font-semibold flex items-center gap-1.5 px-1 bg-[#C5D88F]/20 p-2 rounded-xl border border-[#C5D88F]/40">
+            <span className="text-sm animate-pulse">👉</span>
+            <span>Clique sur un proche pour découvrir son pronostic secret !</span>
+          </p>
+        )}
 
         {predictions.length === 0 ? (
           <div className="bg-white rounded-3xl p-6 text-center border border-[#EFE89F] space-y-2">
@@ -322,96 +338,114 @@ export default function PredictionsView({ isBorn, actualBirth, onOpenAdmin }) {
             <p className="text-[11px] text-slate-400">Sois le tout premier à deviner le jour J !</p>
           </div>
         ) : (
-          <div className="space-y-3">
-            {predictions.map((p) => (
-              <div
-                key={p.id}
-                className="bg-white rounded-3xl p-4 shadow-sm border border-[#EFE89F] space-y-2.5"
-              >
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-full overflow-hidden bg-amber-100 border border-[#EFE89F] flex items-center justify-center text-sm font-bold shadow-2xs">
-                      {p.photo ? (
-                        <img src={p.photo} alt={p.author} className="w-full h-full object-cover" />
-                      ) : (
-                        <img src="/logo.jpg" alt={p.author} className="w-full h-full object-cover" />
+          <div className="space-y-2.5">
+            {predictions.map((p, idx) => {
+              const cardId = p.id || idx;
+              const isExpanded = !!expandedIds[cardId];
+
+              return (
+                <div
+                  key={cardId}
+                  className={`bg-white rounded-3xl shadow-sm border transition-all overflow-hidden ${
+                    isExpanded ? 'border-[#C5D88F] ring-2 ring-[#C5D88F]/30' : 'border-[#EFE89F] hover:border-[#C5D88F]'
+                  }`}
+                >
+                  {/* Entête cliquable du parieur (Toujours visible) */}
+                  <div
+                    onClick={() => toggleExpand(cardId)}
+                    className="p-3.5 flex items-center justify-between cursor-pointer select-none hover:bg-amber-50/20 transition-colors"
+                  >
+                    <div className="flex items-center gap-2.5 min-w-0">
+                      <div className="w-10 h-10 rounded-xl overflow-hidden bg-amber-100 border border-[#EFE89F] flex items-center justify-center text-sm font-bold shadow-2xs flex-shrink-0">
+                        {p.photo ? (
+                          <img src={p.photo} alt={p.author} className="w-full h-full object-cover" />
+                        ) : (
+                          <img src="/logo.jpg" alt={p.author} className="w-full h-full object-cover" />
+                        )}
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-xs font-extrabold text-slate-800 truncate">{p.author}</p>
+                        <p className="text-[10px] text-[#1E4E42] font-medium truncate">
+                          Prédit le {p.date ? new Date(p.date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' }) : ''} à {p.time}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2 flex-shrink-0">
+                      <span className="text-[11px] font-bold text-[#1E4E42] bg-[#C5D88F]/30 px-2.5 py-1 rounded-xl border border-[#C5D88F]/50 flex items-center gap-1">
+                        <span>{isExpanded ? 'Fermer' : 'Voir'}</span>
+                        <ChevronDown className={`w-3 h-3 text-[#1E4E42] transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`} />
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Bet Details Grid - S'affiche uniquement au clic */}
+                  {isExpanded && (
+                    <div className="p-3.5 pt-0 border-t border-slate-100 animate-in fade-in-50 duration-200 space-y-2.5">
+                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 mt-2.5 text-center">
+                        {/* Poids */}
+                        <div className="bg-[#FEFCE7] rounded-xl p-2 border border-[#EFE89F] shadow-2xs">
+                          <p className="text-[9px] uppercase tracking-wider text-slate-400 font-extrabold flex items-center justify-center gap-1">
+                            <span>Poids</span>
+                          </p>
+                          <p className="text-xs font-black text-[#1E4E42] mt-0.5">{p.weight ? (p.weight > 100 ? `${p.weight} g` : `${p.weight} kg`) : `${p.weightG || 3350} g`}</p>
+                        </div>
+
+                        {/* Taille */}
+                        <div className="bg-[#ECCEE6]/25 rounded-xl p-2 border border-[#ECCEE6] shadow-2xs">
+                          <p className="text-[9px] uppercase tracking-wider text-slate-400 font-extrabold flex items-center justify-center gap-1">
+                            <span>Taille</span>
+                          </p>
+                          <p className="text-xs font-black text-[#1E4E42] mt-0.5">{p.height || p.sizeCm || 50} cm</p>
+                        </div>
+
+                        {/* Prénom */}
+                        {p.firstName && (
+                          <div className="bg-[#92AFEC]/20 rounded-xl p-2 border border-[#92AFEC]/50 shadow-2xs col-span-2 sm:col-span-1">
+                            <p className="text-[9px] uppercase tracking-wider text-slate-400 font-extrabold flex items-center justify-center gap-1">
+                              <span>Prénom</span>
+                            </p>
+                            <p className="text-xs font-black text-[#D26E7B] truncate mt-0.5">{p.firstName}</p>
+                          </div>
+                        )}
+
+                        {/* Yeux */}
+                        <div className="bg-[#FEFCE7] rounded-xl p-2 border border-[#EFE89F] shadow-2xs">
+                          <p className="text-[9px] uppercase tracking-wider text-slate-400 font-extrabold flex items-center justify-center gap-1">
+                            <span>Yeux</span>
+                          </p>
+                          <p className="text-xs font-black text-[#1E4E42] mt-0.5">{p.eyeColor || 'Bleus'}</p>
+                        </div>
+
+                        {/* Cheveux */}
+                        <div className="bg-[#D26E7B]/10 rounded-xl p-2 border border-[#D26E7B]/30 shadow-2xs">
+                          <p className="text-[9px] uppercase tracking-wider text-slate-400 font-extrabold flex items-center justify-center gap-1">
+                            <span>Cheveux</span>
+                          </p>
+                          <p className="text-xs font-black text-[#1E4E42] mt-0.5">{p.hairColor || 'Bruns'}</p>
+                        </div>
+
+                        {/* Date & Heure */}
+                        <div className="bg-[#C5D88F]/25 rounded-xl p-2 border border-[#C5D88F]/60 shadow-2xs col-span-2 sm:col-span-1">
+                          <p className="text-[9px] uppercase tracking-wider text-slate-400 font-extrabold flex items-center justify-center gap-1">
+                            <span>Jour J</span>
+                          </p>
+                          <p className="text-xs font-black text-[#1E4E42] truncate mt-0.5">
+                            {p.date ? new Date(p.date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' }) : ''} à {p.time}
+                          </p>
+                        </div>
+                      </div>
+
+                      {p.message && (
+                        <p className="text-xs text-slate-600 bg-amber-50/30 p-2.5 rounded-xl border border-sun-100/60 italic">
+                          « {p.message} »
+                        </p>
                       )}
                     </div>
-                    <div>
-                      <p className="text-xs font-extrabold text-slate-800">{p.author}</p>
-                      <p className="text-[10px] text-[#1E4E42]">
-                        {p.date ? new Date(p.date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' }) : ''} à {p.time}
-                      </p>
-                    </div>
-                  </div>
-                  {p.firstName && (
-                    <span className="text-[10px] font-black text-[#D26E7B] bg-[#D26E7B]/10 px-2.5 py-1 rounded-full border border-[#D26E7B]/30">
-                      {p.firstName}
-                    </span>
                   )}
                 </div>
-
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 mt-3 pt-2.5 border-t border-slate-100 text-center">
-                  {/* Poids */}
-                  <div className="bg-[#FEFCE7] rounded-xl p-2 border border-[#EFE89F] shadow-2xs">
-                    <p className="text-[9px] uppercase tracking-wider text-slate-400 font-extrabold flex items-center justify-center gap-1">
-                      <span>Poids</span>
-                    </p>
-                    <p className="text-xs font-black text-[#1E4E42] mt-0.5">{p.weight ? (p.weight > 100 ? `${p.weight} g` : `${p.weight} kg`) : `${p.weightG || 3350} g`}</p>
-                  </div>
-
-                  {/* Taille */}
-                  <div className="bg-[#ECCEE6]/25 rounded-xl p-2 border border-[#ECCEE6] shadow-2xs">
-                    <p className="text-[9px] uppercase tracking-wider text-slate-400 font-extrabold flex items-center justify-center gap-1">
-                      <span>Taille</span>
-                    </p>
-                    <p className="text-xs font-black text-[#1E4E42] mt-0.5">{p.height || p.sizeCm || 50} cm</p>
-                  </div>
-
-                  {/* Prénom */}
-                  {p.firstName && (
-                    <div className="bg-[#92AFEC]/20 rounded-xl p-2 border border-[#92AFEC]/50 shadow-2xs col-span-2 sm:col-span-1">
-                      <p className="text-[9px] uppercase tracking-wider text-slate-400 font-extrabold flex items-center justify-center gap-1">
-                        <span>Prénom</span>
-                      </p>
-                      <p className="text-xs font-black text-[#D26E7B] truncate mt-0.5">{p.firstName}</p>
-                    </div>
-                  )}
-
-                  {/* Yeux */}
-                  <div className="bg-[#FEFCE7] rounded-xl p-2 border border-[#EFE89F] shadow-2xs">
-                    <p className="text-[9px] uppercase tracking-wider text-slate-400 font-extrabold flex items-center justify-center gap-1">
-                      <span>Yeux</span>
-                    </p>
-                    <p className="text-xs font-black text-[#1E4E42] mt-0.5">{p.eyeColor || 'Bleus'}</p>
-                  </div>
-
-                  {/* Cheveux */}
-                  <div className="bg-[#D26E7B]/10 rounded-xl p-2 border border-[#D26E7B]/30 shadow-2xs">
-                    <p className="text-[9px] uppercase tracking-wider text-slate-400 font-extrabold flex items-center justify-center gap-1">
-                      <span>Cheveux</span>
-                    </p>
-                    <p className="text-xs font-black text-[#1E4E42] mt-0.5">{p.hairColor || 'Bruns'}</p>
-                  </div>
-
-                  {/* Date & Heure */}
-                  <div className="bg-[#C5D88F]/25 rounded-xl p-2 border border-[#C5D88F]/60 shadow-2xs col-span-2 sm:col-span-1">
-                    <p className="text-[9px] uppercase tracking-wider text-slate-400 font-extrabold flex items-center justify-center gap-1">
-                      <span>Jour J</span>
-                    </p>
-                    <p className="text-xs font-black text-[#1E4E42] truncate mt-0.5">
-                      {p.date ? new Date(p.date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' }) : ''} à {p.time}
-                    </p>
-                  </div>
-                </div>
-
-                {p.message && (
-                  <p className="text-xs text-slate-600 bg-amber-50/30 p-2.5 rounded-xl border border-sun-100/60 italic">
-                    « {p.message} »
-                  </p>
-                )}
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </div>
