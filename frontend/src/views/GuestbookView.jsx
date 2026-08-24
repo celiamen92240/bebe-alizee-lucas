@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Heart, Send, Sparkles, Trash2, Smile } from 'lucide-react';
+import { Heart, Send, Sparkles, Trash2, Smile, Mail } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { useUser } from '../context/UserContext';
 import ParticipantSelector from '../components/ParticipantSelector';
@@ -70,7 +70,7 @@ export default function GuestbookView() {
         <div className="flex items-center justify-between">
           <div className="space-y-0.5">
             <span className="text-[10px] font-extrabold uppercase tracking-wider text-sun-800 bg-white/80 px-2.5 py-0.5 rounded-full border border-sun-200">
-              Livre d'Or & Souvenirs 💌
+              Livre d'Or & Souvenirs
             </span>
             <h2 className="font-serif text-xl font-extrabold text-slate-800">
               Capsule d'Amour
@@ -79,7 +79,10 @@ export default function GuestbookView() {
               Laissez un message plein de tendresse pour Alizée, Lucas & leur petit prince 🦕 !
             </p>
           </div>
-          <span className="text-3xl">💌</span>
+          <div className="w-12 h-12 rounded-2xl bg-white/90 border border-[#ECCEE6] flex items-center justify-center shadow-2xs relative flex-shrink-0">
+            <Mail className="w-6 h-6 text-[#D26E7B] stroke-[2.2px]" />
+            <Heart className="w-3 h-3 text-[#D26E7B] fill-[#D26E7B] absolute top-1.5 right-1.5 drop-shadow-2xs animate-pulse" />
+          </div>
         </div>
       </div>
 
@@ -124,7 +127,7 @@ export default function GuestbookView() {
           className="w-full bg-gradient-to-r from-sun-500 to-mint-600 hover:from-sun-600 hover:to-mint-700 text-white font-bold py-3 rounded-2xl shadow-md text-xs transition-all flex items-center justify-center gap-1.5 cursor-pointer active:scale-95"
         >
           <Send className="w-4 h-4" />
-          <span>Glisser mon mot dans la capsule 💌</span>
+          <span>Glisser mon mot dans la capsule</span>
         </button>
       </form>
 
@@ -135,8 +138,11 @@ export default function GuestbookView() {
         </h3>
 
         {messages.length === 0 ? (
-          <div className="bg-white rounded-3xl p-6 text-center border border-sun-200 space-y-1">
-            <span className="text-3xl">💛</span>
+          <div className="bg-white rounded-3xl p-6 text-center border border-sun-200 space-y-2">
+            <div className="w-12 h-12 rounded-2xl bg-amber-50 border border-amber-200 flex items-center justify-center shadow-2xs relative mx-auto">
+              <Mail className="w-6 h-6 text-[#D26E7B] stroke-[2.2px]" />
+              <Heart className="w-3 h-3 text-[#D26E7B] fill-[#D26E7B] absolute top-1.5 right-1.5 drop-shadow-2xs" />
+            </div>
             <p className="text-xs font-bold text-slate-700">La capsule est encore vide</p>
             <p className="text-[11px] text-slate-400">Écris le tout premier mot doux pour le bébé !</p>
           </div>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Calendar, Heart, Clock, Sparkles, Trophy, ArrowRight, Baby, Crown, Star, Flame, Lock, Lightbulb } from 'lucide-react';
+import { Calendar, Heart, Clock, Sparkles, Trophy, ArrowRight, Baby, Crown, Star, Flame, Lock, Lightbulb, Target, Mail } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { useUser } from '../context/UserContext';
 import { fruitsData } from '../data/fruitsData';
@@ -218,7 +218,9 @@ export default function HomeView({ setTab, isBorn, actualBirth }) {
       {/* 2.5 LE SAVIEZ-VOUS DU JOUR (ROTATION QUOTIDIENNE) */}
       <div className="bg-gradient-to-br from-[#EFE89F]/50 via-[#EFE89F]/25 to-white rounded-3xl p-4 shadow-md border-2 border-[#EFE89F] space-y-2 relative overflow-hidden">
         <div className="flex items-center gap-2">
-          <span className="text-lg p-1 bg-white rounded-lg shadow-2xs">💡</span>
+          <div className="w-7 h-7 rounded-xl bg-white text-amber-500 flex items-center justify-center shadow-2xs border border-[#EFE89F]">
+            <Lightbulb className="w-4 h-4 text-amber-500 fill-amber-300" />
+          </div>
           <h3 className="font-serif text-xs font-black text-[#1E4E42]">
             Le saviez-vous ? • Astuce du Jour
           </h3>
@@ -251,7 +253,9 @@ export default function HomeView({ setTab, isBorn, actualBirth }) {
             className="bg-gradient-to-br from-[#D26E7B] to-[#be5361] text-white p-4 rounded-3xl shadow-md border-2 border-white hover:shadow-lg active:scale-95 text-left transition-all group flex flex-col justify-between h-30 cursor-pointer"
           >
             <div className="flex justify-between items-start">
-              <span className="text-3xl p-1 bg-white/20 rounded-2xl">🎯</span>
+              <div className="w-10 h-10 rounded-2xl bg-white/20 backdrop-blur-xs flex items-center justify-center shadow-xs border border-white/30">
+                <Target className="w-5 h-5 text-white" />
+              </div>
               <ArrowRight className="w-4 h-4 text-white/80 group-hover:translate-x-0.5 transition-all" />
             </div>
             <div>
@@ -305,7 +309,9 @@ export default function HomeView({ setTab, isBorn, actualBirth }) {
             className="bg-gradient-to-br from-[#EFE89F] to-[#dac94e] text-[#5f4d21] p-4 rounded-3xl shadow-md border-2 border-white hover:shadow-lg active:scale-95 text-left transition-all group flex flex-col justify-between h-30 cursor-pointer"
           >
             <div className="flex justify-between items-start">
-              <span className="text-3xl p-1 bg-white/40 rounded-2xl">💡</span>
+              <div className="w-10 h-10 rounded-2xl bg-white/35 backdrop-blur-xs flex items-center justify-center shadow-xs border border-white/50">
+                <Lightbulb className="w-5 h-5 text-[#5f4d21] fill-[#EFE89F]" />
+              </div>
               <ArrowRight className="w-4 h-4 text-[#5f4d21]/80 group-hover:translate-x-0.5 transition-all" />
             </div>
             <div>
@@ -322,7 +328,10 @@ export default function HomeView({ setTab, isBorn, actualBirth }) {
           className="w-full bg-gradient-to-r from-[#ECCEE6]/60 via-white to-[#ECCEE6]/40 p-4 rounded-3xl shadow-md border-2 border-[#ECCEE6] hover:border-[#D26E7B] active:scale-[0.99] flex items-center justify-between group transition-all cursor-pointer"
         >
           <div className="flex items-center gap-3">
-            <span className="text-3xl p-1 bg-white rounded-2xl shadow-2xs">💌</span>
+            <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-[#fcf4f5] to-[#ECCEE6]/60 border border-[#ECCEE6] flex items-center justify-center shadow-2xs relative flex-shrink-0">
+              <Mail className="w-5 h-5 text-[#D26E7B] stroke-[2.2px]" />
+              <Heart className="w-2.5 h-2.5 text-[#D26E7B] fill-[#D26E7B] absolute top-1.5 right-1.5 drop-shadow-2xs" />
+            </div>
             <div className="text-left">
               <p className="font-serif font-black text-sm text-[#5e3052]">Capsule d'Amour & Mots Doux</p>
               <p className="text-[10px] text-[#863e75]">Laissez un message plein de tendresse pour sa naissance</p>

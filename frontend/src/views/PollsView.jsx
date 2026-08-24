@@ -89,7 +89,7 @@ export default function PollsView() {
         <div className="flex items-center justify-between">
           <div className="space-y-0.5">
             <span className="text-[10px] font-extrabold uppercase tracking-wider text-sun-800 bg-white/80 px-2.5 py-0.5 rounded-full border border-sun-200">
-              Avis & Conseils de la Famille 💡
+              Avis & Conseils de la Famille
             </span>
             <h2 className="font-serif text-xl font-extrabold text-slate-800">
               Hésitations & Dilemmes
@@ -98,7 +98,9 @@ export default function PollsView() {
               Aidez Alizée & Lucas à trancher sur les choix pour leur petit garçon !
             </p>
           </div>
-          <span className="text-3xl">💡</span>
+          <div className="w-12 h-12 rounded-2xl bg-white/90 border border-sun-200 flex items-center justify-center shadow-2xs text-amber-500 flex-shrink-0">
+            <Lightbulb className="w-6 h-6 fill-amber-300" />
+          </div>
         </div>
       </div>
 
