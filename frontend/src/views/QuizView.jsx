@@ -121,7 +121,15 @@ export default function QuizView() {
 
   const [isVoting, setIsVoting] = useState(false);
 
-  const handleStart = () => {
+  const hasAlreadyCompleted = Boolean(
+    selectedPlayer && (
+      (summary?.completedVoters || []).some(v => (v || '').toLowerCase() === selectedPlayer.toLowerCase()) ||
+      localStorage.getItem(`quiz_completed_alizee_${selectedPlayer.toLowerCase()}`) === 'true' ||
+      (Object.keys(myVotes).length >= (questions.length || 50) && questions.length > 0)
+    )
+  );
+
+  const handleStart = (readOnlyMode = false) => {
     if (!selectedPlayer) {
       if (participants.length > 0) {
         handleSelectPlayer(participants[0].name);
@@ -136,8 +144,17 @@ export default function QuizView() {
 
   const handleVote = async (questionId, choice) => {
     if (isVoting) return;
-    setIsVoting(true);
+    if (hasAlreadyCompleted) {
+      // Mode lecture seule si déjà complété
+      if (currentIndex + 1 < questions.length) {
+        setCurrentIndex(prev => prev + 1);
+      } else {
+        setActiveTab('results');
+      }
+      return;
+    }
 
+    setIsVoting(true);
     const voter = selectedPlayer || 'Un proche';
     
     // Save locally immediately
@@ -163,11 +180,22 @@ export default function QuizView() {
     }
 
     // Auto-advance after showing selected state clearly
-    setTimeout(() => {
+    setTimeout(async () => {
       if (currentIndex + 1 < questions.length) {
         setCurrentIndex(prev => prev + 1);
       } else {
-        // FIN DU QUIZZ -> Confettis et bascule vers les résultats par catégorie
+        // FIN DU QUIZZ -> Clôture officielle pour ce joueur (1 seule participation)
+        localStorage.setItem(`quiz_completed_alizee_${voter.toLowerCase()}`, 'true');
+        try {
+          await fetch('/api/quiz/finish', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ voter })
+          });
+        } catch (e) {
+          console.error(e);
+        }
+
         setIsFinished(true);
         setActiveTab('results');
         confetti({
@@ -203,7 +231,7 @@ export default function QuizView() {
             Qui d'Alizée ou de Lucas ?
           </h2>
           <p className="text-xs text-[#1E4E42]/80 font-medium">
-            Votez et découvrez qui remportera les 5 grands titres de super parents !
+            Votez et découvrez qui remportera les 5 grands titres de super parents ! (1 participation par proche)
           </p>
         </div>
       </div>
@@ -232,14 +260,46 @@ export default function QuizView() {
             />
           </div>
 
-          <button
-            type="button"
-            onClick={handleStart}
-            className="w-full bg-gradient-to-r from-[#D26E7B] to-[#be5361] text-white font-bold py-3.5 rounded-2xl shadow-md hover:shadow-lg text-xs transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-95"
-          >
-            <span>Lancer le Duel</span>
-            <Sparkles className="w-4 h-4" />
-          </button>
+          {/* Message si ce joueur a déjà complété le quiz */}
+          {hasAlreadyCompleted ? (
+            <div className="bg-emerald-50 rounded-2xl p-4 border border-emerald-200 text-center space-y-3">
+              <div className="flex items-center justify-center gap-1.5 text-emerald-800 font-extrabold text-xs">
+                <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                <span>{selectedPlayer}, vous avez déjà répondu à ce Quiz !</span>
+              </div>
+              <p className="text-[11px] text-emerald-700 font-medium">
+                Vos votes ont été définitivement comptabilisés dans le duel.
+              </p>
+              <div className="grid grid-cols-2 gap-2 pt-1">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setHasStarted(true);
+                    setActiveTab('results');
+                  }}
+                  className="bg-[#1E4E42] hover:bg-[#153830] text-white font-bold py-2.5 px-3 rounded-xl text-xs shadow-xs cursor-pointer transition-all"
+                >
+                  Voir les résultats
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleStart(true)}
+                  className="bg-white text-[#1E4E42] border border-[#C5D88F] font-bold py-2.5 px-3 rounded-xl text-xs hover:bg-emerald-50 cursor-pointer transition-all"
+                >
+                  Revoir mes choix 👀
+                </button>
+              </div>
+            </div>
+          ) : (
+            <button
+              type="button"
+              onClick={() => handleStart(false)}
+              className="w-full bg-gradient-to-r from-[#1E4E42] to-[#2d6a4f] text-white font-bold py-3.5 rounded-2xl shadow-md hover:shadow-lg text-xs transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-95"
+            >
+              <span>Lancer le Duel</span>
+              <Sparkles className="w-4 h-4" />
+            </button>
+          )}
         </div>
       ) : isFinished ? (
         /* ÉCRAN FIN DU QUIZ */

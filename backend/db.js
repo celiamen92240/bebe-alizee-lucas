@@ -982,9 +982,20 @@ module.exports = {
   addQuizVote(vote) {
     const data = readDb();
     if (!data.quizVotes) data.quizVotes = [];
-    
+    if (!data.quizCompletedVoters) data.quizCompletedVoters = [];
+
+    const voterClean = (vote.voter || '').trim().toLowerCase();
+
+    // Bloquer si le votant a déjà terminé le quiz
+    if (data.quizCompletedVoters.includes(voterClean)) {
+      return {
+        alreadyCompleted: true,
+        ...this.getQuizAggregates()
+      };
+    }
+
     const existingIndex = data.quizVotes.findIndex(
-      v => v.questionId === vote.questionId && (v.voter || '').toLowerCase() === (vote.voter || '').toLowerCase()
+      v => v.questionId === vote.questionId && (v.voter || '').trim().toLowerCase() === voterClean
     );
 
     if (existingIndex >= 0) {
@@ -993,13 +1004,31 @@ module.exports = {
       data.quizVotes.push({ ...vote, timestamp: new Date().toISOString() });
     }
 
+    // Si toutes les questions ont été répondues, marquer comme complété
+    const voterVotesCount = data.quizVotes.filter(v => (v.voter || '').trim().toLowerCase() === voterClean).length;
+    if (voterVotesCount >= alizeeQuizQuestions.length && !data.quizCompletedVoters.includes(voterClean)) {
+      data.quizCompletedVoters.push(voterClean);
+    }
+
     writeDb(data);
+    return this.getQuizAggregates();
+  },
+
+  finishQuiz(voter) {
+    const data = readDb();
+    if (!data.quizCompletedVoters) data.quizCompletedVoters = [];
+    const voterClean = (voter || '').trim().toLowerCase();
+    if (voterClean && !data.quizCompletedVoters.includes(voterClean)) {
+      data.quizCompletedVoters.push(voterClean);
+      writeDb(data);
+    }
     return this.getQuizAggregates();
   },
 
   getQuizAggregates() {
     const data = readDb();
     const votes = data.quizVotes || [];
+    const completedVoters = data.quizCompletedVoters || [];
 
     const stats = {};
     alizeeQuizQuestions.forEach(q => {
@@ -1082,6 +1111,7 @@ module.exports = {
       summary: {
         totalVotes: totalAllVotes,
         uniqueVotersCount,
+        completedVoters,
         alizeeScore: totalAlizee,
         lucasScore: totalLucas,
         alizeeGlobalPercent: totalAllVotes > 0 ? Math.round((totalAlizee / totalAllVotes) * 100) : 50,
