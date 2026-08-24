@@ -59,9 +59,7 @@ export default function ParentsSpaceView({ isBorn, actualBirth, onBirthSaved, on
   // PURCHASES (With dynamic categories)
   const [purchases, setPurchases] = useState([]);
   const [categories, setCategories] = useState([]);
-  const [selectedCategoryFilter, setSelectedCategoryFilter] = useState('all');
-  const [newPurchaseTitle, setNewPurchaseTitle] = useState('');
-  const [newPurchaseCategory, setNewPurchaseCategory] = useState('');
+  const [inlinePurchases, setInlinePurchases] = useState({});
   const [showAddCategoryModal, setShowAddCategoryModal] = useState(false);
   const [newCategoryName, setNewCategoryName] = useState('');
 
@@ -94,9 +92,6 @@ export default function ParentsSpaceView({ isBorn, actualBirth, onBirthSaved, on
       if (data.success) {
         setPurchases(data.items || []);
         setCategories(data.categories || []);
-        if (!newPurchaseCategory && data.categories?.length > 0) {
-          setNewPurchaseCategory(data.categories[0]);
-        }
       }
     } catch (err) {
       console.error(err);
@@ -172,23 +167,24 @@ export default function ParentsSpaceView({ isBorn, actualBirth, onBirthSaved, on
   };
 
   // --- PURCHASES ACTIONS ---
-  const handleAddPurchase = async (e) => {
+  const handleInlineAddPurchase = async (e, categoryName) => {
     e.preventDefault();
-    if (!newPurchaseTitle.trim()) return;
+    const text = (inlinePurchases[categoryName] || '').trim();
+    if (!text) return;
     try {
       const res = await fetch('/api/purchases', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          title: newPurchaseTitle.trim(),
-          category: newPurchaseCategory || (categories[0] || "Indispensables 🌟")
+          title: text,
+          category: categoryName
         })
       });
       const data = await res.json();
       if (data.success) {
         setPurchases(data.items);
         setCategories(data.categories);
-        setNewPurchaseTitle('');
+        setInlinePurchases(prev => ({ ...prev, [categoryName]: '' }));
       }
     } catch (err) {
       console.error(err);
@@ -227,7 +223,6 @@ export default function ParentsSpaceView({ isBorn, actualBirth, onBirthSaved, on
       const data = await res.json();
       if (data.success) {
         setCategories(data.categories);
-        setNewPurchaseCategory(newCategoryName.trim());
         setNewCategoryName('');
         setShowAddCategoryModal(false);
       }
@@ -245,7 +240,6 @@ export default function ParentsSpaceView({ isBorn, actualBirth, onBirthSaved, on
       const data = await res.json();
       if (data.success) {
         setCategories(data.categories);
-        if (selectedCategoryFilter === catName) setSelectedCategoryFilter('all');
       }
     } catch (err) {
       console.error(err);
@@ -663,169 +657,155 @@ export default function ParentsSpaceView({ isBorn, actualBirth, onBirthSaved, on
         </div>
       )}
 
-      {/* 2. TAB: LISTE D'ACHATS AVEC CATÉGORIES DYNAMIQUES */}
-      {activeTab === 'purchases' && (
-        <div className="space-y-4">
-          <div className="space-y-2">
-            <div className="flex items-center justify-between px-1">
-              <span className="text-[10px] font-black uppercase text-slate-400">Filtrer par catégorie</span>
+      {/* 2. TAB: LISTE D'ACHATS AVEC JAUGE GLOBALE ET CATÉGORIES EMPILÉES */}
+      {activeTab === 'purchases' && (() => {
+        const totalItems = purchases.length;
+        const totalChecked = purchases.filter(i => i.completed).length;
+        const percent = totalItems > 0 ? Math.round((totalChecked / totalItems) * 100) : 0;
+
+        return (
+          <div className="space-y-4">
+            {/* Jauge globale de progression en haut */}
+            <div className="bg-white rounded-3xl p-5 shadow-sm border border-[#EFE89F] space-y-2.5">
+              <div className="flex items-center justify-between">
+                <div>
+                  <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">Progression des Achats</span>
+                  <h3 className="font-serif text-base font-bold text-slate-800">
+                    {totalChecked} sur {totalItems} articles achetés
+                  </h3>
+                </div>
+                <span className="text-base font-black text-[#D26E7B] bg-[#D26E7B]/10 px-3 py-1 rounded-2xl border border-[#D26E7B]/20">
+                  {percent}%
+                </span>
+              </div>
+
+              <div className="w-full h-3 bg-amber-50 rounded-full overflow-hidden p-0.5 border border-[#EFE89F] shadow-inner">
+                <div
+                  className="h-full bg-gradient-to-r from-sun-400 via-amber-500 to-[#D26E7B] rounded-full transition-all duration-500"
+                  style={{ width: `${percent}%` }}
+                />
+              </div>
+            </div>
+
+            {/* Bouton Nouvelle Catégorie */}
+            <div className="flex justify-end px-1">
               <button
                 type="button"
                 onClick={() => setShowAddCategoryModal(true)}
-                className="text-[10px] font-bold text-[#D26E7B] hover:underline flex items-center gap-1 cursor-pointer"
+                className="text-xs font-bold text-[#D26E7B] bg-amber-50 hover:bg-amber-100 px-3 py-1.5 rounded-2xl border border-[#EFE89F] flex items-center gap-1.5 cursor-pointer transition-colors shadow-2xs"
               >
-                <PlusCircle className="w-3 h-3" />
-                <span>Nouvelle catégorie</span>
+                <Plus className="w-3.5 h-3.5 stroke-[3px]" />
+                <span>+ Nouvelle catégorie</span>
               </button>
             </div>
 
-            <div className="flex gap-1.5 overflow-x-auto pb-1 no-scrollbar">
-              <button
-                type="button"
-                onClick={() => setSelectedCategoryFilter('all')}
-                className={`px-3 py-1.5 rounded-xl text-xs whitespace-nowrap transition-all cursor-pointer border ${
-                  selectedCategoryFilter === 'all'
-                    ? 'bg-sun-500 text-white border-sun-600 shadow-xs font-extrabold'
-                    : 'bg-white text-slate-700 border-sun-200 hover:bg-sun-50'
-                }`}
-              >
-                Tous ({purchases.length})
-              </button>
-
-              {categories.map(cat => {
-                const count = purchases.filter(p => p.category === cat).length;
-                const isSelected = selectedCategoryFilter === cat;
-                return (
-                  <div
-                    key={cat}
-                    className={`flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs whitespace-nowrap transition-all border ${
-                      isSelected
-                        ? 'bg-sun-500 text-white border-sun-600 shadow-xs font-extrabold'
-                        : 'bg-white text-slate-700 border-sun-200 hover:bg-sun-50'
-                    }`}
-                  >
-                    <button
-                      type="button"
-                      onClick={() => setSelectedCategoryFilter(cat)}
-                      className="cursor-pointer"
-                    >
-                      {cat} ({count})
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => handleDeleteCategory(cat)}
-                      className={`p-0.5 rounded-full hover:bg-black/10 transition-colors ${
-                        isSelected ? 'text-white/80 hover:text-white' : 'text-slate-300 hover:text-red-500'
-                      }`}
-                      title="Supprimer cette catégorie"
-                    >
-                      <X className="w-3 h-3" />
-                    </button>
+            {/* Modal d'ajout de catégorie */}
+            {showAddCategoryModal && (
+              <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-2xs flex items-center justify-center p-4">
+                <form onSubmit={handleAddCategory} className="bg-white rounded-3xl p-5 shadow-2xl border-2 border-sun-300 max-w-xs w-full space-y-3 animate-in zoom-in-95">
+                  <div className="flex justify-between items-center border-b border-sun-100 pb-2">
+                    <h4 className="font-serif text-sm font-bold text-slate-800">Ajouter une Catégorie</h4>
+                    <button type="button" onClick={() => setShowAddCategoryModal(false)} className="text-slate-400 cursor-pointer">✕</button>
                   </div>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Add Category Modal */}
-          {showAddCategoryModal && (
-            <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-2xs flex items-center justify-center p-4">
-              <form onSubmit={handleAddCategory} className="bg-white rounded-3xl p-5 shadow-2xl border-2 border-sun-300 max-w-xs w-full space-y-3 animate-in zoom-in-95">
-                <div className="flex justify-between items-center border-b border-sun-100 pb-2">
-                  <h4 className="font-serif text-sm font-bold text-slate-800">Ajouter une Catégorie</h4>
-                  <button type="button" onClick={() => setShowAddCategoryModal(false)} className="text-slate-400 cursor-pointer">✕</button>
-                </div>
-                <input
-                  type="text"
-                  required
-                  autoFocus
-                  placeholder="Ex: Décoration, Sécurité..."
-                  value={newCategoryName}
-                  onChange={e => setNewCategoryName(e.target.value)}
-                  className="w-full px-3 py-2.5 rounded-xl border border-sun-200 text-xs bg-amber-50/20 font-bold"
-                />
-                <button
-                  type="submit"
-                  className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-xl text-xs shadow transition-colors cursor-pointer"
-                >
-                  Créer la catégorie
-                </button>
-              </form>
-            </div>
-          )}
-
-          {/* Add Purchase Form */}
-          <form onSubmit={handleAddPurchase} className="bg-white p-3.5 rounded-2xl border border-sun-200 shadow-xs space-y-2">
-            <div className="flex gap-2">
-              <input
-                type="text"
-                required
-                placeholder="Nouvel achat à prévoir..."
-                value={newPurchaseTitle}
-                onChange={e => setNewPurchaseTitle(e.target.value)}
-                className="flex-1 px-3 py-2 rounded-xl border border-sun-200 text-xs bg-amber-50/20"
-              />
-              <select
-                value={newPurchaseCategory}
-                onChange={e => setNewPurchaseCategory(e.target.value)}
-                className="px-2 py-2 rounded-xl border border-sun-200 text-xs bg-white font-bold text-slate-700 max-w-[130px]"
-              >
-                {categories.map(c => (
-                  <option key={c} value={c}>{c}</option>
-                ))}
-              </select>
-            </div>
-            <button
-              type="submit"
-              className="w-full bg-sun-500 hover:bg-sun-600 text-white py-2 rounded-xl text-xs font-bold shadow-xs cursor-pointer transition-colors flex items-center justify-center gap-1.5"
-            >
-              <Plus className="w-3.5 h-3.5" />
-              <span>Ajouter à la liste d'achats</span>
-            </button>
-          </form>
-
-          {/* Purchases List */}
-          <div className="space-y-2">
-            {filteredPurchases.length === 0 ? (
-              <div className="bg-white rounded-2xl p-5 text-center border border-sun-200 text-xs text-slate-400">
-                Aucun achat dans cette catégorie pour le moment.
+                  <input
+                    type="text"
+                    required
+                    autoFocus
+                    placeholder="Ex: Décoration 🎨, Poussette 🍼..."
+                    value={newCategoryName}
+                    onChange={e => setNewCategoryName(e.target.value)}
+                    className="w-full box-border px-3 py-2.5 rounded-xl border border-sun-200 text-xs bg-amber-50/20 font-bold focus:outline-none focus:ring-2 focus:ring-[#D26E7B]"
+                  />
+                  <button
+                    type="submit"
+                    className="w-full bg-gradient-to-r from-[#D26E7B] to-[#be5361] text-white font-bold py-2.5 rounded-xl text-xs shadow transition-colors cursor-pointer"
+                  >
+                    Créer la catégorie ✨
+                  </button>
+                </form>
               </div>
-            ) : (
-              filteredPurchases.map(item => (
-                <div
-                  key={item.id}
-                  className="bg-white p-3 rounded-2xl border border-sun-100 flex items-center justify-between shadow-2xs"
-                >
-                  <button
-                    type="button"
-                    onClick={() => handleTogglePurchase(item.id)}
-                    className="flex items-center gap-2.5 text-xs text-left cursor-pointer flex-1"
-                  >
-                    <div className={`w-5 h-5 rounded-lg border flex items-center justify-center ${
-                      item.completed ? 'bg-mint-500 border-mint-600 text-white' : 'border-slate-300'
-                    }`}>
-                      {item.completed && <CheckCircle2 className="w-3.5 h-3.5" />}
-                    </div>
-                    <span className={item.completed ? 'line-through text-slate-400 font-medium' : 'text-slate-800 font-bold'}>
-                      {item.title}
-                    </span>
-                  </button>
-                  <span className="text-[9px] bg-amber-50 text-sun-800 font-bold px-2 py-0.5 rounded-full border border-sun-200 mr-2 max-w-[100px] truncate">
-                    {item.category}
-                  </span>
-                  <button
-                    type="button"
-                    onClick={() => handleDeletePurchase(item.id)}
-                    className="text-slate-300 hover:text-red-500 p-1 cursor-pointer"
-                  >
-                    <Trash2 className="w-3.5 h-3.5" />
-                  </button>
-                </div>
-              ))
             )}
+
+            {/* Sections des Catégories empilées */}
+            {categories.map(cat => {
+              const catItems = purchases.filter(i => i.category === cat);
+              const catChecked = catItems.filter(i => i.completed).length;
+
+              return (
+                <div key={cat} className="bg-white rounded-3xl p-4 shadow-sm border border-[#EFE89F] space-y-3">
+                  <div className="flex items-center justify-between border-b border-slate-100 pb-2">
+                    <div className="flex items-center gap-2">
+                      <div className="w-8 h-8 rounded-xl bg-amber-50 flex items-center justify-center text-[#D26E7B]">
+                        <ShoppingBag className="w-4 h-4" />
+                      </div>
+                      <h4 className="font-serif text-sm font-black text-slate-800">{cat}</h4>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-[10px] font-bold text-[#D26E7B] bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200">
+                        {catChecked}/{catItems.length} achetés
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => handleDeleteCategory(cat)}
+                        className="text-slate-300 hover:text-red-500 p-1 cursor-pointer"
+                        title="Supprimer cette catégorie"
+                      >
+                        <X className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="space-y-1.5">
+                    {catItems.length === 0 ? (
+                      <p className="text-xs text-slate-400 text-center py-2">Aucun article dans cette catégorie pour le moment.</p>
+                    ) : (
+                      catItems.map(item => (
+                        <div key={item.id} className="p-2.5 rounded-2xl border border-slate-100 flex items-center justify-between hover:bg-slate-50/50">
+                          <button
+                            type="button"
+                            onClick={() => handleTogglePurchase(item.id)}
+                            className="flex items-center gap-2 text-xs text-left cursor-pointer flex-1"
+                          >
+                            <div className={`w-5 h-5 rounded-lg border flex items-center justify-center ${
+                              item.completed ? 'bg-mint-500 border-mint-600 text-white' : 'border-slate-300'
+                            }`}>
+                              {item.completed && <CheckCircle2 className="w-3.5 h-3.5" />}
+                            </div>
+                            <span className={item.completed ? 'line-through text-slate-400 font-medium' : 'text-slate-800 font-bold'}>
+                              {item.title}
+                            </span>
+                          </button>
+                          <button type="button" onClick={() => handleDeletePurchase(item.id)} className="text-slate-300 hover:text-red-500 p-1 cursor-pointer">
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      ))
+                    )}
+                  </div>
+
+                  {/* Inline Quick Add pour cette catégorie */}
+                  <form onSubmit={(e) => handleInlineAddPurchase(e, cat)} className="flex items-center gap-2 pt-1">
+                    <input
+                      type="text"
+                      placeholder={`Ajouter un article dans ${cat}...`}
+                      value={inlinePurchases[cat] || ''}
+                      onChange={e => setInlinePurchases({ ...inlinePurchases, [cat]: e.target.value })}
+                      className="flex-1 px-3 py-2 rounded-xl border border-[#EFE89F] text-xs bg-[#FEFCE7] text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#D26E7B]"
+                    />
+                    <button
+                      type="submit"
+                      className="w-8 h-8 rounded-xl bg-[#D26E7B] text-white flex items-center justify-center shadow-xs cursor-pointer active:scale-95 flex-shrink-0"
+                      title="Ajouter"
+                    >
+                      <Plus className="w-4 h-4 stroke-[3px]" />
+                    </button>
+                  </form>
+                </div>
+              );
+            })}
           </div>
-        </div>
-      )}
+        );
+      })()}
 
       {/* 3. TAB: VALISE MATERNITÉ (AVEC JAUGE DE PROGRESSION GLOBALE ET 3 SECTIONS ÉPURÉES) */}
       {activeTab === 'bag' && (
@@ -1039,255 +1019,187 @@ export default function ParentsSpaceView({ isBorn, actualBirth, onBirthSaved, on
         </div>
       )}
 
-      {/* 4. TAB: RENDEZ-VOUS & CALENDRIER MENSUEL */}
+      {/* 4. TAB: RENDEZ-VOUS & CALENDRIER (PROCHAIN RDV, AUTRES RDV & HISTORIQUE) */}
       {activeTab === 'appointments' && (() => {
-        const year = currentMonthDate.getFullYear();
-        const month = currentMonthDate.getMonth();
-        const monthName = currentMonthDate.toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' });
-        const firstDayOfWeek = (new Date(year, month, 1).getDay() + 6) % 7; // Monday = 0
-        const daysInMonth = new Date(year, month + 1, 0).getDate();
+        const sortedRdvs = [...appointments].sort((a, b) => (a.date + (a.time || '')).localeCompare(b.date + (b.time || '')));
+        const todayStr = new Date().toISOString().split('T')[0];
 
-        const prevMonth = () => setCurrentMonthDate(new Date(year, month - 1, 1));
-        const nextMonth = () => setCurrentMonthDate(new Date(year, month + 1, 1));
-        const jumpToTerm = () => {
-          setCurrentMonthDate(new Date(2026, 11, 1));
-          setSelectedCalendarDay('2026-12-08');
-          setNewRdvDate('2026-12-08');
-        };
+        const uncompletedRdvs = sortedRdvs.filter(r => !r.completed);
+        const completedRdvs = sortedRdvs.filter(r => r.completed);
 
-        const filteredAppointments = selectedCalendarDay
-          ? appointments.filter(a => a.date === selectedCalendarDay)
-          : appointments;
+        // Prochain RDV = premier non terminé à venir
+        const nextRdv = uncompletedRdvs.find(r => r.date >= todayStr) || uncompletedRdvs[0] || null;
+        const otherUpcomingRdvs = uncompletedRdvs.filter(r => r.id !== nextRdv?.id);
 
         return (
           <div className="space-y-4 animate-in fade-in">
-            {/* 1. MINI CALENDRIER MENSUEL DESIGN & INTUITIF */}
-            <div className="bg-white rounded-3xl p-4 shadow-sm border-2 border-[#EFE89F] space-y-3">
-              {/* Navigation Mois & Année */}
-              <div className="flex items-center justify-between px-1">
-                <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-xl bg-amber-50 flex items-center justify-center text-[#D26E7B] border border-[#EFE89F]">
-                    <Calendar className="w-4 h-4" />
-                  </div>
-                  <div>
-                    <h4 className="font-serif text-sm font-black text-[#1E4E42] capitalize leading-tight">
-                      {monthName}
-                    </h4>
-                    <p className="text-[10px] text-slate-400">Cliquez sur un jour pour voir ou ajouter un RDV</p>
-                  </div>
-                </div>
+            {/* Formulaire d'Ajout de Rendez-Vous */}
+            <form onSubmit={handleAddAppointment} className="bg-white p-5 rounded-3xl border-2 border-[#EFE89F] shadow-xs space-y-3">
+              <h4 className="font-serif text-sm font-bold text-[#1E4E42] flex items-center gap-1.5 border-b border-slate-100 pb-2">
+                <Calendar className="w-4 h-4 text-[#D26E7B]" />
+                <span>Ajouter un Rendez-Vous</span>
+              </h4>
 
-                <div className="flex items-center gap-1">
-                  <button
-                    type="button"
-                    onClick={prevMonth}
-                    className="p-1.5 rounded-xl hover:bg-slate-100 text-slate-600 border border-slate-200 cursor-pointer"
-                    title="Mois précédent"
-                  >
-                    <ChevronLeft className="w-4 h-4" />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={jumpToTerm}
-                    className="text-[10px] font-black px-2.5 py-1 bg-[#ECCEE6] text-[#D26E7B] rounded-xl border border-[#D26E7B]/30 hover:bg-[#ECCEE6]/80 cursor-pointer shadow-2xs"
-                    title="Aller au jour du terme (08 Décembre 2026)"
-                  >
-                    Terme (08/12)
-                  </button>
-                  <button
-                    type="button"
-                    onClick={nextMonth}
-                    className="p-1.5 rounded-xl hover:bg-slate-100 text-slate-600 border border-slate-200 cursor-pointer"
-                    title="Mois suivant"
-                  >
-                    <ChevronRight className="w-4 h-4" />
-                  </button>
-                </div>
+              <div>
+                <label className="block text-[11px] font-bold text-slate-700 mb-1">
+                  Titre du rendez-vous *
+                </label>
+                <input
+                  type="text"
+                  required
+                  placeholder="Ex: Échographie T3, Consultation 8ème mois..."
+                  value={newRdvTitle}
+                  onChange={e => setNewRdvTitle(e.target.value)}
+                  className="w-full box-border block text-xs font-medium px-3.5 py-2.5 rounded-xl border border-[#EFE89F] bg-[#FEFCE7] text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#D26E7B]"
+                />
               </div>
 
-              {/* Grille des 7 jours de la semaine */}
-              <div className="grid grid-cols-7 gap-1 text-center text-[10px] font-black text-slate-400 border-b border-slate-100 pb-1.5">
-                <span>Lun</span>
-                <span>Mar</span>
-                <span>Mer</span>
-                <span>Jeu</span>
-                <span>Ven</span>
-                <span>Sam</span>
-                <span>Dim</span>
+              <div>
+                <label className="block text-[11px] font-bold text-slate-700 mb-1">Date *</label>
+                <input
+                  type="date"
+                  required
+                  value={newRdvDate}
+                  onChange={e => setNewRdvDate(e.target.value)}
+                  className="w-full box-border block text-xs font-medium px-3.5 py-2.5 rounded-xl border border-[#EFE89F] bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#D26E7B]"
+                />
               </div>
 
-              {/* Grille des jours du mois */}
-              <div className="grid grid-cols-7 gap-1 text-center">
-                {/* Cases vides pour le début du mois */}
-                {Array.from({ length: firstDayOfWeek }).map((_, idx) => (
-                  <div key={`empty-${idx}`} className="h-9" />
-                ))}
-
-                {/* Jours du mois */}
-                {Array.from({ length: daysInMonth }).map((_, idx) => {
-                  const dayNum = idx + 1;
-                  const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(dayNum).padStart(2, '0')}`;
-                  const dayRdvs = appointments.filter(a => a.date === dateStr);
-                  const hasRdv = dayRdvs.length > 0;
-                  const isTerm = dateStr === '2026-12-08';
-                  const isSelected = selectedCalendarDay === dateStr;
-
-                  return (
-                    <button
-                      key={dateStr}
-                      type="button"
-                      onClick={() => {
-                        if (isSelected) {
-                          setSelectedCalendarDay(null);
-                        } else {
-                          setSelectedCalendarDay(dateStr);
-                          setNewRdvDate(dateStr);
-                        }
-                      }}
-                      className={`h-9 rounded-2xl flex flex-col items-center justify-center relative transition-all cursor-pointer ${
-                        isSelected
-                          ? 'bg-[#D26E7B] text-white font-black shadow-md scale-105 ring-2 ring-[#D26E7B]/40'
-                          : isTerm
-                          ? 'bg-[#ECCEE6] text-[#D26E7B] font-black border-2 border-[#D26E7B] shadow-2xs'
-                          : hasRdv
-                          ? 'bg-[#FEFCE7] text-[#1E4E42] font-black border border-[#EFE89F] shadow-2xs'
-                          : 'hover:bg-slate-100 text-slate-700 font-bold'
-                      }`}
-                    >
-                      <span className="text-xs leading-none">{dayNum}</span>
-
-                      {/* Marqueur visuel sous le chiffre */}
-                      {isTerm && !isSelected ? (
-                        <span className="w-1.5 h-1.5 rounded-full bg-[#D26E7B] mt-0.5" />
-                      ) : hasRdv && !isSelected ? (
-                        <div className="flex gap-0.5 mt-0.5">
-                          {dayRdvs.slice(0, 2).map((_, rIdx) => (
-                            <span key={rIdx} className="w-1 h-1 rounded-full bg-[#D26E7B]" />
-                          ))}
-                        </div>
-                      ) : null}
-                    </button>
-                  );
-                })}
+              <div>
+                <label className="block text-[11px] font-bold text-slate-700 mb-1">Heure</label>
+                <input
+                  type="time"
+                  value={newRdvTime}
+                  onChange={e => setNewRdvTime(e.target.value)}
+                  className="w-full box-border block text-xs font-medium px-3.5 py-2.5 rounded-xl border border-[#EFE89F] bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#D26E7B]"
+                />
               </div>
 
-              {/* Légende du calendrier */}
-              <div className="flex items-center justify-between text-[10px] text-slate-500 pt-1 px-1 border-t border-slate-100 font-medium">
-                <div className="flex items-center gap-1.5">
-                  <span className="w-2 h-2 rounded-full bg-[#D26E7B]" />
-                  <span>RDV Prévu</span>
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <span className="w-2 h-2 rounded-full bg-[#ECCEE6] border border-[#D26E7B]" />
-                  <span>Terme (08/12)</span>
-                </div>
-                {selectedCalendarDay && (
-                  <button
-                    type="button"
-                    onClick={() => setSelectedCalendarDay(null)}
-                    className="text-[#D26E7B] font-black hover:underline cursor-pointer"
-                  >
-                    ✕ Tout afficher
-                  </button>
-                )}
+              <div>
+                <label className="block text-[11px] font-bold text-slate-700 mb-1">Lieu / Médecin</label>
+                <input
+                  type="text"
+                  placeholder="Ex: Maternité, Cabinet Dr. Sophie..."
+                  value={newRdvLocation}
+                  onChange={e => setNewRdvLocation(e.target.value)}
+                  className="w-full box-border block text-xs font-medium px-3.5 py-2.5 rounded-xl border border-[#EFE89F] bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#D26E7B]"
+                />
               </div>
-            </div>
-
-            {/* 2. FORMULAIRE AJOUT RDV (DATE ET HEURE L'UNE EN DESSOUS DE L'AUTRE SANS DÉBORDEMENT) */}
-            <form onSubmit={handleAddAppointment} className="bg-white p-4 rounded-3xl border-2 border-[#EFE89F] shadow-xs space-y-3">
-              <div className="flex items-center justify-between">
-                <h4 className="text-xs font-black text-[#1E4E42] flex items-center gap-1.5">
-                  <PlusCircle className="w-3.5 h-3.5 text-[#D26E7B]" />
-                  <span>Ajouter un Rendez-Vous</span>
-                </h4>
-                {selectedCalendarDay && (
-                  <span className="text-[10px] font-bold text-[#D26E7B] bg-[#D26E7B]/10 px-2 py-0.5 rounded-full">
-                    Pour le {new Date(selectedCalendarDay).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })}
-                  </span>
-                )}
-              </div>
-
-              <input
-                type="text"
-                required
-                placeholder="Titre du rendez-vous (ex: Échographie T3, Consultation 8ème mois...)"
-                value={newRdvTitle}
-                onChange={e => setNewRdvTitle(e.target.value)}
-                className="w-full box-border min-w-0 px-3 py-2 rounded-xl border border-[#EFE89F] text-xs bg-[#FEFCE7] text-slate-800 font-bold focus:outline-none focus:ring-2 focus:ring-[#D26E7B]"
-              />
-
-              <div className="space-y-2">
-                <div className="space-y-0.5">
-                  <label className="text-[10px] font-bold text-slate-600 block">Date :</label>
-                  <input
-                    type="date"
-                    required
-                    value={newRdvDate}
-                    onChange={e => setNewRdvDate(e.target.value)}
-                    className="w-full box-border min-w-0 px-3 py-2 rounded-xl border border-[#EFE89F] text-xs bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#D26E7B]"
-                  />
-                </div>
-                <div className="space-y-0.5">
-                  <label className="text-[10px] font-bold text-slate-600 block">Heure :</label>
-                  <input
-                    type="time"
-                    value={newRdvTime}
-                    onChange={e => setNewRdvTime(e.target.value)}
-                    className="w-full box-border min-w-0 px-3 py-2 rounded-xl border border-[#EFE89F] text-xs bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#D26E7B]"
-                  />
-                </div>
-              </div>
-
-              <input
-                type="text"
-                placeholder="Lieu / Praticien (ex: Maternité, Cabinet Dr. Sophie...)"
-                value={newRdvLocation}
-                onChange={e => setNewRdvLocation(e.target.value)}
-                className="w-full box-border min-w-0 px-3 py-2 rounded-xl border border-[#EFE89F] text-xs bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#D26E7B]"
-              />
 
               <button
                 type="submit"
                 className="w-full bg-gradient-to-r from-[#D26E7B] to-[#be5361] text-white py-2.5 rounded-xl text-xs font-bold shadow-xs cursor-pointer transition-all active:scale-95 flex items-center justify-center gap-1.5"
               >
-                <Plus className="w-3.5 h-3.5" />
-                <span>Enregistrer dans le calendrier</span>
+                Enregistrer dans le calendrier
               </button>
             </form>
 
-            {/* 3. LISTE DES RENDEZ-VOUS */}
-            <div className="space-y-2">
-              <div className="flex items-center justify-between px-1">
-                <h4 className="text-xs font-black text-slate-800">
-                  {selectedCalendarDay
-                    ? `Rendez-vous du ${new Date(selectedCalendarDay).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' })}`
-                    : `Tous les Rendez-Vous Prévus (${appointments.length})`}
-                </h4>
-              </div>
-
-              {filteredAppointments.length === 0 ? (
-                <div className="bg-white rounded-2xl p-5 text-center border border-[#EFE89F] text-xs text-slate-400 space-y-1">
-                  <p>Aucun rendez-vous {selectedCalendarDay ? 'ce jour-là' : 'enregistré'}.</p>
-                  <p className="text-[10px] text-slate-400">Utilise le formulaire ci-dessus pour planifier vos consultations.</p>
+            {/* 🌟 1. SECTION : PROCHAIN RENDEZ-VOUS (HERO CARD) */}
+            {nextRdv && (
+              <div className="bg-gradient-to-br from-amber-50 via-white to-rose-50 rounded-3xl p-5 shadow-sm border-2 border-[#EFE89F] space-y-3 relative overflow-hidden">
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] font-black uppercase tracking-wider text-[#D26E7B] bg-[#D26E7B]/10 px-2.5 py-1 rounded-full border border-[#D26E7B]/20 flex items-center gap-1">
+                    <Sparkles className="w-3 h-3 text-[#D26E7B]" />
+                    <span>Prochain Rendez-Vous</span>
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => handleDeleteAppointment(nextRdv.id)}
+                    className="text-slate-300 hover:text-red-500 p-1 cursor-pointer"
+                    title="Supprimer ce rendez-vous"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                  </button>
                 </div>
-              ) : (
-                filteredAppointments.map(rdv => (
+
+                <div className="flex items-start gap-3">
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      await fetch(`/api/appointments/${nextRdv.id}/toggle`, { method: 'PATCH' });
+                      fetchAppointments();
+                    }}
+                    className="mt-1 cursor-pointer flex-shrink-0"
+                  >
+                    <Circle className="w-6 h-6 text-sun-400 hover:text-[#D26E7B]" />
+                  </button>
+
+                  <div className="space-y-1.5 flex-1">
+                    <h4 className="font-serif text-base font-extrabold text-[#1E4E42] leading-tight">
+                      {nextRdv.title}
+                    </h4>
+
+                    <div className="flex flex-wrap items-center gap-2 text-xs font-bold text-[#D26E7B]">
+                      <span className="flex items-center gap-1 bg-white px-2.5 py-1 rounded-xl border border-[#EFE89F] shadow-2xs">
+                        <Calendar className="w-3.5 h-3.5" />
+                        <span>{new Date(nextRdv.date).toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })}</span>
+                      </span>
+                      {nextRdv.time && (
+                        <span className="flex items-center gap-1 bg-white px-2 py-1 rounded-xl border border-[#EFE89F] shadow-2xs">
+                          <Clock className="w-3.5 h-3.5" />
+                          <span>{nextRdv.time}</span>
+                        </span>
+                      )}
+                    </div>
+
+                    {nextRdv.location && (
+                      <p className="text-xs text-slate-600 flex items-center gap-1 font-medium">
+                        <MapPin className="w-3.5 h-3.5 text-slate-400" />
+                        <span>{nextRdv.location}</span>
+                      </p>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* 📅 2. SECTION : AUTRES RENDEZ-VOUS À VENIR */}
+            {otherUpcomingRdvs.length > 0 && (
+              <div className="space-y-2.5">
+                <h4 className="font-serif text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center justify-between px-1">
+                  <span>Autres Rendez-Vous à Venir</span>
+                  <span className="text-[10px] font-semibold text-slate-400">{otherUpcomingRdvs.length}</span>
+                </h4>
+
+                {otherUpcomingRdvs.map((rdv) => (
                   <div
                     key={rdv.id}
-                    className="bg-white p-3.5 rounded-2xl border border-[#EFE89F] flex items-center justify-between shadow-2xs hover:shadow-xs transition-all"
+                    className="bg-white rounded-3xl p-4 shadow-2xs border border-[#EFE89F] hover:border-sun-300 transition-all flex items-start justify-between"
                   >
-                    <div className="flex items-start gap-2.5">
-                      <div className="w-9 h-9 rounded-xl bg-[#FEFCE7] border border-[#EFE89F] flex items-center justify-center text-[#D26E7B] flex-shrink-0">
-                        <Calendar className="w-4 h-4" />
-                      </div>
-                      <div>
-                        <p className="text-xs font-black text-slate-800">{rdv.title}</p>
-                        <p className="text-[10px] text-[#D26E7B] font-bold mt-0.5">
-                          {rdv.date ? new Date(rdv.date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' }) : ''} {rdv.time ? `à ${rdv.time}` : ''}
-                        </p>
+                    <div className="flex items-start gap-3 flex-1">
+                      <button
+                        type="button"
+                        onClick={async () => {
+                          await fetch(`/api/appointments/${rdv.id}/toggle`, { method: 'PATCH' });
+                          fetchAppointments();
+                        }}
+                        className="mt-0.5 cursor-pointer flex-shrink-0"
+                      >
+                        <Circle className="w-5 h-5 text-slate-300 hover:text-[#D26E7B]" />
+                      </button>
+
+                      <div className="space-y-1 flex-1">
+                        <h5 className="text-xs font-bold text-slate-800">
+                          {rdv.title}
+                        </h5>
+
+                        <div className="flex items-center gap-3 text-[11px] font-semibold text-[#D26E7B]">
+                          <span className="flex items-center gap-1">
+                            <Calendar className="w-3 h-3" />
+                            <span>{new Date(rdv.date).toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric', month: 'short' })}</span>
+                          </span>
+                          {rdv.time && (
+                            <span className="flex items-center gap-1">
+                              <Clock className="w-3 h-3" />
+                              <span>{rdv.time}</span>
+                            </span>
+                          )}
+                        </div>
+
                         {rdv.location && (
-                          <p className="text-[10px] text-slate-500 font-medium">
-                            {rdv.location}
+                          <p className="text-[10px] text-slate-500 flex items-center gap-1">
+                            <MapPin className="w-3 h-3 text-slate-400" />
+                            <span>{rdv.location}</span>
                           </p>
                         )}
                       </div>
@@ -1296,15 +1208,66 @@ export default function ParentsSpaceView({ isBorn, actualBirth, onBirthSaved, on
                     <button
                       type="button"
                       onClick={() => handleDeleteAppointment(rdv.id)}
-                      className="text-slate-300 hover:text-red-500 p-1.5 transition-colors cursor-pointer"
+                      className="text-slate-300 hover:text-red-500 p-1 cursor-pointer flex-shrink-0"
                       title="Supprimer ce rendez-vous"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
                     </button>
                   </div>
-                ))
-              )}
-            </div>
+                ))}
+              </div>
+            )}
+
+            {/* 🕰️ 3. SECTION : HISTORIQUE DES RENDEZ-VOUS PASSÉS */}
+            {completedRdvs.length > 0 && (
+              <div className="space-y-2.5 pt-2">
+                <h4 className="font-serif text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center justify-between px-1">
+                  <span>Historique des Rendez-Vous Passés</span>
+                  <span className="text-[10px] font-semibold text-slate-400">{completedRdvs.length}</span>
+                </h4>
+
+                {completedRdvs.map((rdv) => (
+                  <div
+                    key={rdv.id}
+                    className="bg-slate-50/70 rounded-3xl p-3.5 border border-slate-200 transition-all flex items-start justify-between opacity-80"
+                  >
+                    <div className="flex items-start gap-3 flex-1">
+                      <button
+                        type="button"
+                        onClick={async () => {
+                          await fetch(`/api/appointments/${rdv.id}/toggle`, { method: 'PATCH' });
+                          fetchAppointments();
+                        }}
+                        className="mt-0.5 cursor-pointer flex-shrink-0"
+                      >
+                        <CheckCircle2 className="w-4 h-4 text-emerald-500 fill-emerald-100" />
+                      </button>
+
+                      <div className="space-y-0.5 flex-1">
+                        <h5 className="text-xs font-bold line-through text-slate-400">
+                          {rdv.title}
+                        </h5>
+
+                        <div className="flex items-center gap-2 text-[10px] font-medium text-slate-400">
+                          <span>{new Date(rdv.date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
+                          {rdv.time && <span>• {rdv.time}</span>}
+                          {rdv.location && <span>• {rdv.location}</span>}
+                        </div>
+                      </div>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => handleDeleteAppointment(rdv.id)}
+                      className="text-slate-300 hover:text-red-500 p-1 cursor-pointer flex-shrink-0"
+                      title="Supprimer de l'historique"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         );
       })()}
