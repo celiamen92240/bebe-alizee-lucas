@@ -177,10 +177,11 @@ export default function HomeView({ setTab, isBorn, actualBirth }) {
 
       {/* 2. ÉVOLUTION DU BÉBÉ (DESIGN COMPACT, ÉPURÉ & PEP'S) */}
       <div className="bg-gradient-to-br from-[#EFE89F]/40 via-white to-[#C5D88F]/30 rounded-3xl p-5 shadow-md border-2 border-[#C5D88F] space-y-3 relative overflow-hidden">
-        {/* Header Title Row sur une seule ligne épurée */}
+        {/* Header Title Row sur une seule ligne épurée avec douce feuille */}
         <div>
-          <h3 className="font-serif text-xs font-black text-[#1E4E42] tracking-wide">
-            Évolution semaine après semaine
+          <h3 className="font-serif text-xs font-black text-[#1E4E42] tracking-wide flex items-center gap-1.5">
+            <span>🌿</span>
+            <span>Évolution semaine après semaine</span>
           </h3>
         </div>
 
