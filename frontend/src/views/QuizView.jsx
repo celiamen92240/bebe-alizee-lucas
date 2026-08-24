@@ -156,32 +156,25 @@ export default function QuizView() {
 
   return (
     <div className="space-y-4 pb-8">
-      {/* Header Banner - Design Pinterest & Épuré */}
+      {/* Header Banner - Design Épuré */}
       <div className="bg-gradient-to-br from-[#EFE89F]/35 via-white to-[#C5D88F]/40 rounded-3xl p-5 border-2 border-[#C5D88F] shadow-md relative overflow-hidden space-y-4">
-        <div className="flex items-center justify-between gap-3">
-          <div className="space-y-1">
-            <div className="flex items-center gap-2 flex-wrap">
-              <span className="text-[10px] font-black uppercase tracking-wider text-[#6E732E] bg-[#EFE89F] px-2.5 py-0.5 rounded-full border border-white/80 flex items-center gap-1 shadow-2xs">
-                <Sparkles className="w-3 h-3 text-[#D26E7B]" />
-                <span>Duel des Parents • 50 Questions</span>
-              </span>
-              
-              <span className="text-[10px] font-bold text-slate-600 bg-white/70 backdrop-blur-xs px-2.5 py-0.5 rounded-full border border-[#C5D88F]/60 flex items-center gap-1 shadow-2xs">
-                👥 {summary.uniqueVotersCount || 0} {(summary.uniqueVotersCount || 0) > 1 ? 'participants' : 'participant'}
-              </span>
-            </div>
-
-            <h2 className="font-serif text-2xl font-black text-[#1E4E42] tracking-tight leading-tight pt-0.5">
-              Qui d'Alizée ou de Lucas ?
-            </h2>
-            <p className="text-xs text-[#1E4E42]/80 font-medium">
-              Votez et découvrez qui remportera les 5 grands titres de super parents !
-            </p>
+        <div className="space-y-1">
+          <div className="flex items-center gap-2 flex-wrap">
+            <span className="text-[10px] font-black uppercase tracking-wider text-[#6E732E] bg-[#EFE89F] px-2.5 py-0.5 rounded-full border border-white/80 flex items-center gap-1 shadow-2xs">
+              <span>Duel des Parents • 50 Questions</span>
+            </span>
+            
+            <span className="text-[10px] font-bold text-slate-600 bg-white/70 backdrop-blur-xs px-2.5 py-0.5 rounded-full border border-[#C5D88F]/60 flex items-center shadow-2xs">
+              {(summary.uniqueVotersCount || 0) === 1 ? '1 participant' : `${summary.uniqueVotersCount || 0} participants`}
+            </span>
           </div>
 
-          <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-[#D26E7B]/20 via-[#EFE89F]/40 to-[#C5D88F]/50 border border-[#C5D88F]/50 flex items-center justify-center text-xl shadow-xs flex-shrink-0">
-            ✨
-          </div>
+          <h2 className="font-serif text-2xl font-black text-[#1E4E42] tracking-tight leading-tight pt-0.5">
+            Qui d'Alizée ou de Lucas ?
+          </h2>
+          <p className="text-xs text-[#1E4E42]/80 font-medium">
+            Votez et découvrez qui remportera les 5 grands titres de super parents !
+          </p>
         </div>
 
         {/* Segmented Control Pinterest Style : Sans fond blanc agressif */}
@@ -195,7 +188,6 @@ export default function QuizView() {
                 : 'text-[#1E4E42] hover:bg-white/40'
             }`}
           >
-            <Sparkles className="w-3.5 h-3.5" />
             <span>Répondre au Quiz</span>
           </button>
 
