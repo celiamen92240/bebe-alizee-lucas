@@ -280,42 +280,105 @@ module.exports = {
   // POLLS / HÉSITATIONS
   getPolls() {
     const data = readDb();
-    return data.polls || defaultState.polls;
+    const list = data.polls || defaultState.polls || [];
+    return list.map(poll => {
+      const options = (poll.options || []).map((opt, idx) => {
+        const voters = Array.isArray(opt.voters) ? opt.voters : [];
+        return {
+          ...opt,
+          id: opt.id || `opt-${idx}`,
+          text: opt.text || opt.label || '',
+          label: opt.label || opt.text || '',
+          emoji: opt.emoji || '🌿',
+          voters,
+          votes: typeof opt.votes === 'number' ? opt.votes : voters.length
+        };
+      });
+
+      // Tous les votants uniques du sondage
+      const allVoters = new Set();
+      options.forEach(o => o.voters.forEach(v => allVoters.add(v)));
+      const totalParticipants = allVoters.size;
+      const totalVotes = options.reduce((sum, o) => sum + o.votes, 0);
+
+      const optionsWithPercent = options.map(opt => ({
+        ...opt,
+        percent: totalVotes > 0 ? Math.round((opt.votes / totalVotes) * 100) : 0
+      }));
+
+      return {
+        ...poll,
+        multiple: !!poll.multiple,
+        options: optionsWithPercent,
+        totalParticipants,
+        totalVotes
+      };
+    });
   },
 
   addPoll(pollData) {
     const data = readDb();
-    if (!data.polls) data.polls = defaultState.polls;
+    if (!data.polls) data.polls = [];
     const newPoll = {
       id: "poll-" + Date.now(),
-      question: pollData.question,
-      options: pollData.options.map(opt => ({ text: opt, votes: 0 })),
-      votes: []
+      title: pollData.title || pollData.question,
+      question: pollData.title || pollData.question,
+      category: pollData.category || "Hésitation 💡",
+      description: pollData.description || "",
+      multiple: !!pollData.multiple,
+      options: (pollData.options || []).map((opt, i) => ({
+        id: `opt-${Date.now()}-${i}`,
+        label: typeof opt === 'string' ? opt : (opt.label || opt.text || ''),
+        text: typeof opt === 'string' ? opt : (opt.label || opt.text || ''),
+        emoji: opt.emoji || "🌿",
+        votes: 0,
+        voters: []
+      })),
+      voters: []
     };
-    data.polls.push(newPoll);
+    data.polls.unshift(newPoll);
     writeDb(data);
     return this.getPolls();
   },
 
-  votePoll(pollId, optionIndex, voterName) {
+  votePoll(pollId, optionIdentifier, voterName) {
     const data = readDb();
     const poll = (data.polls || []).find(p => p.id === pollId);
     if (!poll) return this.getPolls();
 
-    if (!poll.votes) poll.votes = [];
-    const prevVote = poll.votes.find(v => v.voterName.toLowerCase() === voterName.toLowerCase());
-    if (prevVote) {
-      if (poll.options[prevVote.optionIndex]) {
-        poll.options[prevVote.optionIndex].votes = Math.max(0, poll.options[prevVote.optionIndex].votes - 1);
+    const voterClean = (voterName || '').trim();
+    if (!voterClean) return this.getPolls();
+
+    const isMultiple = !!poll.multiple;
+
+    poll.options.forEach(opt => {
+      if (!Array.isArray(opt.voters)) {
+        opt.voters = [];
       }
-      prevVote.optionIndex = optionIndex;
+    });
+
+    // Match option either by optionId or optionIndex
+    const targetOption = poll.options.find((o, idx) => o.id === optionIdentifier || idx === Number(optionIdentifier));
+    if (!targetOption) return this.getPolls();
+
+    const alreadyVotedTarget = targetOption.voters.includes(voterClean);
+
+    if (alreadyVotedTarget) {
+      // Retirer le vote (toggle off)
+      targetOption.voters = targetOption.voters.filter(v => v !== voterClean);
     } else {
-      poll.votes.push({ voterName, optionIndex });
+      // Si choix unique, retirer des autres options
+      if (!isMultiple) {
+        poll.options.forEach(opt => {
+          opt.voters = opt.voters.filter(v => v !== voterClean);
+        });
+      }
+      targetOption.voters.push(voterClean);
     }
 
-    if (poll.options[optionIndex]) {
-      poll.options[optionIndex].votes += 1;
-    }
+    poll.options.forEach(opt => {
+      opt.votes = opt.voters.length;
+    });
 
     writeDb(data);
     return this.getPolls();
@@ -785,11 +848,14 @@ module.exports = {
     const dayOfYear = Math.floor((currentDay - startOfYear) / (1000 * 60 * 60 * 24));
     
     const gridIndex = Math.abs(dayOfYear) % bank.length;
+    const tomorrowGridIndex = Math.abs(dayOfYear + 1) % bank.length;
     const grid = bank[gridIndex];
+    const tomorrowGrid = bank[tomorrowGridIndex];
 
     return {
       date: actualDateStr,
       dayNumber: dayOfYear + 1,
+      tomorrowTheme: tomorrowGrid?.theme || "",
       ...grid
     };
   },

@@ -125,19 +125,11 @@ export default function ParticipantSelector({ selectedName, onSelect, label = "Q
   return (
     <div className="space-y-3">
       {/* Label & "+ Nouveau Joueur" Button */}
-      <div className="flex items-center justify-between">
-        <label className="text-xs font-black text-slate-800 flex items-center gap-1.5">
-          <User className="w-3.5 h-3.5 text-[#D26E7B]" />
+      <div>
+        <label className="text-xs font-black text-slate-800 flex items-center gap-1.5 mb-1.5">
+          <User className="w-3.5 h-3.5 text-[#1E4E42]" />
           <span>{label}</span>
         </label>
-        <button
-          type="button"
-          onClick={() => setShowAddModal(true)}
-          className="text-[11px] font-black text-[#D26E7B] hover:text-[#be5361] flex items-center gap-1 bg-[#ECCEE6]/40 hover:bg-[#ECCEE6]/70 px-2.5 py-1 rounded-full border border-[#D26E7B]/30 transition-all cursor-pointer shadow-2xs"
-        >
-          <Plus className="w-3.5 h-3.5 stroke-[3px]" />
-          <span>Créer un joueur</span>
-        </button>
       </div>
 
       {/* 1. LISTE DÉROULANTE (SELECT DROPDOWN) */}

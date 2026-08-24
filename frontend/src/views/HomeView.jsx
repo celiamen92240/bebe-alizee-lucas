@@ -190,10 +190,9 @@ export default function HomeView({ setTab, isBorn, actualBirth }) {
           <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#EFE89F]/40 to-[#C5D88F]/30 shadow-xs border border-[#C5D88F] flex items-center justify-center flex-shrink-0">
             <FruitIllustration fruit={fruitInfo.fruit} size={48} className="drop-shadow-xs" />
           </div>
-
           <div className="space-y-1.5 min-w-0 flex-1">
-            <div className="flex items-center gap-2 flex-wrap">
-              <span className="font-extrabold text-sm text-[#1E4E42]">
+            <div className="flex items-center justify-between gap-1.5 min-w-0">
+              <span className="font-extrabold text-xs sm:text-sm text-[#1E4E42] truncate">
                 Comme {fruitInfo.fruit}
               </span>
               <span className="text-[10px] bg-[#EFE89F] text-[#6E732E] px-2.5 py-0.5 rounded-full font-extrabold whitespace-nowrap flex-shrink-0">
@@ -265,18 +264,16 @@ export default function HomeView({ setTab, isBorn, actualBirth }) {
             onClick={() => navigate('predictions')}
             className="bg-gradient-to-br from-[#FA9B9B] to-[#F57B7B] text-white p-4 rounded-[28px] shadow-sm hover:shadow-md active:scale-95 text-left transition-all group flex flex-col justify-between h-[145px] relative overflow-hidden cursor-pointer"
           >
-            {/* Top-left Icon in White Circle */}
-            <div className="w-11 h-11 rounded-full bg-white/90 shadow-2xs flex items-center justify-center flex-shrink-0">
-              <CalendarHeart className="w-5 h-5 text-[#F57B7B]" />
+            {/* Top-left Icon */}
+            <div className="w-10 h-10 rounded-2xl bg-white/20 backdrop-blur-xs flex items-center justify-center flex-shrink-0">
+              <CalendarHeart className="w-5 h-5 text-white" />
             </div>
 
-            {/* Bottom-right Circle with Arrow */}
-            <div className="w-8 h-8 rounded-full bg-white/95 text-[#F57B7B] shadow-2xs flex items-center justify-center absolute bottom-3.5 right-3.5 group-hover:scale-105 transition-all">
-              <ArrowRight className="w-3.5 h-3.5" />
-            </div>
+            {/* Bottom-right Discreet Arrow */}
+            <ArrowRight className="w-4 h-4 text-white/80 absolute bottom-3.5 right-3.5 group-hover:translate-x-1 transition-transform" />
 
             {/* Bottom-left Content */}
-            <div className="pr-8">
+            <div className="pr-6">
               <p className="font-serif font-black text-sm text-white leading-tight">Grand Prono</p>
               <p className="text-[10px] text-white/90 font-medium">Paris sur le jour J & prénom</p>
             </div>
@@ -288,18 +285,16 @@ export default function HomeView({ setTab, isBorn, actualBirth }) {
             onClick={() => navigate('quiz')}
             className="bg-gradient-to-br from-[#D2E4AD] to-[#B8D389] text-[#26422A] p-4 rounded-[28px] shadow-sm hover:shadow-md active:scale-95 text-left transition-all group flex flex-col justify-between h-[145px] relative overflow-hidden cursor-pointer"
           >
-            {/* Top-left Icon in White Circle */}
-            <div className="w-11 h-11 rounded-full bg-white/90 shadow-2xs flex items-center justify-center flex-shrink-0">
-              <MessageSquareText className="w-5 h-5 text-[#466647]" />
+            {/* Top-left Icon */}
+            <div className="w-10 h-10 rounded-2xl bg-white/30 backdrop-blur-xs flex items-center justify-center flex-shrink-0">
+              <MessageSquareText className="w-5 h-5 text-[#26422A]" />
             </div>
 
-            {/* Bottom-right Circle with Arrow */}
-            <div className="w-8 h-8 rounded-full bg-white/95 text-[#26422A] shadow-2xs flex items-center justify-center absolute bottom-3.5 right-3.5 group-hover:scale-105 transition-all">
-              <ArrowRight className="w-3.5 h-3.5" />
-            </div>
+            {/* Bottom-right Discreet Arrow */}
+            <ArrowRight className="w-4 h-4 text-[#26422A]/80 absolute bottom-3.5 right-3.5 group-hover:translate-x-1 transition-transform" />
 
             {/* Bottom-left Content */}
-            <div className="pr-8">
+            <div className="pr-6">
               <p className="font-serif font-black text-sm text-[#26422A] leading-tight">Qui d'Alizée<br />ou de Lucas ?</p>
               <p className="text-[10px] text-[#26422A]/85 font-medium">Duel des futurs parents</p>
             </div>
@@ -311,18 +306,16 @@ export default function HomeView({ setTab, isBorn, actualBirth }) {
             onClick={() => navigate('games')}
             className="bg-gradient-to-br from-[#A5BBF9] to-[#88A4F3] text-white p-4 rounded-[28px] shadow-sm hover:shadow-md active:scale-95 text-left transition-all group flex flex-col justify-between h-[145px] relative overflow-hidden cursor-pointer"
           >
-            {/* Top-left Icon in White Circle */}
-            <div className="w-11 h-11 rounded-full bg-white/90 shadow-2xs flex items-center justify-center flex-shrink-0">
-              <Puzzle className="w-5 h-5 text-[#6B8CF2]" />
+            {/* Top-left Icon */}
+            <div className="w-10 h-10 rounded-2xl bg-white/20 backdrop-blur-xs flex items-center justify-center flex-shrink-0">
+              <Puzzle className="w-5 h-5 text-white" />
             </div>
 
-            {/* Bottom-right Circle with Arrow */}
-            <div className="w-8 h-8 rounded-full bg-white/95 text-[#6B8CF2] shadow-2xs flex items-center justify-center absolute bottom-3.5 right-3.5 group-hover:scale-105 transition-all">
-              <ArrowRight className="w-3.5 h-3.5" />
-            </div>
+            {/* Bottom-right Discreet Arrow */}
+            <ArrowRight className="w-4 h-4 text-white/80 absolute bottom-3.5 right-3.5 group-hover:translate-x-1 transition-transform" />
 
             {/* Bottom-left Content */}
-            <div className="pr-8">
+            <div className="pr-6">
               <p className="font-serif font-black text-sm text-white leading-tight">Mots Fléchés</p>
               <p className="text-[10px] text-white/90 font-medium">12 mots & chrono ⏱️</p>
             </div>
@@ -334,18 +327,16 @@ export default function HomeView({ setTab, isBorn, actualBirth }) {
             onClick={() => navigate('polls')}
             className="bg-gradient-to-br from-[#FEE79F] to-[#FBD76F] text-[#6B4D1B] p-4 rounded-[28px] shadow-sm hover:shadow-md active:scale-95 text-left transition-all group flex flex-col justify-between h-[145px] relative overflow-hidden cursor-pointer"
           >
-            {/* Top-left Icon in White Circle */}
-            <div className="w-11 h-11 rounded-full bg-white/90 shadow-2xs flex items-center justify-center flex-shrink-0">
-              <Lightbulb className="w-5 h-5 text-amber-500 fill-amber-300" />
+            {/* Top-left Icon */}
+            <div className="w-10 h-10 rounded-2xl bg-white/35 backdrop-blur-xs flex items-center justify-center flex-shrink-0">
+              <Lightbulb className="w-5 h-5 text-[#6B4D1B]" />
             </div>
 
-            {/* Bottom-right Circle with Arrow */}
-            <div className="w-8 h-8 rounded-full bg-white/95 text-[#6B4D1B] shadow-2xs flex items-center justify-center absolute bottom-3.5 right-3.5 group-hover:scale-105 transition-all">
-              <ArrowRight className="w-3.5 h-3.5" />
-            </div>
+            {/* Bottom-right Discreet Arrow */}
+            <ArrowRight className="w-4 h-4 text-[#6B4D1B]/80 absolute bottom-3.5 right-3.5 group-hover:translate-x-1 transition-transform" />
 
             {/* Bottom-left Content */}
-            <div className="pr-8">
+            <div className="pr-6">
               <p className="font-serif font-black text-xs font-black text-[#6B4D1B] leading-tight">Petits Doutes,<br />grandes réponses</p>
               <p className="text-[10px] text-[#6B4D1B]/85 font-medium">On vous aide, à deux</p>
             </div>
@@ -356,44 +347,40 @@ export default function HomeView({ setTab, isBorn, actualBirth }) {
         <button
           type="button"
           onClick={() => navigate('guestbook')}
-          className="w-full bg-[#FEEFF4] border border-[#FCD8E6] rounded-[26px] p-4 flex items-center justify-between shadow-xs relative overflow-hidden group cursor-pointer active:scale-[0.99] transition-all"
+          className="w-full bg-[#FEEFF4] border border-[#FCD8E6] rounded-[24px] p-4 flex items-center justify-between shadow-2xs relative overflow-hidden group cursor-pointer active:scale-[0.99] transition-all"
         >
           <div className="flex items-center gap-3.5">
-            <div className="w-12 h-12 rounded-full bg-white shadow-2xs flex items-center justify-center flex-shrink-0 relative border border-pink-100">
+            <div className="w-11 h-11 rounded-2xl bg-white shadow-2xs flex items-center justify-center flex-shrink-0 relative border border-pink-100">
               <MailOpen className="w-5 h-5 text-[#F2619C] stroke-[2.2px]" />
-              <Heart className="w-2.5 h-2.5 text-[#F2619C] fill-[#F2619C] absolute -top-1 right-2 drop-shadow-2xs animate-pulse" />
+              <Heart className="w-2.5 h-2.5 text-[#F2619C] fill-[#F2619C] absolute -top-1 right-1.5 drop-shadow-2xs animate-pulse" />
             </div>
             <div className="text-left">
               <p className="font-serif font-black text-sm text-[#4A154B] leading-tight">Capsule d'Amour & Mots Doux</p>
               <p className="text-[10px] text-rose-500 font-medium">Écrivez-lui un message plein de tendresse</p>
             </div>
           </div>
-          <div className="w-8 h-8 rounded-full bg-white shadow-2xs flex items-center justify-center text-rose-400 flex-shrink-0 group-hover:translate-x-0.5 transition-all">
-            <ArrowRight className="w-3.5 h-3.5" />
-          </div>
+          <ArrowRight className="w-4 h-4 text-rose-400 flex-shrink-0 group-hover:translate-x-1 transition-transform" />
         </button>
 
         {/* BANNER 2 : ESPACE PARENTS */}
         <button
           type="button"
           onClick={() => navigate('parents')}
-          className="w-full bg-[#F5F8EE] border border-[#E3EDCE] rounded-[26px] p-4 flex items-center justify-between shadow-xs relative overflow-hidden group cursor-pointer active:scale-[0.99] transition-all"
+          className="w-full bg-[#F5F8EE] border border-[#E3EDCE] rounded-[24px] p-4 flex items-center justify-between shadow-2xs relative overflow-hidden group cursor-pointer active:scale-[0.99] transition-all"
         >
           <div className="flex items-center gap-3.5">
-            <div className="w-12 h-12 rounded-full bg-white shadow-2xs flex items-center justify-center flex-shrink-0 relative border border-green-100">
-              <ShieldCheck className="w-6 h-6 text-[#466647]" />
+            <div className="w-11 h-11 rounded-2xl bg-white shadow-2xs flex items-center justify-center flex-shrink-0 relative border border-green-100">
+              <ShieldCheck className="w-5 h-5 text-[#466647]" />
             </div>
             <div className="text-left">
               <p className="font-serif font-black text-sm text-[#26422A] flex items-center gap-1.5 leading-tight">
                 <span>Espace Parents</span>
-                <Lock className="w-3 h-3 text-[#466647]" />
+                <Lock className="w-3.5 h-3.5 text-[#466647]" />
               </p>
               <p className="text-[10px] text-slate-500 font-medium">Votre cocon privé pour tout organiser à deux</p>
             </div>
           </div>
-          <div className="w-8 h-8 rounded-full bg-white shadow-2xs flex items-center justify-center text-[#466647] flex-shrink-0 group-hover:translate-x-0.5 transition-all">
-            <ArrowRight className="w-3.5 h-3.5" />
-          </div>
+          <ArrowRight className="w-4 h-4 text-[#466647]/60 flex-shrink-0 group-hover:translate-x-1 transition-transform" />
         </button>
       </div>
     </div>

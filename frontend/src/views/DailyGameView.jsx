@@ -178,54 +178,55 @@ export default function DailyGameView() {
   return (
     <div className="px-5 space-y-5 pb-8">
       {/* Header Banner */}
-      <div className="glass-card-sun rounded-3xl p-5 border border-sun-300 shadow-md relative overflow-hidden">
+      <div className="glass-card-sun rounded-3xl p-5 border border-sun-300 shadow-md relative overflow-hidden space-y-3">
         <div className="flex items-center justify-between">
           <div className="space-y-0.5">
-            <span className="text-[10px] font-extrabold uppercase tracking-wider text-sun-800 bg-white/80 px-2.5 py-0.5 rounded-full border border-sun-200 flex items-center gap-1 w-fit">
-              <Calendar className="w-3 h-3 text-sun-600" />
-              <span>Défi du Jour • 12 Mots</span>
-            </span>
             <h2 className="font-serif text-xl font-extrabold text-[#1E4E42]">
               Mots Fléchés Quotidiens
             </h2>
             <p className="text-xs text-[#1E4E42]/80 font-medium">
-              Bébé, enfants, Noël, famille & aventures ! 1 tentative officielle par jour.
+              12 mots chaque jour pour faire briller votre culture bébé & famille !
             </p>
           </div>
           <img src="/logo.jpg" alt="Logo" className="w-10 h-10 rounded-2xl object-cover shadow-2xs border border-[#C5D88F]" />
         </div>
 
-        {/* Today's Theme Pill (Toujours sur la même ligne) */}
+        {/* Today's Theme & Tomorrow's Theme */}
         {gridData && (
-          <div className="mt-3 bg-white/95 rounded-2xl px-3 py-2 border border-[#EFE89F] flex items-center justify-between gap-2 shadow-2xs">
-            <div className="flex items-center gap-1.5 text-xs whitespace-nowrap overflow-hidden">
-              <span className="font-bold text-slate-500">Thème :</span>
-              <strong className="text-[#D26E7B] font-black truncate">{gridData.theme}</strong>
+          <div className="bg-white/95 rounded-2xl p-3 border border-[#EFE89F] space-y-1.5 shadow-2xs">
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex items-center gap-1.5 text-xs">
+                <span className="font-bold text-slate-500">Thème du jour :</span>
+                <strong className="text-[#D26E7B] font-black">{gridData.theme}</strong>
+              </div>
+              <span className="text-[10px] font-bold text-[#1E4E42] bg-[#EFE89F] px-2 py-0.5 rounded-md whitespace-nowrap flex-shrink-0 border border-[#C5D88F]">
+                12 mots
+              </span>
             </div>
-            <span className="text-[10px] font-bold text-[#1E4E42] bg-[#EFE89F] px-2 py-0.5 rounded-md whitespace-nowrap flex-shrink-0 border border-[#C5D88F]">
-              12 définitions
-            </span>
+
+            {gridData.tomorrowTheme && (
+              <p className="text-[10px] text-slate-400 font-medium flex items-center gap-1 pt-0.5 border-t border-slate-50">
+                <span>🔮 Thème de demain :</span>
+                <span className="font-bold text-slate-600">{gridData.tomorrowTheme}</span>
+              </p>
+            )}
           </div>
         )}
       </div>
 
-      {/* CHRONOMETER BAR */}
-      <div className="bg-white rounded-2xl p-3 shadow-sm border border-[#EFE89F] flex items-center justify-between">
-        <div className="flex items-center gap-2">
+      {/* CHRONOMETER BAR (Visible pendant la partie) */}
+      {isPlaying && !isSubmitted && (
+        <div className="bg-white rounded-2xl p-3 shadow-sm border border-[#EFE89F] flex items-center justify-between animate-in fade-in">
           <span className="text-xs font-bold text-slate-700">
             Joueur : <strong className="text-[#D26E7B]">{playerName || currentUser?.name || "Non défini"}</strong>
           </span>
-        </div>
 
-        <div className={`flex items-center gap-1.5 px-3.5 py-1 rounded-full text-xs font-black font-mono transition-all ${
-          isPlaying && !isSubmitted
-            ? 'bg-red-500 text-white animate-pulse shadow-md scale-105'
-            : 'bg-slate-100 text-slate-600'
-        }`}>
-          <Timer className="w-3.5 h-3.5" />
-          <span>{formatTime(elapsedTenths)}</span>
+          <div className="flex items-center gap-1.5 px-3.5 py-1 rounded-full text-xs font-black font-mono bg-red-500 text-white animate-pulse shadow-md">
+            <Timer className="w-3.5 h-3.5" />
+            <span>{formatTime(elapsedTenths)}</span>
+          </div>
         </div>
-      </div>
+      )}
 
       {/* 1. ÉCRAN INTRO : DÉMARRER OU VOIR SON SCORE DÉJÀ ENREGISTRÉ */}
       {!isPlaying && !isSubmitted && (
